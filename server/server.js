@@ -2,14 +2,37 @@ if (Meteor.isServer) {
   self= this;
 
   
-
+    groups = new Meteor.Collection("groups");
 
     markers = new Meteor.Collection("markers");
+    
+    marker_services = new Meteor.Collection("marker_services");
 
+    services = new Meteor.Collection("services");
+
+
+    
+    markers.allow({
+    
+        insert: function(userId,doc){
+            return (userId && doc.owner === userId);
+        },
+        update: function(userId,doc,fields,modifier){
+            return doc.owner === userId;
+        },
+        remove: function(userId,doc){
+            return doc.owner === userId;
+        },
+        fetch: ['owner']
+        
+    
+    });
     Meteor.publish("allMarkers",function(){
         return markers.find({},{});
     });
-
+    Meteor.publish("allGroups",function(){
+        return groups.find({},{});
+    });
 
     Meteor.publish("allMarkerServices",function(){
         return marker_services.find({},{});
@@ -28,11 +51,13 @@ if (Meteor.isServer) {
         service_id : services._id
      
     */
-    marker_services = new Meteor.Collection("marker_services");
+ //   marker_services = new Meteor.Collection("marker_services");
+    
+    
 
 //    agencies = new Meteor.Collection("agencies");
 
-    services = new Meteor.Collection("services");
+   // services = new Meteor.Collection("services");
 
   //markers._ensureIndex({ loc : "2d" });
 

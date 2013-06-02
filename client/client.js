@@ -8,8 +8,38 @@
 		37.713761,
 		-122.40093200000001
 	],
+    "group" groups.id,
 	"_id" : "nhdSqB3TFNnuyek4i"
 }
+
+
+groups :
+
+{
+
+    "title" : (string),
+    "owner" : Mongo.userId()
+}
+
+
+group_codes :
+
+
+{
+    "owner" : Mongo.userId(),
+    "visibility" : (public/private)
+    "in_use" : (int)
+    "code" : aSimpleOneFormAuth,
+    "group" : groups._id
+    "access": (creator/admin/user/spectator)
+}
+
+users_group_codes{
+    "user_id" : Meteor.userId(),
+    "group_code_id" : group_codes._id,
+    "code" : aSimpleOneFormAuth
+}
+
 */
 
 
@@ -17,6 +47,24 @@
 
 marker_sub = Meteor.subscribe("allMarkers");
 markers = new Meteor.Collection("markers");
+
+    
+    markers.allow({
+    
+        insert: function(userId,doc){
+            return (userId && doc.owner === userId);
+        },
+        update: function(userId,doc,fields,modifier){
+            return doc.owner === userId;
+        },
+        remove: function(userId,doc){
+            return doc.owner === userId;
+        },
+        fetch: ['owner']
+        
+    
+    });
+
 /*
     marker_services = contains mongo id's refering to 'services'
     
@@ -29,6 +77,12 @@ markers = new Meteor.Collection("markers");
 
 marker_services_sub = Meteor.subscribe("allMarkerServices");
 marker_services = new Meteor.Collection("marker_services");
+
+
+groups_sub = Meteor.subscribe("allGroups");
+groups = new Meteor.Collection("groups");
+
+
 
 agencies = new Meteor.Collection("agencies");
 
@@ -153,13 +207,15 @@ Template.add_marker.events({
                     var record ={};
                     record.name = tmpl.find(".marker_name").value;
                     record.type = tmpl.find(".marker_type").value;
-                    record.visibility = tmpl.find(".marker_type").marker_visiblity;
-
+                    
+                    record.group = tmpl.find(".marker_group").value;
+                    
                     
                     // set loc field to geometry locations given in geocoder
                     record.loc = [results.geometry.location.jb,results.geometry.location.kb];
                     // set owner field to person who created it so they may re-edit what they have created
                     record.owner = Meteor.userId();
+                    console.log(record);
                     markers.insert(record);
                     lookForMarkers([results.geometry.location.jb,results.geometry.location.kb]);
                     //document.getElementById('.marker_address').value = '';
@@ -185,6 +241,32 @@ Template.add_marker.events({
         
         }
     }
+});
+
+
+Template.groups.userGroups = function(evt,tmpl){
+    console.log('user groups');
+    var q = groups.find({'owner' : Meteor.userId()});
+    q = q.fetch();
+    console.log(q);
+    return q;
+    
+};
+
+Template.add_marker.userGroups = Template.groups.userGroups;
+
+Template.add_group.events({
+    'click input.add_group': function(evt,tmpl){
+        alert('You are adding a group!');
+        var record ={};
+        record.owner = Meteor.userId();
+        record.name = tmpl.find(".group_title").value;
+        record.desc = tmpl.find(".group_desc").value;
+        console.log(groups.insert(record));
+    
+        
+    }
+
 });
 
 Template.markers.events({
@@ -220,9 +302,12 @@ Template.markers.events({
 
 
 Template.loggedInMenu.events({
-    'click .agencyAdd' : function(evt,tmpl){
+    'click .groupAdd' : function(evt,tmpl){
         Template.loggedInMenu.rendered();
-        $('div#agency_new').show();
+        $('div#the_markers').hide();
+        $('div#marker_edit').hide();
+
+        $('div#groups').show();
  
     },
     'click .showMarkers' : function(evt,tmpl){
@@ -295,6 +380,8 @@ Template.edit_marker.events = {
 
 Template.services_offered.services = function(evt,tmpl){
     var q = services.find({},{});
+    console.log('in services offered');
+    console.log(q);
     q = q.fetch();
     return q;
 }
@@ -337,10 +424,12 @@ Template.loggedInMenu.rendered = function(evt,tmpl){
     
     $('div#marker_add').hide();
     $('div#user_settings').hide();
+    $('div#groups').hide();
+
+    
    // $('div#the_markers').hide();
     if(!Session.get('selected_marker'))
         $('div#marker_edit').hide();
-    $('div#agency_new').hide();
 
 };
 
