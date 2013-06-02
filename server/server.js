@@ -5,6 +5,9 @@ if (Meteor.isServer) {
     groups = new Meteor.Collection("groups");
 
     markers = new Meteor.Collection("markers");
+
+    marker_types = new Meteor.Collection("marker_types");
+
     
     marker_services = new Meteor.Collection("marker_services");
 
@@ -30,6 +33,11 @@ if (Meteor.isServer) {
     Meteor.publish("allMarkers",function(){
         return markers.find({},{});
     });
+    
+    Meteor.publish("allMarkerTypes",function(){
+        return marker_types.find({},{});
+    });
+    
     Meteor.publish("allGroups",function(){
         return groups.find({},{});
     });
@@ -67,7 +75,51 @@ if (Meteor.isServer) {
 
   Meteor.startup(function () {
     // theres no org..
+    if(marker_types.find({},{}).count() == 0){
+        console.log('filling marker types');
+        
+        var default_markers = [
+            {
+                name: 'Other',
+                owner : 'sys',
+                img : '/Other.png'
+                
+            },
+            {
+                name: 'Clinic',
+                owner : 'sys',
+                img : '/Clinic.png'
+                
+            },
+            {
+                name: 'Hospital',
+                owner : 'sys',
+                img : '/Hospital.png'
+                
+            },
+            {
+                name: 'Pharmacy',
+                owner : 'sys',
+                img : '/Pharmacy.png'
+                
+            },
+            {
+                name: 'Shelter',
+                owner : 'sys',
+                img : '/Shelter.png'
+                
+            }
 
+
+
+        
+        ];
+        
+        for(var i=0;i<default_markers.length;i++){
+            console.log(marker_types.insert(default_markers[i]));
+        }
+        
+    }
 
  });
  
