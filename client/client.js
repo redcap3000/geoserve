@@ -1,4 +1,8 @@
 /*
+geoserve - Ronaldo Barbachano June 2013
+http://redcapmedia.com
+
+meteor js
 
 {
 	"name" : "Test",
@@ -11,8 +15,6 @@
     "group" groups.id,
 	"_id" : "nhdSqB3TFNnuyek4i"
 }
-
-
 groups :
 
 {
@@ -23,8 +25,6 @@ groups :
 
 
 group_codes :
-
-
 {
     "owner" : Mongo.userId(),
     "visibility" : (public/private)
@@ -40,151 +40,211 @@ users_group_codes{
     "code" : aSimpleOneFormAuth
 }
 
-*/
 
+marker_types{
+    "owner" : Mongo.userId(),
+    "name" : (string),
+    "img" : (string - url image/path)
+}
 
-
-
-marker_sub = Meteor.subscribe("allMarkers");
-markers = new Meteor.Collection("markers");
-
-    
-    markers.allow({
-    
-        insert: function(userId,doc){
-            return (userId && doc.owner === userId);
-        },
-        update: function(userId,doc,fields,modifier){
-            return doc.owner === userId;
-        },
-        remove: function(userId,doc){
-            return doc.owner === userId;
-        },
-        fetch: ['owner']
-        
-    
-    });
-
-/*
-    marker_services = contains mongo id's refering to 'services'
-    
-    
+marker_services = contains mongo id's refering to 'services'
     _id : <mongo_id>,
     marker_id : markers._id,
     service_id : services._id
  
 */
 
-marker_services_sub = Meteor.subscribe("allMarkerServices");
+markers = new Meteor.Collection("markers");
+
 marker_services = new Meteor.Collection("marker_services");
 
+marker_types = new Meteor.Collection("marker_types");
 
-groups_sub = Meteor.subscribe("allGroups");
 groups = new Meteor.Collection("groups");
-
-
 
 agencies = new Meteor.Collection("agencies");
 
-
-services_sub = Meteor.subscribe("allServices");
-
 services = new Meteor.Collection("services");
 
-
 Meteor.startup(function(){
+
+
+/* BEGIN GMAPS
+ *
+ *
+ */
+
+        lookForMarkers = function(theBox){
+            c = markers.find({}, {fields: {_id: 1}}).fetch();
+            if(c.length > 0)
+                for(var i=0;i<c.length;i++){
+                    var arr= c[i];
+                    if(typeof arr['loc'] != 'undefined'){
+                        var co = new google.maps.LatLng(arr['loc'][0], arr['loc'][1]);
+                        var marker_type = '';
+                        if(arr['type'] == 'Shelter' || arr['type'] == 'Hospital' || arr['type'] == 'Other' || arr['type'] == 'Pharmacy'){
+                        // default
+                            marker_type = arr['type'];
+                        }else{
+                            marker_type = undefined;
+                        }
+                        placeNavMarker(co,marker_type,function(){alert(arr['name'] + ' ' + arr['type']);});
+                    }
+                }
+        };
+
+        createMap = function(latLng) {
+            var mapOptions = {
+                disableDoubleClick: true,
+                streetViewControl: false,
+                scrollwheel: false,
+                zoom: 15,
+                center: latLng,
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+        };
+
+        placeNavMarker = function(latLng,image,clickCallBack) {
+            if(typeof image == 'undefined')
+                var image = "Other.png";
+            else if(typeof image == 'string'){
+                // dont show this marker for the geocoded location
+                var image = image + ".png";
+                console.log("Should be using"+image);
+            }else{
+                var image = "http://gmaps-samples.googlecode.com/svn/trunk/markers/blue/blank.png";
+            }
+            // this map is not always there>>>?
+            var new_marker = new google.maps.Marker({
+              position: latLng,
+              map: map,
+              icon: image
+            });
+            if(typeof clickCallBack == 'function')
+                google.maps.event.addListener(new_marker,"click",clickCallBack);
+            //currentMarkers.push( new_marker );
+        };
+
       geocoder = new google.maps.Geocoder();
       createMap();
       
+/*
+ *
+ * END GMAPS
+ *
+ */
+      marker_sub = Meteor.subscribe("allMarkers");
+      groups_sub = Meteor.subscribe("allGroups");
+      marker_services_sub = Meteor.subscribe("allMarkerServices");
+      services_sub = Meteor.subscribe("allServices");
+      marker_types_sub = Meteor.subscribe("allMarkerTypes");
       Deps.autorun(function(){
         if(marker_sub.ready()){
             console.log('marker subscription ready');
-            // this sets the new loc prematurely?
-            var mCheck = markers.find({},{}).fetch();
-            var emCheck = mCheck.pop();
-            emCheck = emCheck['loc'];
-            // maybe not 'create the map new each time?
-            if(typeof map === 'undefined'){
-                //createMap(new google.maps.LatLng(emCheck[0],emCheck[1]));
-            }else{
-                var latlng = new google.maps.LatLng(emCheck[0], emCheck[1]);
-                map.setCenter(latlng);
+            if(marker_types_sub.ready() && services_sub.ready() && marker_services_sub.ready() && groups_sub.ready()){
+                // this sets the new loc prematurely?
+                var mCheck = markers.find({},{}).fetch();
+                var emCheck = mCheck.pop();
+                emCheck = emCheck['loc'];
+                // maybe not 'create the map new each time?
+                if(typeof map === 'undefined'){
+                    //createMap(new google.maps.LatLng(emCheck[0],emCheck[1]));
+                }else{
+                    var latlng = new google.maps.LatLng(emCheck[0], emCheck[1]);
+                    map.setCenter(latlng);
+                }
+                lookForMarkers();
+                var curMarker = Session.get('selected_marker');
+                if(curMarker){
+                    // probably show something that allows us to edit the selected marker?
+                }
             }
-            lookForMarkers();
-          
-        var curMarker = Session.get('selected_marker');
-        if(curMarker){
-        
-            // probably show something that allows us to edit the selected marker?
-        
-        }
     }
 });
       
 });
 
-Template.services_offered.events({
-    
-    'click input.new_service' : function(evt,tmpl){
-        if(Meteor.userId()){
-            var new_service = tmpl.find('.new_service_input').value,
-        
-            record = {title:new_service,owner:Meteor.userId()};
-            
-            services.insert(record);
-        
-        }else{
-            alert('Must be logged in to create new services to add to markers');
-        }
-        console.log(record);
 
+/*
+ *
+ * Template Events
+ *
+ */
+
+
+// Deals with navigation showing/hiding elements; going to create screen/edit screen, and geolocation button.
+
+Template.loggedInMenu.events({
+    'click .groupAdd' : function(evt,tmpl){
+        Template.loggedInMenu.rendered();
+        $('div#the_markers').hide();
+        $('div#marker_edit').hide();
+        $('div#groups').show();
     },
-    
-    'click input.add_service' : function(evt,tmpl){
-        var new_service = tmpl.find('.add_services'),
-            record = {};
-            marker_id = Session.get('selected_marker');
-        if(marker_id){
-            console.log(new_service.options[new_service.selectedIndex]);
-            record.service = new_service.options[new_service.selectedIndex].id;
-            record.marker_id = marker_id;
-            //alert('inserting');
-            // make sure no DUPES!!
-            marker_services.insert(record);
-            console.log(record);
-            // owner? possibly agency? not super needed...
+    'click .showMarkers' : function(evt,tmpl){
+        Template.loggedInMenu.rendered();
+        $('div#the_markers').show();
+        if(Session.get('selected_marker'))
+            $('div#marker_edit').show();
+ 
+    },
+    'click .markerEditShow': function(evt,tmpl){
+        Template.loggedInMenu.rendered();
+        $('div#marker_edit').show();
+    },
+    'click .markerAddShow': function(evt,tmpl){
+        Template.loggedInMenu.rendered();
+        $('div#marker_add').show();
+        $('div#the_markers').hide();
+        $('div#marker_edit').hide();
+    },
+    'click .settingsShow': function(evt,tmpl){
+        Template.loggedInMenu.rendered();
+        console.log('showing settings');
+        $('div#user_settings').show();
+    },
+    'click .geolocate': function(evt,tmpl){
+        if(navigator.geolocation){
+            var successFunction = function(success) {
+                  var navLatLng = new google.maps.LatLng(success.coords.latitude, success.coords.longitude);
+                  // annoying...
+                  //createMap(navLatLng);
+                  // send it true option to use different marker
+                  placeNavMarker(navLatLng,true);
+                  lookForMarkers([navLatLng.jb,navLatLng.kb]);
+                };
+
+            var errorFunction = function(success) {
+                var latlng = new google.maps.LatLng(37.808631, -122.474470);
+                //createMap(latlng);
+                placeNavMarker(navLatLng);
+            //  addAutocomplete();
+                };
+        
+            navigator.geolocation.getCurrentPosition(successFunction, errorFunction);
         }else{
-            alert('No selected marker to apply new service to');
+            alert('Could not geolocate');
         }
-    },
-    
-    'click .del_marker_service' : function(evt,tmpl){
-        marker_services.remove({_id: tmpl.find('.del_marker_service').id});
     }
+});
 
+// adds a new 'group' and stores userid as record 'owner'
 
+Template.add_group.events({
+    'click input.add_group': function(evt,tmpl){
+        var record ={};
+        record.owner = Meteor.userId();
+        record.name = tmpl.find(".group_title").value;
+        record.desc = tmpl.find(".group_desc").value;
+        console.log(groups.insert(record));
+    }
 });
 
 
-
-Template.edit_marker.canEdit = function(evt,tmpl){
-    var user_id = Meteor.userId(), marker_id = Session.get('selected_marker'), can_edit = Session.get('can_edit');
-    
-    // kinda insecure... probably destroy session if user_id isn't around ...
-    if(can_edit == marker_id && user_id){
-        return true;
-    }else{
-        if(marker_id && user_id)
-        
-            Meteor.call('canEdit',marker_id,user_id,function(error,result){
-                if(result)
-                    Session.set('can_edit',result);
-            
-            });
-        return false;
-    }
-
-}
+// adds a new marker from title/address + group, geocodes it and stores x,y
+// TODO : Interactive screen if multiple addresses are returned in geolookup - more rhobust address completion etc.
 
 Template.add_marker.events({
     'click input.add_marker' : function(evt,tmpl){
@@ -197,20 +257,14 @@ Template.add_marker.events({
     */
         if(typeof geocoder != 'undefined' && Meteor.userId()){
             var geo_term=tmpl.find(".marker_address").value;
-
-        
             geocoder.geocode({'address':geo_term},function(results,status){
                 results = results[0];
                 if(status == google.maps.GeocoderStatus.OK){
                     map.setCenter(results.geometry.location);
-                    
                     var record ={};
                     record.name = tmpl.find(".marker_name").value;
                     record.type = tmpl.find(".marker_type").value;
-                    
                     record.group = tmpl.find(".marker_group").value;
-                    
-                    
                     // set loc field to geometry locations given in geocoder
                     record.loc = [results.geometry.location.jb,results.geometry.location.kb];
                     // set owner field to person who created it so they may re-edit what they have created
@@ -243,31 +297,8 @@ Template.add_marker.events({
     }
 });
 
-
-Template.groups.userGroups = function(evt,tmpl){
-    console.log('user groups');
-    var q = groups.find({'owner' : Meteor.userId()});
-    q = q.fetch();
-    console.log(q);
-    return q;
-    
-};
-
-Template.add_marker.userGroups = Template.groups.userGroups;
-
-Template.add_group.events({
-    'click input.add_group': function(evt,tmpl){
-        alert('You are adding a group!');
-        var record ={};
-        record.owner = Meteor.userId();
-        record.name = tmpl.find(".group_title").value;
-        record.desc = tmpl.find(".group_desc").value;
-        console.log(groups.insert(record));
-    
-        
-    }
-
-});
+// Handles edit /deleting markers
+// TODO Remove all associated services when removing a marker, create server side methods for secure deletion etc.
 
 Template.markers.events({
     'click input.del_marker' : function(evt,tmpl){
@@ -287,82 +318,11 @@ Template.markers.events({
         if(curMarker != tmpl.data._id){
             console.log('Session: selected_marker set to ' + tmpl.data._id);
             Session.set('selected_marker',tmpl.data._id);
-            }
-        
-    },
-    'click a.add_service':function(evt,tmpl){
-        /* add a service from existing services in services collection */
-    },
-    'click a.new_service':function(evt,tmpl){
-//        tmpl.find()
-        /* add a new service - inserts new service into services */
-    }
-});
-
-
-
-Template.loggedInMenu.events({
-    'click .groupAdd' : function(evt,tmpl){
-        Template.loggedInMenu.rendered();
-        $('div#the_markers').hide();
-        $('div#marker_edit').hide();
-
-        $('div#groups').show();
- 
-    },
-    'click .showMarkers' : function(evt,tmpl){
-        Template.loggedInMenu.rendered();
-        $('div#the_markers').show();
-        if(Session.get('selected_marker'))
-            $('div#marker_edit').show();
- 
-    },
-    
-    'click .markerEditShow': function(evt,tmpl){
-        Template.loggedInMenu.rendered();
-        $('div#marker_edit').show();
-    },'click .markerAddShow': function(evt,tmpl){
-        Template.loggedInMenu.rendered();
-        $('div#marker_add').show();
-        $('div#the_markers').hide();
-        //    Template.loggedInMenu.rendered();
-        $('div#marker_edit').hide();
-    },
-    'click .settingsShow': function(evt,tmpl){
-        Template.loggedInMenu.rendered();
-        console.log('showing settings');
-        $('div#user_settings').show();
-    },
-    'click .geolocate': function(evt,tmpl){
-        if(navigator.geolocation){
-            
-            var successFunction = function(success) {
-                  var navLatLng = new google.maps.LatLng(success.coords.latitude, success.coords.longitude);
-                  // annoying...
-                  //createMap(navLatLng);
-                  // send it true option to use different marker
-                  placeNavMarker(navLatLng,true);
-                  lookForMarkers([navLatLng.jb,navLatLng.kb]);
-                };
-
-            var errorFunction = function(success) {
-                var latlng = new google.maps.LatLng(37.808631, -122.474470);
-                //createMap(latlng);
-                placeNavMarker(navLatLng);
-            //  addAutocomplete();
-                };
-        
-            navigator.geolocation.getCurrentPosition(successFunction, errorFunction);
-        }else{
-            alert('Could not geolocate');
         }
-  
     }
-
 });
 
 Template.edit_marker.events = {
-
     'click input.del_marker' : function(evt,tmpl){
         markers.remove({_id:tmpl.data._id});
         // refresh the overlays
@@ -370,13 +330,94 @@ Template.edit_marker.events = {
         // based on the user settings/permissions etc.
         lookForMarkers();
     },
-    
-    
-        'click .del_marker_service' : function(evt,tmpl){
+    'click .del_marker_service' : function(evt,tmpl){
         marker_services.remove({_id: tmpl.find('.del_marker_service').id});
     }
 };
 
+// handles creating a new service (adding it to the services collection)
+// adding a service to a marker (creating a record in marker_services that refers to the other collections)
+// removing a service from a marker (removing the record from marker_services)
+
+Template.services_offered.events({
+    'click input.new_service' : function(evt,tmpl){
+        if(Meteor.userId()){
+            var new_service = tmpl.find('.new_service_input').value,
+            record = {title:new_service,owner:Meteor.userId()};
+            services.insert(record);
+        }else{
+            alert('Must be logged in to create new services to add to markers');
+        }
+        console.log(record);
+    },
+    'click input.add_service' : function(evt,tmpl){
+        var new_service = tmpl.find('.add_services'),
+            record = {};
+            marker_id = Session.get('selected_marker');
+        if(marker_id){
+            console.log(new_service.options[new_service.selectedIndex]);
+            record.service = new_service.options[new_service.selectedIndex].id;
+            record.marker_id = marker_id;
+            //alert('inserting');
+            // make sure no DUPES!!
+            marker_services.insert(record);
+            console.log(record);
+            // owner? possibly agency? not super needed...
+        }else{
+            alert('No selected marker to apply new service to');
+        }
+    },
+    'click .del_marker_service' : function(evt,tmpl){
+        marker_services.remove({_id: tmpl.find('.del_marker_service').id});
+    }
+});
+
+
+/* 
+ *
+ *
+ *   Template Functions
+ *
+ */
+
+
+Template.edit_marker.canEdit = function(evt,tmpl){
+    var user_id = Meteor.userId(), marker_id = Session.get('selected_marker'), can_edit = Session.get('can_edit');
+    
+    // kinda insecure... probably destroy session if user_id isn't around ...
+    if(can_edit == marker_id && user_id){
+        return true;
+    }else{
+        if(marker_id && user_id)
+        
+            Meteor.call('canEdit',marker_id,user_id,function(error,result){
+                if(result)
+                    Session.set('can_edit',result);
+            
+            });
+        return false;
+    }
+
+}
+
+Template.groups.userGroups = function(evt,tmpl){
+    console.log('user groups');
+    var q = groups.find({'owner' : Meteor.userId()});
+    q = q.fetch();
+    console.log(q);
+    return q;
+    
+};
+
+Template.add_marker.userGroups = Template.groups.userGroups;
+
+
+Template.add_marker.markerTypes = function(evt,tmpl){
+    var q = marker_types.find({},{});
+    console.log(q);
+    q = q.fetch();
+    return q;
+}
 
 Template.services_offered.services = function(evt,tmpl){
     var q = services.find({},{});
@@ -385,6 +426,8 @@ Template.services_offered.services = function(evt,tmpl){
     q = q.fetch();
     return q;
 }
+
+
 
 Template.edit_marker.currentServices = function(evt,tmpl){
     var curMarker = Session.get('selected_marker');
@@ -405,6 +448,14 @@ Template.edit_marker.currentServices = function(evt,tmpl){
     }
 }
 
+
+/* 
+ *
+ *
+ *   Logged in menu template functions  to generate menu for markers, and also to handle the selected marker
+ *   session
+ *
+ */
 
 Template.loggedInMenu.marker_index = function(evt,tmpl){
 // get User. something to filter this find
@@ -432,71 +483,3 @@ Template.loggedInMenu.rendered = function(evt,tmpl){
         $('div#marker_edit').hide();
 
 };
-
-
-
-
-/* BEGIN GMAPS
-
-
- TO Eventually support hiding /showing markers quickly in gmaps.. trying to get that to work properly..
- 
- */
-
-function lookForMarkers(theBox){
-    console.log ('looking for markers');
-    c = markers.find({}, {fields: {_id: 1}}).fetch();
-    console.log(c);
-    if(c.length > 0)
-        for(var i=0;i<c.length;i++){
-            var arr= c[i];
-            if(typeof arr['loc'] != 'undefined'){
-                var co = new google.maps.LatLng(arr['loc'][0], arr['loc'][1]);
-                var marker_type = '';
-                if(arr['type'] == 'Shelter' || arr['type'] == 'Hospital' || arr['type'] == 'Other' || arr['type'] == 'Pharmacy'){
-                // default
-                    marker_type = arr['type'];
-                }else{
-                    marker_type = undefined;
-                }
-                placeNavMarker(co,marker_type,function(){alert(arr['name'] + ' ' + arr['type']);});
-            }
-        }
-}
-
-function createMap (latLng) {
-    var mapOptions = {
-        disableDoubleClick: true,
-        streetViewControl: false,
-        scrollwheel: false,
-        zoom: 15,
-        center: latLng,
-        mapTypeId: google.maps.MapTypeId.ROADMAP
-    };
-    map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-
-};
-
-
-
-function placeNavMarker (latLng,image,clickCallBack) {
-
-    if(typeof image == 'undefined')
-        var image = "Other.png";
-    else if(typeof image == 'string'){
-        // dont show this marker for the geocoded location
-        var image = image + ".png";
-        console.log("Should be using"+image);
-    }else{
-        var image = "http://gmaps-samples.googlecode.com/svn/trunk/markers/blue/blank.png";
-    }
-    // this map is not always there>>>?
-    var new_marker = new google.maps.Marker({
-      position: latLng,
-      map: map,
-      icon: image
-    });
-    if(typeof clickCallBack == 'function')
-        google.maps.event.addListener(new_marker,"click",clickCallBack);
-    //currentMarkers.push( new_marker );
-}
