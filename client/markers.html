@@ -6,11 +6,9 @@
         <input type="text"   placeholder="Street Address" class="marker_address">
         
         <select class="marker_type">
-            <option>Hospital</option>
-            <option>Clinic</option>
-            <option>Pharmacy</option>
-            <option>Shelter</option>
-            <option>Other</option>
+            {{#each markerTypes}}
+            <option value="{{_id}}">{{name}}</option>
+            {{/each}}
         </select>
         
         <select class="marker_group">
