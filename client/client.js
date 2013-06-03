@@ -144,20 +144,23 @@ Meteor.startup(function(){
             console.log('marker subscription ready');
             if(marker_types_sub.ready() && services_sub.ready() && marker_services_sub.ready() && groups_sub.ready()){
                 // this sets the new loc prematurely?
-                var mCheck = markers.find({},{}).fetch();
-                var emCheck = mCheck.pop();
-                emCheck = emCheck['loc'];
-                // maybe not 'create the map new each time?
-                if(typeof map === 'undefined'){
-                    //createMap(new google.maps.LatLng(emCheck[0],emCheck[1]));
-                }else{
-                    var latlng = new google.maps.LatLng(emCheck[0], emCheck[1]);
-                    map.setCenter(latlng);
-                }
-                lookForMarkers();
+                
                 var curMarker = Session.get('selected_marker');
                 if(curMarker){
                     // probably show something that allows us to edit the selected marker?
+                }else{
+                    var mCheck = markers.find({},{}).fetch();
+                    var emCheck = mCheck.pop();
+                    emCheck = emCheck['loc'];
+                    // maybe not 'create the map new each time?
+                    if(typeof map === 'undefined'){
+                        //createMap(new google.maps.LatLng(emCheck[0],emCheck[1]));
+                    }else{
+                        var latlng = new google.maps.LatLng(emCheck[0], emCheck[1]);
+                        map.setCenter(latlng);
+                    }
+                    lookForMarkers();
+
                 }
             }
     }
@@ -347,8 +350,10 @@ Template.markers.events({
         /* set session and show marker editor if admin*/
         // probably use the index to look for the term eventually...
         var latlng = new google.maps.LatLng(tmpl.data.loc[0], tmpl.data.loc[1]);
+
         map.setCenter(latlng);
         var curMarker = Session.get('selected_marker');
+
         if(curMarker != tmpl.data._id){
             console.log('Session: selected_marker set to ' + tmpl.data._id);
             Session.set('selected_marker',tmpl.data._id);
