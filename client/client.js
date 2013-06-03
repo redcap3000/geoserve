@@ -112,7 +112,6 @@ Meteor.startup(function(){
             else if(typeof image == 'string'){
                 // dont show this marker for the geocoded location
                 var image = image + ".png";
-                console.log("Should be using"+image);
             }else{
                 var image = "http://gmaps-samples.googlecode.com/svn/trunk/markers/blue/blank.png";
             }
@@ -185,6 +184,7 @@ Template.loggedInMenu.events({
     },
     'click .showMarkers' : function(evt,tmpl){
         Template.loggedInMenu.rendered();
+        $('div#groups').hide();
         $('div#the_markers').show();
         if(Session.get('selected_marker'))
             $('div#marker_edit').show();
@@ -192,17 +192,22 @@ Template.loggedInMenu.events({
     },
     'click .markerEditShow': function(evt,tmpl){
         Template.loggedInMenu.rendered();
+        $('div#groups').hide();
+
         $('div#marker_edit').show();
     },
     'click .markerAddShow': function(evt,tmpl){
         Template.loggedInMenu.rendered();
+                $('div#groups').hide();
+
         $('div#marker_add').show();
         $('div#the_markers').hide();
         $('div#marker_edit').hide();
     },
     'click .settingsShow': function(evt,tmpl){
         Template.loggedInMenu.rendered();
-        console.log('showing settings');
+                $('div#groups').hide();
+
         $('div#user_settings').show();
     },
     'click .geolocate': function(evt,tmpl){
@@ -238,7 +243,9 @@ Template.add_group.events({
         record.owner = Meteor.userId();
         record.name = tmpl.find(".group_title").value;
         record.desc = tmpl.find(".group_desc").value;
-        console.log(groups.insert(record));
+        var record_id = groups.insert(record);
+        Session.set('selected_group',record_id);
+
     }
 });
 
@@ -270,8 +277,11 @@ Template.add_marker.events({
                     // set owner field to person who created it so they may re-edit what they have created
                     record.owner = Meteor.userId();
                     console.log(record);
-                    markers.insert(record);
-                    lookForMarkers([results.geometry.location.jb,results.geometry.location.kb]);
+                    var record_id = markers.insert(record);
+                    
+                    Session.set('selected_marker',record_id);
+                    
+                    //lookForMarkers([results.geometry.location.jb,results.geometry.location.kb]);
                     //document.getElementById('.marker_address').value = '';
                 }else{
                 /*
@@ -286,7 +296,6 @@ Template.add_marker.events({
             
             // show the button to add another marker
             $('.markerAddShow').show();
-            console.log('Its all here lets make an insert. and probably hide something...');
             
             // remove fields from session to avoid accidental field duplication/reentry
         }else{
@@ -300,17 +309,42 @@ Template.add_marker.events({
 // Handles edit /deleting markers
 // TODO Remove all associated services when removing a marker, create server side methods for secure deletion etc.
 
+
+
+
+Template.groups.events({
+
+    'click .edit_group': function(evt,tmpl){
+        console.log('edit group');
+        // weird bug.. click was only getting the first classed element...
+        if(!Session.equals('selected_group',evt.target.id))
+            Session.set('selected_group',evt.target.id);
+    },
+    // DELETE A GROUP!
+    'click input.del_group': function(evt,tmpl){
+        console.log('delete this group');
+        var group_id = evt.target.id;
+        
+        if( group_id && typeof group_id === 'string' && group_id != ''){
+            groups.remove({_id:group_id});
+            //var q = groups.remove({_id:group_id,owner:Meteor.userId()});
+        }
+    }
+}
+);
+
+
 Template.markers.events({
     'click input.del_marker' : function(evt,tmpl){
         markers.remove({_id:tmpl.data._id});
+        $('#marker_add'),show();
         // refresh the overlays
         // eventually use SESSION variable to keep track of how to filter the markers
         // based on the user settings/permissions etc.
-        lookForMarkers();
+//        lookForMarkers();
     },
     'click a.edit_marker' :function(evt,tmpl){
         /* set session and show marker editor if admin*/
-        console.log('edit');
         // probably use the index to look for the term eventually...
         var latlng = new google.maps.LatLng(tmpl.data.loc[0], tmpl.data.loc[1]);
         map.setCenter(latlng);
@@ -319,6 +353,9 @@ Template.markers.events({
             console.log('Session: selected_marker set to ' + tmpl.data._id);
             Session.set('selected_marker',tmpl.data._id);
         }
+        //alert('hide');
+        $('div#groups').hide();
+
     }
 });
 
@@ -355,13 +392,11 @@ Template.services_offered.events({
             record = {};
             marker_id = Session.get('selected_marker');
         if(marker_id){
-            console.log(new_service.options[new_service.selectedIndex]);
             record.service = new_service.options[new_service.selectedIndex].id;
             record.marker_id = marker_id;
             //alert('inserting');
             // make sure no DUPES!!
             marker_services.insert(record);
-            console.log(record);
             // owner? possibly agency? not super needed...
         }else{
             alert('No selected marker to apply new service to');
@@ -379,6 +414,23 @@ Template.services_offered.events({
  *   Template Functions
  *
  */
+
+
+
+Template.groups.selectedGroup = function(evt,tmpl){
+    var group_id = Session.get('selected_group');
+    console.log('in selected group');
+    if(Meteor.userId() && group_id){
+        var q =groups.find({_id: group_id });
+        console.log(q);
+        q = q.fetch();
+        console.log(q);
+        return q[0];
+    }
+};
+
+Template.editor_group.selectedGroup = Template.groups.selectedGroup;
+
 
 
 Template.edit_marker.canEdit = function(evt,tmpl){
@@ -400,29 +452,24 @@ Template.edit_marker.canEdit = function(evt,tmpl){
 
 }
 
-Template.groups.userGroups = function(evt,tmpl){
-    console.log('user groups');
+Template.group_menu.userGroups = function(evt,tmpl){
     var q = groups.find({'owner' : Meteor.userId()});
     q = q.fetch();
-    console.log(q);
     return q;
     
 };
 
-Template.add_marker.userGroups = Template.groups.userGroups;
+Template.add_marker.userGroups = Template.group_menu.userGroups;
 
 
 Template.add_marker.markerTypes = function(evt,tmpl){
     var q = marker_types.find({},{});
-    console.log(q);
     q = q.fetch();
     return q;
 }
 
 Template.services_offered.services = function(evt,tmpl){
     var q = services.find({},{});
-    console.log('in services offered');
-    console.log(q);
     q = q.fetch();
     return q;
 }
@@ -437,7 +484,6 @@ Template.edit_marker.currentServices = function(evt,tmpl){
         if(currentServ){
             // next link up with services to get titles...
             for(var i = 0;i<currentServ.length;i++){
-                console.log(currentServ[i].service);
                 var q = services.findOne({_id: currentServ[i].service});
                 if(typeof q.title != 'undefined')
                     currentServ[i].title = q.title;
@@ -475,7 +521,8 @@ Template.loggedInMenu.rendered = function(evt,tmpl){
     
     $('div#marker_add').hide();
     $('div#user_settings').hide();
-    $('div#groups').hide();
+    if(!Session.get('selected_group'))
+        $('div#groups').hide();
 
     
    // $('div#the_markers').hide();
@@ -483,3 +530,17 @@ Template.loggedInMenu.rendered = function(evt,tmpl){
         $('div#marker_edit').hide();
 
 };
+
+
+/* 
+ *
+ *
+ *  Template rendered functions
+ *
+ */
+
+
+Template.edit_marker.rendered = function(evt,tmpl){
+//    alert('edit marker rendered');
+    $('div#groups').hide();
+}
