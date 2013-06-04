@@ -1,0 +1,52 @@
+
+
+<template name="groups">
+
+    {{>group_menu}}
+
+    {{#with selectedGroup}}
+        <input type="text"   placeholder="Title" class="group_title" value="{{name}}">
+        <textarea class="group_desc" value="{{desc}}">{{desc}}</textarea>
+        <input type="button" class="update_group" value="Update">
+    {{/with}}
+    
+    
+    
+    {{>add_group}}
+    
+    </div>
+</template>
+
+
+<template name="group_menu">
+    {{#each userGroups}}
+    
+    <span class="marker">
+    <input type="button" class="btn del_group" value="x" id="{{_id}}">
+        <a href="#" class="edit_group" id="{{_id}}">{{name}}</a>
+    </span>
+    {{/each}}
+
+
+</template>
+
+<template name="add_group">
+    <div id="group_add" >
+        <input type="text"   placeholder="Title" class="group_title" value="{{title}}">
+        <textarea class="group_desc" value="{{desc}}"></textarea>
+        <input type="button" class="add_group" value="Add New Group">
+    </div>
+</template>
+
+
+
+<template name="editor_group">
+    <div class="editor_group">
+    {{#with selectedGroup}}
+        <input type="text"   placeholder="Title" class="group_title" value="{{name}}">
+        <textarea class="group_desc" value="{{desc}}">{{desc}}</textarea>
+        <input type="button" class="update_group" value="Update">
+    {{/with}}
+    </div>
+</template>
+
