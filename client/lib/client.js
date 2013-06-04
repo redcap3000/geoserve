@@ -95,21 +95,18 @@ Template.loggedInMenu.events({
     'click .markerEditShow': function(evt,tmpl){
         Template.loggedInMenu.rendered();
         $('div#groups').hide();
-
         $('div#marker_edit').show();
     },
     'click .markerAddShow': function(evt,tmpl){
         Template.loggedInMenu.rendered();
-                $('div#groups').hide();
-
+        $('div#groups').hide();
         $('div#marker_add').show();
         $('div#the_markers').hide();
         $('div#marker_edit').hide();
     },
     'click .settingsShow': function(evt,tmpl){
         Template.loggedInMenu.rendered();
-                $('div#groups').hide();
-
+        $('div#groups').hide();
         $('div#user_settings').show();
     },
     'click .geolocate': function(evt,tmpl){
