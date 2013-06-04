@@ -1,33 +1,3 @@
-groups = new Meteor.Collection("groups");
-
-markers = new Meteor.Collection("markers");
-
-marker_types = new Meteor.Collection("marker_types");
-
-marker_services = new Meteor.Collection("marker_services");
-
-services = new Meteor.Collection("services");
-
-Meteor.publish("allMarkers",function(){
-    return markers.find({},{});
-});
-
-Meteor.publish("allMarkerTypes",function(){
-    return marker_types.find({},{});
-});
-
-Meteor.publish("allGroups",function(){
-    return groups.find({},{});
-});
-
-Meteor.publish("allMarkerServices",function(){
-    return marker_services.find({},{});
-});
-
-Meteor.publish("allServices",function(){
-    return services.find({},{});
-});
-
 Meteor.startup(function () {
     // Pre fil the markertypes with some default types .. images are stored in /public
     if(marker_types.find({},{}).count() == 0){
@@ -59,17 +29,17 @@ Meteor.startup(function () {
                 img : '/Shelter.png'
             }
         ];
-        
         for(var i=0;i<default_markers.length;i++)
             console.log(marker_types.insert(default_markers[i]));
         
     }
 });
  
-    // basic function that determines if the user can edit
+// basic function that determines if the user can edit
 Meteor.methods({
     canEdit : function(curMarker,theCollection){
         if(curMarker && typeof theCollection == 'undefined'){
+            console.log('findoning one');
             var q = markers.findOne({_id: curMarker, owner: Meteor.userId()});
 
         }else if(typeof theCollection != 'undefined'){

@@ -3,24 +3,7 @@
  * http://redcapmedia.com
  */
 
-markers = new Meteor.Collection("markers");
 
-marker_services = new Meteor.Collection("marker_services");
-
-marker_types = new Meteor.Collection("marker_types");
-
-groups = new Meteor.Collection("groups");
-
-// stores various codes associated with a group; i.e. multiple codes could refer to the same group and grant different types of access
-
-group_codes = new Meteor.Collection("group_codes");
-
-// to store a users authorized subscriptiion to a group based on group codes, would contain fields that could refer to a users editing capability
-users_group_codes = new Meteor.Collection("users_group_codes");
-
-agencies = new Meteor.Collection("agencies");
-
-services = new Meteor.Collection("services");
 
 Meteor.startup(function(){
 
@@ -365,7 +348,7 @@ Template.edit_marker.canEdit = function(evt,tmpl){
     }else{
         if(marker_id && user_id)
         
-            Meteor.call('canEdit',marker_id,user_id,function(error,result){
+            Meteor.call('canEdit',marker_id,function(error,result){
                 if(result)
                     Session.set('can_edit',result);
             
