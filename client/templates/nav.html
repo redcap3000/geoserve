@@ -35,13 +35,13 @@
         
         {{#if currentUser}}
         {{> add_marker}}
-        
+         {{/if}}
         <div id="the_editor">
             {{#with selectedMarker}}
                 {{>edit_marker}}
             {{/with}}
        </div>
-       {{/if}}
+      
        <div id="groups">
         {{>groups}}
        </div>
