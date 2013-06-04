@@ -1,3 +1,23 @@
+Meteor.publish("allMarkers",function(){
+    return markers.find({},{});
+});
+
+Meteor.publish("allMarkerTypes",function(){
+    return marker_types.find({},{});
+});
+
+Meteor.publish("allGroups",function(){
+    return groups.find({},{});
+});
+
+Meteor.publish("allMarkerServices",function(){
+    return marker_services.find({},{});
+});
+
+Meteor.publish("allServices",function(){
+    return services.find({},{});
+});
+
 Meteor.startup(function () {
     // Pre fil the markertypes with some default types .. images are stored in /public
     if(marker_types.find({},{}).count() == 0){

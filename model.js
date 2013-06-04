@@ -16,24 +16,3 @@ users_group_codes = new Meteor.Collection("users_group_codes");
 agencies = new Meteor.Collection("agencies");
 
 services = new Meteor.Collection("services");
-
-
-Meteor.publish("allMarkers",function(){
-    return markers.find({},{});
-});
-
-Meteor.publish("allMarkerTypes",function(){
-    return marker_types.find({},{});
-});
-
-Meteor.publish("allGroups",function(){
-    return groups.find({},{});
-});
-
-Meteor.publish("allMarkerServices",function(){
-    return marker_services.find({},{});
-});
-
-Meteor.publish("allServices",function(){
-    return services.find({},{});
-});
