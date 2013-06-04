@@ -3,38 +3,40 @@
  * http://redcapmedia.com
  */
 
-
-
 Meteor.startup(function(){
-
     geocoder = new google.maps.Geocoder();
     createMap();
-    
     marker_sub = Meteor.subscribe("allMarkers");
-    groups_sub = Meteor.subscribe("allGroups");
-    marker_services_sub = Meteor.subscribe("allMarkerServices");
-    services_sub = Meteor.subscribe("allServices");
-    marker_types_sub = Meteor.subscribe("allMarkerTypes");
-    
     Deps.autorun(function(){
         if(marker_sub.ready()){
-            console.log('marker subscription readyzzzz');
-            if(marker_types_sub.ready() && services_sub.ready() && marker_services_sub.ready() && groups_sub.ready()){
+            groups_sub = Meteor.subscribe("allGroups");
+            marker_types_sub = Meteor.subscribe("allMarkerTypes");
+            if(marker_types_sub.ready() && groups_sub.ready()){
                 // this sets the new loc prematurely?
-
                 var curMarker = Session.get('selected_marker');
                 if(curMarker){
-                    console.log('cur marker set inside of autorun');
-                    var q = markers.findOne({_id: curMarker});
-                    if(q){
-                        if(typeof q['loc'] != 'undefined'){
-                            map.setCenter(new google.maps.LatLng(q['loc'][0] ,q['loc'][1] ));
-                        }else{
-                            console.log('problem with mongo loc query');
-                            map.setCenter(new google.maps.LatLng(0,0));
+                    // load marker services and all services - but also need to trigger this when creating a new record...
+                   if(typeof marker_services_sub == 'undefined'){
+                        services_sub = Meteor.subscribe("allServices");
+                        marker_services_sub = Meteor.subscribe("allMarkerServices");
+                        var q = markers.findOne({_id:curMarker}).loc;
+                        map.setCenter(new google.maps.LatLng(q[0],q[1]));
+                        lookForMarkers();
+                 
+                    }else if(marker_services_sub.ready() && services_sub.ready()){
+                        console.log('cur marker set inside of autorun');
+                        var q = markers.findOne({_id: curMarker});
+                        if(q){
+                            if(typeof q['loc'] != 'undefined'){
+                                map.setCenter(new google.maps.LatLng(q['loc'][0] ,q['loc'][1] ));
+                            }else{
+                                console.log('problem with mongo loc query');
+                                map.setCenter(new google.maps.LatLng(0,0));
+                            }
                         }
+                        lookForMarkers();
                     }
-                    lookForMarkers();
+                 
                 // probably show something that allows us to edit the selected marker?
                 }else{
                     var mCheck = markers.find({},{}).fetch();
