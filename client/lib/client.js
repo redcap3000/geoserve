@@ -139,6 +139,8 @@ Template.add_group.events({
         record.owner = Meteor.userId();
         record.name = tmpl.find(".group_title").value;
         record.desc = tmpl.find(".group_desc").value;
+        record.visiblity = tmpl.find(".group_visibility").value;
+
         var record_id = groups.insert(record);
         Session.set('selected_group',record_id);
 
@@ -358,7 +360,6 @@ Template.group_menu.userGroups = function(evt,tmpl){
     var q = groups.find({'owner' : Meteor.userId()});
     q = q.fetch();
     return q;
-    
 };
 
 Template.add_marker.userGroups = Template.group_menu.userGroups;
@@ -422,20 +423,15 @@ Template.loggedInMenu.selectedMarker = function(evt,tmpl){
  *
  */
 Template.loggedInMenu.rendered = function(evt,tmpl){
-    
     $('div#marker_add').hide();
     $('div#user_settings').hide();
     if(!Session.get('selected_group'))
         $('div#groups').hide();
-
-    
-   // $('div#the_markers').hide();
     if(!Session.get('selected_marker'))
         $('div#marker_edit').hide();
 
 };
 
 Template.edit_marker.rendered = function(evt,tmpl){
-//    alert('edit marker rendered');
     $('div#groups').hide();
 }

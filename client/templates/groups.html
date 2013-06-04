@@ -34,6 +34,15 @@
     <div id="group_add" >
         <input type="text"   placeholder="Title" class="group_title" value="{{title}}">
         <textarea class="group_desc" value="{{desc}}"></textarea>
+        
+        <select class="group_visibility">
+            <option>Public</option>
+            <option>Private</option>
+            <option>Invite</option>
+
+
+        </select>
+        
         <input type="button" class="add_group" value="Add New Group">
     </div>
 </template>
@@ -50,3 +59,12 @@
     </div>
 </template>
 
+
+<template name="group_invites">
+    <div class="group_invites">
+        {{#each selectedGroupInvites}}
+            {{group_id}}
+        {{/each}}
+    </div>
+
+</template>
