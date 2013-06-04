@@ -1,16 +1,12 @@
-
 <template name="add_marker">
     <div id="marker_add" >
-        
         <input type="text"   placeholder="Name" class="marker_name">
         <input type="text"   placeholder="Street Address" class="marker_address">
-        
         <select class="marker_type">
             {{#each markerTypes}}
             <option value="{{name}}">{{name}}</option>
             {{/each}}
         </select>
-        
         <select class="marker_group">
             <option value="">None</option>
 
@@ -18,15 +14,11 @@
             <option value="{{_id}}">{{name}}</option>
             {{/each}}
         </select>
-      
-        
         <input type="button" class="add_marker" value="Add">
     </div>
 </template>
 
-
 <template name="services_offered">
-
     <fieldset>
     {{#if services}}
         <select name="services_offered" class="add_services" size="3">
@@ -47,9 +39,7 @@
 
 <template name="edit_marker">
 <div id ="marker_edit">
-
     {{#if canEdit}}
-    
         <label>Marker Name</label>
 
         <input type="text"   placeholder="marker Name" class="marker_name" value="{{name}}">
@@ -59,25 +49,18 @@
         <label>Group Id</label>
         <input type="text"   placeholder="Group" class="group_id" value="{{group}}">
         
-
-
-        
         {{>services_offered}}
         <input type="button" class="edit_marker" value="Update">
         <fieldset class="span4"><input type="button" class="del_marker" value="x">Remove</fieldset>
 
     {{else}}
         <label>{{name}} - {{type}}</label>
-        
-    
     {{/if}}
     
         {{#each currentServices}}
         <fieldset class="span4"><a href="#" class="del_marker_service btn" id="{{_id}}">x</a>&nbsp;{{title}}</fieldset>
         
         {{/each}}
-
-    
     </div>
     
 </template>

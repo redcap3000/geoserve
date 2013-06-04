@@ -6,6 +6,7 @@
 Meteor.startup(function(){
     createMap();
     marker_sub = Meteor.subscribe("allMarkers");
+
     Deps.autorun(function(){
         if(marker_sub.ready()){
             groups_sub = Meteor.subscribe("allGroups");
@@ -139,8 +140,24 @@ Template.add_group.events({
         record.owner = Meteor.userId();
         record.name = tmpl.find(".group_title").value;
         record.desc = tmpl.find(".group_desc").value;
-        record.visiblity = tmpl.find(".group_visibility").value;
-
+        //console.log(tmpl.find(".group_visibility"));
+        //record.visiblity = tmpl.find(".group_visibility").value;
+        
+        
+        //  function getCheckedRadioId(name) {
+        var elements = tmpl.findAll(".group_visibility");
+        // properly determines the checked element for similarlly classed values
+        var checked_element = undefined;
+        for (var i=0, len=elements.length; i<len; ++i)
+            if (elements[i].checked) var checked_element =  elements[i].value;
+        
+        console.log('checked element:');
+        console.log(checked_element);
+        if(typeof checked_element !== 'undefined')
+            record.visibility = checked_element;
+        else{
+            record.visibility = 'private';
+        }
         var record_id = groups.insert(record);
         Session.set('selected_group',record_id);
 
@@ -334,6 +351,29 @@ Template.groups.selectedGroup = function(evt,tmpl){
         return q[0];
     }
 };
+
+Template.groups.selected_visibility = function(evt,tmpl){
+    // check to see if element is selected or not ?
+    var group_id = Session.get('selected_group');
+    if(Meteor.userId() && group_id){
+        console.log('in groups visibility');
+        var q = groups.findOne({_id: group_id},{visibility:1});
+        
+        console.log(q.visibility);
+        // just return entire html block with the select menu and the appropriate value selected SUCH A PITA!!!
+        var vis = ['public','private','invite'];
+        
+        var result = '';
+        
+        for(var n = 0; n< vis.length;n++){
+            result += '<input type="radio" name="group_visbility" class="group_visibility" id="gv_'+vis[n]+'" value="'+vis[n]+'" '+(vis[n] == q.visibility ? ' CHECKED ':'' )+'  >'+vis[n]+'</br>';
+
+        }
+      
+        console.log(result);
+        return result;
+    }
+}
 
 Template.editor_group.selectedGroup = Template.groups.selectedGroup;
 
