@@ -5,12 +5,24 @@
     {{>group_menu}}
 
     {{#with selectedGroup}}
-        <input type="text"   placeholder="Title" class="group_title" value="{{name}}">
-        <textarea class="group_desc" value="{{desc}}">{{desc}}</textarea>
-        
-        {{{selected_visibility}}}
-      
-        <input type="button" class="update_group" value="Update">
+    
+    
+
+        <div class="row">
+            <fieldset class="span2">
+                <input type="text"   placeholder="Title" class="group_title" value="{{name}}">
+                <textarea class="group_desc" value="{{desc}}">{{desc}}</textarea>
+                   <input type="button" class="btn update_group" value="Update">
+            
+                        <input type="button" class="btn del_group" value="Delete Group" id="{{_id}}"> 
+
+            </fieldset>
+        <fieldset class="span">
+            {{{selected_visibility}}}
+        </fieldset>
+
+            </div>
+
     {{/with}}
     
     {{>add_group}}
@@ -23,7 +35,6 @@
     {{#each userGroups}}
     
     <span class="marker">
-    <input type="button" class="btn del_group" value="x" id="{{_id}}">
         <a href="#" class="edit_group" id="{{_id}}">{{name}}</a>
     </span>
     {{/each}}
@@ -32,41 +43,55 @@
 </template>
 
 <template name="add_group">
-    <div id="group_add" >
+    <div id="group_add" class="row">
+        <fieldset class="span">
         <input type="text"   placeholder="Title" class="group_title" value="{{title}}">
-        <textarea class="group_desc" value="{{desc}}"></textarea>
-        
-        <input type="radio" name="group_visbility" class="group_visibility" id="gv_public" value="public">Public</br>
-        <input type="radio" name="group_visbility" class="group_visibility" id="gv_private" value="private">Private</br>
-        <input type="radio" name="group_visbility" class="group_visibility" id="gv_invite" value="invite">Invite</br>
-        
-        <input type="button" class="add_group" value="Add New Group">
+            <textarea class="group_desc" value="{{desc}}"></textarea>
+            <input type="button" class="btn add_group" value="Add New Group">
+        </fieldset>
+        <fieldset class="span">
+            <input type="radio" name="group_visbility" class="span group_visibility" id="gv_public" value="public"><label>Public</label>
+            <input type="radio" name="group_visbility" class="span group_visibility" id="gv_private" value="private"><label>Private</label>
+            <input type="radio" name="group_visbility" class="span group_visibility" id="gv_invite" value="invite"><label>Invite</label>
+        </fieldset>
     </div>
 </template>
 
 
 
 <template name="editor_group">
-    <div class="editor_group">
+    <div class="row editor_group">
             {{visibility}}
 
     
     {{#with selectedGroup}}
+        <fieldset class="span">
         <input type="text"   placeholder="Title" class="group_title" value="{{name}}">
         <textarea class="group_desc" value="{{desc}}">{{desc}}</textarea>
-        <input type="radio" name="group_visbility" class="group_visibility" id="gv_public" value="public">Public</br>
-        <input type="radio" name="group_visbility" class="group_visibility" id="gv_private" value="private">Private</br>
-        <input type="radio" name="group_visbility" class="group_visibility" id="gv_invite" value="invite">Invite</br>
+        <fieldset class="span">
+            <input type="radio" name="group_visbility" class="span group_visibility" id="gv_public" value="public">Public
+            <input type="radio" name="group_visbility" class="span group_visibility" id="gv_private" value="private">Private
+            <input type="radio" name="group_visbility" class="span group_visibility" id="gv_invite" value="invite">Invite
+            <input type="button" class="btn update_group" value="Update">
+
+        </fieldset>
+        </fieldset>
         
-        <input type="button" class="update_group" value="Update">
+        {{>group_codes}}
     {{/with}}
     </div>
 </template>
 
+<template name="group_codes">
+    <div class="group_codes">
+        {{_id}}
+    </div>
+
+</template>
 
 <template name="group_invites">
     <div class="group_invites">
-        {{#each selectedGroupInvites}}
+        {{#each usersGroupInvites}}
             {{group_id}}
         {{/each}}
     </div>

@@ -11,14 +11,15 @@ Meteor.startup(function(){
         if(marker_sub.ready()){
             groups_sub = Meteor.subscribe("allGroups");
             marker_types_sub = Meteor.subscribe("allMarkerTypes");
-            if(marker_types_sub.ready() && groups_sub.ready()){
+            services_sub = Meteor.subscribe("allServices");
+
+            if(marker_types_sub.ready() && groups_sub.ready() && services_sub.ready()){
                 // this sets the new loc prematurely?
                 var curMarker = Session.get('selected_marker');
                 if(curMarker){
                     // load marker services and all services - but also need to trigger this when creating a new record...
                    if(typeof marker_services_sub == 'undefined'){
-                        services_sub = Meteor.subscribe("allServices");
-                        marker_services_sub = Meteor.subscribe("allMarkerServices");
+                                                marker_services_sub = Meteor.subscribe("allMarkerServices");
                         var q = markers.findOne({_id:curMarker}).loc;
                         setMapCenter(q);
                         lookForMarkers();
@@ -311,6 +312,9 @@ Template.services_offered.events({
         console.log(record);
     },
     'click input.add_service' : function(evt,tmpl){
+    
+        console.log('adding this service');
+    
         var new_service = tmpl.find('.add_services'),
             record = {};
             marker_id = Session.get('selected_marker');
@@ -344,11 +348,23 @@ Template.groups.selectedGroup = function(evt,tmpl){
     var group_id = Session.get('selected_group');
     console.log('in selected group');
     if(Meteor.userId() && group_id){
-        var q =groups.find({_id: group_id });
+        var q =groups.findOne({_id: group_id });
         console.log(q);
-        q = q.fetch();
-        console.log(q);
-        return q[0];
+//        q = q.fetch();
+  //      console.log(q);
+        
+        var q2=group_codes.find({owner:Meteor.userId(),group_id:group_id});
+        
+        q2 = q2.fetch();
+        
+        if(q2.length > 0){
+            // return the codes so template renders them ...
+            console.log(q2);
+        }else{
+            console.log('no codes');
+        }
+        
+        return q;
     }
 };
 
@@ -366,7 +382,7 @@ Template.groups.selected_visibility = function(evt,tmpl){
         var result = '';
         
         for(var n = 0; n< vis.length;n++){
-            result += '<input type="radio" name="group_visbility" class="group_visibility" id="gv_'+vis[n]+'" value="'+vis[n]+'" '+(vis[n] == q.visibility ? ' CHECKED ':'' )+'  >'+vis[n]+'</br>';
+            result += '<input type="radio" name="group_visbility" class="span group_visibility" id="gv_'+vis[n]+'" value="'+vis[n]+'" '+(vis[n] == q.visibility ? ' CHECKED ':'' )+'  ><label>'+vis[n]+'</label>';
 
         }
       
@@ -402,6 +418,10 @@ Template.group_menu.userGroups = function(evt,tmpl){
     return q;
 };
 
+
+//Template.group_invites.
+
+
 Template.add_marker.userGroups = Template.group_menu.userGroups;
 
 
@@ -409,18 +429,32 @@ Template.add_marker.markerTypes = function(evt,tmpl){
     var q = marker_types.find({},{});
     q = q.fetch();
     return q;
-}
+};
 
 Template.services_offered.services = function(evt,tmpl){
-    var q = services.find({},{});
-    q = q.fetch();
-    return q;
-}
+
+
+    if(typeof services_sub != 'undefined'){
+        console.log(services_sub);
+    
+        if(services_sub.ready()){
+            var q = services.find({},{});
+            q = q.fetch();
+            console.log('looking up services in services_offered > services');
+            console.log(q);
+            return q;
+        }else{
+            console.log('services sub not ready');
+//            Template.services_offered.services;
+        }
+    }
+};
 
 Template.edit_marker.currentServices = function(evt,tmpl){
     var curMarker = Session.get('selected_marker');
     if(curMarker){
-        var currentServ = marker_services.find({marker_id: curMarker}).fetch();
+        var currentServ = marker_services.find({marker_id: curMarker});
+        currentServ = currentServ.fetch();
         if(currentServ){
             // next link up with services to get titles...
             for(var i = 0;i<currentServ.length;i++){

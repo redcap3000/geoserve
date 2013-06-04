@@ -18,6 +18,56 @@ Meteor.publish("allServices",function(){
     return services.find({},{});
 });
 
+
+/* allow editing of group_codes records so long as owner is current user id
+
+
+    group codes might look like:
+    
+    {
+        _id: <mongo_id>,
+        group_id : <groups._id>,
+        owner : Meteor.userId(),
+        hash : (string),
+        salt : (string),
+        permission : (admin/mod/client)
+        
+    }
+
+*/
+Meteor.publish("groupCodes",function(){
+    return group_codes.find({owner:Meteor.userId()},{});
+});
+
+
+
+/*
+ stores codes for a user to edit (only their own based on Meteor.userId()
+ a record is created in users_group_codes every time a group is subscribed to so long as a refer code record exists and is active.
+
+
+    term refers to the 'protected passphrase' that is required to grant access...
+    
+    Probably run salt on term and compare against hash
+    
+    users_group_codes
+    
+    {
+    
+        _id: <mongo_id>,
+        owner: Meteor.userId();
+        code_id : group_codes._id,
+        term : <string>
+    }
+
+*/
+
+Meteor.publish("usersGroupCodes",function(){
+    return users_group_codes.find({owner:Meteor.userId()},{});
+});
+
+
+
 Meteor.startup(function () {
     // Pre fil the markertypes with some default types .. images are stored in /public
     if(marker_types.find({},{}).count() == 0){

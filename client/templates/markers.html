@@ -1,12 +1,21 @@
 <template name="add_marker">
     <div id="marker_add" >
-        <input type="text"   placeholder="Name" class="marker_name">
-        <input type="text"   placeholder="Street Address" class="marker_address">
+    
+        <fieldset>
+            <label>Marker Name</label>
+
+            <input type="text"   placeholder="Name" class="marker_name">
+        <fieldset>
+        <div class="row">
+        <span class="span2"><label>Kind</label>
         <select class="marker_type">
             {{#each markerTypes}}
             <option value="{{name}}">{{name}}</option>
             {{/each}}
         </select>
+        </span>
+        
+        <span class="span2"><label>Group</label>
         <select class="marker_group">
             <option value="">None</option>
 
@@ -14,7 +23,15 @@
             <option value="{{_id}}">{{name}}</option>
             {{/each}}
         </select>
-        <input type="button" class="add_marker" value="Add">
+        
+        </span>
+        </div>
+        </fieldset>
+        <input type="text"   placeholder="Street Address" class="marker_address">
+        
+        
+        <input type="button" class="btn add_marker" value="Add">
+        </fieldset>
     </div>
 </template>
 
