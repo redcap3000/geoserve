@@ -4,7 +4,6 @@
  */
 
 Meteor.startup(function(){
-    geocoder = new google.maps.Geocoder();
     createMap();
     marker_sub = Meteor.subscribe("allMarkers");
     Deps.autorun(function(){
@@ -20,42 +19,40 @@ Meteor.startup(function(){
                         services_sub = Meteor.subscribe("allServices");
                         marker_services_sub = Meteor.subscribe("allMarkerServices");
                         var q = markers.findOne({_id:curMarker}).loc;
-                        map.setCenter(new google.maps.LatLng(q[0],q[1]));
+                        setMapCenter(q);
                         lookForMarkers();
-                 
                     }else if(marker_services_sub.ready() && services_sub.ready()){
                         console.log('cur marker set inside of autorun');
                         var q = markers.findOne({_id: curMarker});
                         if(q){
                             if(typeof q['loc'] != 'undefined'){
-                                map.setCenter(new google.maps.LatLng(q['loc'][0] ,q['loc'][1] ));
+                                setMapCenter(q['loc']);
                             }else{
                                 console.log('problem with mongo loc query');
-                                map.setCenter(new google.maps.LatLng(0,0));
+                                setMapCenter([0,0]);
                             }
                         }
                         lookForMarkers();
                     }
-                 
                 // probably show something that allows us to edit the selected marker?
                 }else{
                     var mCheck = markers.find({},{}).fetch();
                 // maybe not 'create the map new each time?
                     if(typeof map === 'undefined' && !mCheck){
-                        createMap(new google.maps.LatLng(0,0));
+                        createMap();
+                        setMapCenter([0,0]);
                     }else if (mCheck){
                         var emCheck = mCheck.pop();
-                        console.log(emCheck);
-                    if(typeof emCheck != 'undefined'){
-                        emCheck = emCheck['loc'];
-                        var latlng = new google.maps.LatLng(emCheck[0], emCheck[1]);
-                    }else{
-                        alert('It appears you are running geoserve for the first time!');
-                        var latlng = new google.maps.LatLng(0,0);
-                    }
-                    map.setCenter(latlng);
+                        if(typeof emCheck != 'undefined'){
+                            emCheck = emCheck['loc'];
+                        }else{
+                            alert('It appears you are running geoserve for the first time!');
+                            // ideally show the add marker screen
+                            emCheck = [0,0];
+                        }
+                        setMapCenter(emCheck);
                     }else
-                        map.setCenter(new google.maps.LatLng(0,0));
+                        setMapCenter([0,0]);
                     lookForMarkers();
                 }
             }

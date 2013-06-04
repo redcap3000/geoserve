@@ -109,6 +109,15 @@ n.google.maps.Load(function(a,b){var c=n.google.maps;Si();"version"in c&&n[Ub]&&
         if(typeof clickCallBack == 'function')
             google.maps.event.addListener(new_marker,"click",clickCallBack);
     };
+    
+    
+    setMapCenter = function(q){
+    
+        map.setCenter(new google.maps.LatLng(q[0],q[1]));
+    
+    }
+    
+    geocoder = new google.maps.Geocoder();
 }
 /*
  *
