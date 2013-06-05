@@ -1,3 +1,5 @@
+/* @override http://192.168.3.1:3000/client/css/client.css?c4228303eefde1b6420a4a5ef3a96a1a3130a56a */
+
 
 html, body {
     height: 100%;
@@ -40,46 +42,7 @@ padding-top: .5em;
 width: auto;float: left;
 }
 
-input{
-	margin: 0;
-	float: left;
-	margin-top: .5em;width: 85%;
-		margin-bottom: 1em;
-	
-}
 
-#marker_edit fieldset input.new_service {
-width: 90%;
-}
-
-input.marker_x,input.marker_y{
-	width: 2em;
-	
-}
-input.edit_marker{
-float: right;
-margin-right: 1.5em;
-margin-top: .1em;
-}
-
-#user_settings a {
-margin-right: 1em;
-float: right;
-color: white;
-}
-
-#phone_number,#email{
-float:left;
-}
-
-
-.greyed {
-    opacity: 0.05;
-}
-
-.hide {
-  opacity: 0.0;
-}
 
 #map_canvas { 
   height: 100%;
@@ -93,36 +56,10 @@ float:left;
 
 
 
-input.del_marker {
-	margin-right: 1em;
-}
-
-
-#groups{
-	
-	padding-top: 2em;
-}
-
 #group_add span.marker {
 	line-height:1.5em;padding: .25em .45em;float: left;
 }
 
-#group_add input{
-	float: left;clear: both;
-}
-
-
-textarea.group_desc {
-margin-top: .5em;
-margin-left: 10%;width: 79%;
-	clear: both;float: left;
-}
-
-
-#groups input{
-	margin: 0 5%;
-	line-height: 2em;
-}
 
 #login-name-link {
 	width: 100%;
@@ -211,14 +148,29 @@ font-size: .75em;
 
 
 #main_menu div{
-width: 90%;
-padding-top: .25em;
-padding-left: 5%;
-	background-color:white;float: left;
+	background-color:white;
+	padding: .5em .25em;
 }
 
+#the_markers {
+	clear: both;
+}
 
+#group_add span.span textarea.group_desc {
+	width: 89%;
+}
 
+input{
+	width: 84%;
+}
+
+#marker_edit {
+float: ;
+}
+
+#main_menu {
+	float: left;background-color: white;
+}
 
 #login-name-link {
 	margin: 0;padding: 0;font-size: .65em;color: white;line-height: 1.2em;
