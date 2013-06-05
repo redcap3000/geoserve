@@ -1,3 +1,4 @@
+
 html, body {
     height: 100%;
     margin: 0;
@@ -101,19 +102,16 @@ input.del_marker {
 	
 	padding-top: 2em;
 }
-span.marker{float: left; height: 1.5em;clear: left;
+
+#group_add span.marker {
+	line-height:1.5em;padding: .25em .45em;float: left;
 }
-
-
-
 
 #group_add input{
 	float: left;clear: both;
 }
 
-#group_add {
-	
-}
+
 textarea.group_desc {
 margin-top: .5em;
 margin-left: 10%;width: 79%;
@@ -213,12 +211,14 @@ font-size: .75em;
 
 
 #main_menu div{
+width: 90%;
+padding-top: .25em;
+padding-left: 5%;
 	background-color:white;float: left;
 }
 
-#group_add {
-	padding-top: 1em;
-}
+
+
 
 #login-name-link {
 	margin: 0;padding: 0;font-size: .65em;color: white;line-height: 1.2em;

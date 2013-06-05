@@ -319,7 +319,7 @@ Template.groups.selected_visibility = function(evt,tmpl){
     if(Meteor.userId() && group_id){
         // just return entire html block with the select menu and the appropriate value selected SUCH A PITA!!!
         for(var n = 0,vis = ['public','private','invite'],result='',q=groups.findOne({_id: group_id},{visibility:1}); n< vis.length;n++)
-            result += '<input type="radio" name="group_visbility" class="span group_visibility" id="gv_'+vis[n]+'" value="'+vis[n]+'" '+(vis[n] == q.visibility ? ' CHECKED ':'' )+'  ><label>'+vis[n]+'</label>';
+            result += '<input type="radio" name="group_visbility" class="group_visibility" id="gv_'+vis[n]+'" value="'+vis[n]+'" '+(vis[n] == q.visibility ? ' CHECKED ':'' )+'  ><label>'+vis[n]+'</label>';
 
         
         return result;
@@ -420,3 +420,13 @@ Template.loggedInMenu.rendered = function(evt,tmpl){
 Template.edit_marker.rendered = function(evt,tmpl){
     $('div#groups').hide();
 }
+
+Template.groups.rendered = function(evt,tmpl){
+//alert('groups rendered');
+            $('.add_group').hide();
+
+};
+
+Template.add_group.rendered = function(evt,tmpl){
+    console.log('group added');
+};

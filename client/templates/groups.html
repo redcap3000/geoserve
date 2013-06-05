@@ -1,6 +1,7 @@
 
 
 <template name="groups">
+        <div class="row groups">
 
     {{>group_menu}}
 
@@ -8,26 +9,30 @@
     
     
 
-        <div class="row">
             <fieldset class="span2">
                 <input type="text"   placeholder="Title" class="group_title" value="{{name}}">
                 <textarea class="group_desc" value="{{desc}}">{{desc}}</textarea>
-                   <input type="button" class="btn update_group" value="Update">
-            
-                        <input type="button" class="btn del_group" value="Delete Group" id="{{_id}}"> 
 
             </fieldset>
-        <fieldset class="span">
+        <fieldset class="span2">
             {{{selected_visibility}}}
         </fieldset>
-
-            </div>
+        
+        
+    <fieldset class="span"><input type="button" class="btn update_group" value="Update"><input type="button" class="btn del_group" value="Delete Group" id="{{_id}}"></fieldset>
+    
+    
+            
 
     {{/with}}
     
+      </div>
+ 
     {{>add_group}}
-    
-    </div>
+ 
+    <span class="row">
+       <a href="#" id="new_group_btn" class ="btn span" onClick="$('#new_group_btn').hide();$('div.groups').hide();$('.marker').hide(); $('.add_group').show()">New Group</a></span>
+  
 </template>
 
 
@@ -39,12 +44,16 @@
     </span>
     {{/each}}
 
-
 </template>
 
 <template name="add_group">
-    <div id="group_add" class="row">
+
+
+    <div id="group_add" class="row add_group">
         <fieldset class="span">
+            <a href="#" class ="btn" onClick="$('#new_group_btn').show();$('div.groups').show();$('.marker').show(); $('.add_group').hide()">Back</a>
+
+        
         <input type="text"   placeholder="Title" class="group_title" value="{{title}}">
             <textarea class="group_desc" value="{{desc}}"></textarea>
             <input type="button" class="btn add_group" value="Add New Group">
