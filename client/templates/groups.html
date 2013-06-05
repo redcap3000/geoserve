@@ -10,7 +10,12 @@
         <input type="text"   placeholder="Title" class="group_title" value="{{name}}">
         <textarea class="group_desc" value="{{desc}}">{{desc}}</textarea>
         </span>
+        
+        <legend></legend>
             {{{selected_visibility}}}
+            
+        <legend></legend>
+        
         <span class="span">
         <input type="button" class="btn update_group" value="Update"><input type="button" class="btn del_group" value="Delete Group" id="{{_id}}">
         </span>
@@ -31,11 +36,16 @@
 
 <template name="group_menu">
     <div class="row">
-        <span class="span">
+            <legend></legend>
+
         {{#each userGroups}}
-            <a href="#" class="edit_group" id="{{_id}}">{{name}}</a><br/>
+                <span class="span">
+
+            <a href="#" class="edit_group" id="{{_id}}">{{name}}</a>
+                    </span>
+
         {{/each}}
-        </span>
+        <legend></legend>
     </div>
 
 </template>
@@ -44,19 +54,18 @@
 
 
     <div id="group_add" class="row add_group">
-        <span class="span">
-           
-        </span>
         
         
+        <fieldset class="span">
+            <input type="text"   placeholder="Title" class="group_title" value="{{name}}">
+            <textarea class="group_desc" value="{{desc}}">{{desc}}</textarea>
+        </fieldset>
         
-        <span class="span">
-        <input type="text"   placeholder="Title" class="group_title" value="{{name}}">
-        <textarea class="group_desc" value="{{desc}}">{{desc}}</textarea>
-        </span>
         
+
         
         <span class="span">
+        
         <label class="radio inline">
             <input type="radio" name="group_visbility" class="span group_visibility" id="gv_public" value="public">Public
             </label>
@@ -95,13 +104,14 @@
         <fieldset class="span">
         <input type="text"   placeholder="Title" class="group_title" value="{{name}}">
         <textarea class="group_desc" value="{{desc}}">{{desc}}</textarea>
-        <fieldset class="span">
-            <input type="radio" name="group_visbility" class="span group_visibility" id="gv_public" value="public">Public
-            <input type="radio" name="group_visbility" class="span group_visibility" id="gv_private" value="private">Private
-            <input type="radio" name="group_visbility" class="span group_visibility" id="gv_invite" value="invite">Invite
-            <input type="button" class="btn update_group" value="Update">
 
-        </fieldset>
+            <fieldset class="span">
+                <input type="radio" name="group_visbility" class="span group_visibility" id="gv_public" value="public">Public
+                <input type="radio" name="group_visbility" class="span group_visibility" id="gv_private" value="private">Private
+                <input type="radio" name="group_visbility" class="span group_visibility" id="gv_invite" value="invite">Invite
+                <input type="button" class="btn update_group" value="Update">
+
+            </fieldset>
         </fieldset>
         
         {{>group_codes}}

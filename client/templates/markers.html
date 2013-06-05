@@ -1,106 +1,110 @@
 <template name="add_marker">
-    <div id="marker_add" >
-        <fieldset>
-            <label>Marker Name</label>
-            <input type="text"   placeholder="Name" class="marker_name">
-            <fieldset>
-                <div class="row">
-                <span class="span2"><label>Kind</label>
-                <select class="marker_type">
-                    {{#each markerTypes}}
-                    <option value="{{name}}">{{name}}</option>
-                    {{/each}}
-                </select>
-                </span>
-                
-                <span class="span2"><label>Group</label>
-                <select class="marker_group">
-                    <option value="">None</option>
 
-                    {{#each userGroups}}
-                    <option value="{{_id}}">{{name}}</option>
-                    {{/each}}
-                </select>
-                
-                </span>
-                </div>
-            </fieldset>
-        <input type="text"   placeholder="Street Address" class="marker_address">
-        <input type="button" class="btn add_marker" value="Add">
+            <div  id="marker_add" class="row">
+            <br/>&nbsp;
+            <label>Create Marker</label>
+
+            <div class="span input-prepend">
+
+                <span class="span add-on">Name</span>
+                <input class="span2 marker_name" id="prependedInput" type="text" placeholder="Marker Name">
+            </div>
+            
+            <div class="span input-prepend">
+                <span class="span add-on">Address</span>
+                <input type="text"   placeholder="Street Address" class="marker_address">
+            </div>
+            
+
+                <fieldset class="row">
+                    <fieldset class="span">
+                    <label class="inline">Type
+                    <select class="marker_type">
+                        {{#each markerTypes}}
+                        <option value="{{name}}">{{name}}</option>
+                        {{/each}}
+                    </select>
+                    </label>
+                    
+                    </fieldset>
+                    <fieldset class="span2">
+                    <label class="inline">Group
+                    <select class="marker_group">
+                        <option value="">None</option>
+
+                        {{#each userGroups}}
+                        <option value="{{_id}}">{{name}}</option>
+                        {{/each}}
+                    </select>
+                    </label>
+                    </fieldset>
+                </fieldset>
+        <fieldset class="span">
+        <input type="button" class="btn-primary add_marker" value="Add">
+        <legend></legend>
         </fieldset>
-    </div>
+        </div>
 </template>
 
 <template name="services_offered">
-
-
-
     <div class="input-append">
-
-    <fieldset>
-    {{#if services}}
-        <select name="services_offered" class="span2 add_services">
-        {{#each services}}
-           <option id="{{_id}}">{{title}}
-        {{/each}}
-        </select>
-    <button class="btn add_service" type="button">Add Service</button>
+        <fieldset>
+        {{#if services}}
+            <select name="services_offered" class="span2 add_services">
+            {{#each services}}
+               <option id="{{_id}}">{{title}}
+            {{/each}}
+            </select>
+        <button class="btn add_service" type="button">Add Service</button>
+        {{else}}
+            <label>Please create a new service to add to this marker.</label>
+        {{/if}}
+        </fieldset>
         
-    {{else}}
-        <label>Please create a new service to add to this marker.</label>
-    {{/if}}
-    </fieldset>
-    
-    
-    
-    
         <div class="input-append">
             <input class="span2 new_service_input" id="appendedInputButton" type="text">
             <button class="btn new_service" type="button">New Service</button>
         </div>
-        
         </div>
-
-    
 </template>
 
 <template name="edit_marker">
 <div id ="marker_edit">
     {{#if canEdit}}
         <fieldset class="span">
-        <legend>Marker Editor</legend>
-        <div class="input-prepend">
-            <span class="span add-on">Name</span>
-            <input class="span2 marker_name" id="prependedInput" type="text" placeholder="Marker Name" value="{{name}}">
-        </div>
+            <legend>Marker Editor</legend>
+            <div class="input-prepend">
+                <span class="span add-on">Name</span>
+                <input class="span2 marker_name" id="prependedInput" type="text" placeholder="Marker Name" value="{{name}}">
+            </div>
 
-        <div class="input-prepend">
-            <span class="span add-on">Type</span>
-            <input class="span2 marker_type" id="prependedInput" type="text" placeholder="Marker Type" value="{{type}}">
-        </div>
-        
-        
-        
-        <div class="input-prepend">
-            <span class="span add-on">Group</span>
-            <input class="span2 group_id" id="prependedInput" type="text" placeholder="Marker Type" value="{{group}}">
+            <div class="input-prepend">
+                <span class="span add-on">Type</span>
+                <input class="span2 marker_type" id="prependedInput" type="text" placeholder="Marker Type" value="{{type}}">
+            </div>
+            
+            
+            
+            <div class="input-prepend">
+                <span class="span add-on">Group</span>
+                <input class="span2 group_id" id="prependedInput" type="text" placeholder="Marker Type" value="{{group}}">
 
-        </div>
+            </div>
+            
+            <fieldset>
+                <input type="button" class="btn-primary edit_marker" value="Update">
+                <input type="button" class="btn del_marker" value="Remove"></fieldset>
+            </fieldset>
+            
+            <legend>Marker Services</legend>
+            {{#each currentServices}}
+            <fieldset class="span4"><a href="#" class="del_marker_service btn" id="{{_id}}">x</a>&nbsp;{{title}}</fieldset>
         
-        <fieldset>
-            <input type="button" class="btn-primary edit_marker" value="Update">
-            <input type="button" class="btn del_marker" value="Remove"></fieldset>
-        </fieldset>
-        
-        <legend>Marker Services</legend>
-        {{#each currentServices}}
-        <fieldset class="span4"><a href="#" class="del_marker_service btn" id="{{_id}}">x</a>&nbsp;{{title}}</fieldset>
-    
-        {{/each}}
+            {{/each}}
 
-        
-        
-        {{>services_offered}}
+            
+            
+            {{>services_offered}}
 
     
         </fieldset>
