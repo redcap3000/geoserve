@@ -1,3 +1,5 @@
+/* @override http://192.168.3.1:3000/client/css/client.css?32f6499ae697b33aaac049b0d5e39baa95f78daa */
+
 /* @override http://192.168.3.1:3000/client/css/client.css?c4228303eefde1b6420a4a5ef3a96a1a3130a56a */
 
 
@@ -20,6 +22,7 @@ nav {
     overflow:auto;
     font-size: 25px;
     width: 15em;
+    height: 100%;
     background-color: rgba(51,51,51,0.7);
     z-index: 1;
     text-shadow: 0 -1px 0 #bbb;
@@ -149,7 +152,6 @@ font-size: .75em;
 
 #main_menu div{
 	background-color:white;
-	padding: .5em .25em;
 }
 
 #the_markers {
@@ -164,12 +166,15 @@ input{
 	width: 84%;
 }
 
-#marker_edit {
-float: ;
-}
+
 
 #main_menu {
 	float: left;background-color: white;
+	padding: 0 .5em ;
+}
+
+legend {
+	border-bottom: solid gray .05em;float: left;margin: .75em 0 .5em  0;
 }
 
 #login-name-link {
@@ -195,9 +200,7 @@ background-color: green;
 	border-radius: 10px;	
 }
 
-#marker_edit {
-	margin-top: 1em;
-}
+
 
 #login-buttons-password {
 	height: auto;float: left;clear: both;width: 90%;
@@ -230,8 +233,19 @@ width: 92%;
 	margin: .25em;clear: both;
 }
 
-#marker_edit {
+span.span.add-on {
+	width: 5em;color: green;
+	margin: 0;border-right: none;
 }
+div.input-prepend input{
+	width: 100%;
+}
+
+div.input-append fieldset button.btn {
+float: right;
+margin-top: .45em;
+}
+
 
 
 

@@ -256,7 +256,8 @@ Template.edit_marker.events = {
 // removing a service from a marker (removing the record from marker_services)
 
 Template.services_offered.events({
-    'click input.new_service' : function(evt,tmpl){
+    'click button.new_service' : function(evt,tmpl){
+    alert('new service clicked');
         if(Meteor.userId()){
             var new_service = tmpl.find('.new_service_input').value,
             record = {title:new_service,owner:Meteor.userId()};
@@ -266,7 +267,7 @@ Template.services_offered.events({
         }
         console.log(record);
     },
-    'click input.add_service' : function(evt,tmpl){
+    'click button.add_service' : function(evt,tmpl){
         console.log('adding this service');
         var new_service = tmpl.find('.add_services'),
             record = {},
