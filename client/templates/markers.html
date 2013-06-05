@@ -1,35 +1,31 @@
 <template name="add_marker">
     <div id="marker_add" >
-    
         <fieldset>
             <label>Marker Name</label>
-
             <input type="text"   placeholder="Name" class="marker_name">
-        <fieldset>
-        <div class="row">
-        <span class="span2"><label>Kind</label>
-        <select class="marker_type">
-            {{#each markerTypes}}
-            <option value="{{name}}">{{name}}</option>
-            {{/each}}
-        </select>
-        </span>
-        
-        <span class="span2"><label>Group</label>
-        <select class="marker_group">
-            <option value="">None</option>
+            <fieldset>
+                <div class="row">
+                <span class="span2"><label>Kind</label>
+                <select class="marker_type">
+                    {{#each markerTypes}}
+                    <option value="{{name}}">{{name}}</option>
+                    {{/each}}
+                </select>
+                </span>
+                
+                <span class="span2"><label>Group</label>
+                <select class="marker_group">
+                    <option value="">None</option>
 
-            {{#each userGroups}}
-            <option value="{{_id}}">{{name}}</option>
-            {{/each}}
-        </select>
-        
-        </span>
-        </div>
-        </fieldset>
+                    {{#each userGroups}}
+                    <option value="{{_id}}">{{name}}</option>
+                    {{/each}}
+                </select>
+                
+                </span>
+                </div>
+            </fieldset>
         <input type="text"   placeholder="Street Address" class="marker_address">
-        
-        
         <input type="button" class="btn add_marker" value="Add">
         </fieldset>
     </div>
@@ -49,11 +45,6 @@
         <label>Please create a new service to add to this marker.</label>
     {{/if}}
     </fieldset>
-    
-
-      
-    
-    
 </template>
 
 <template name="edit_marker">
@@ -77,18 +68,17 @@
             <input class="span2 new_service_input" id="appendedInputButton" type="text">
             <button class="btn new_service" type="button">New Service</button>
         </div>
-    
-
-    {{else}}
-        <label>{{name}} - {{type}}</label>
-    {{/if}}
-    
         {{#each currentServices}}
         <fieldset class="span4"><a href="#" class="del_marker_service btn" id="{{_id}}">x</a>&nbsp;{{title}}</fieldset>
         
         {{/each}}
+    {{else}}
+        <label>{{name}} - {{type}}</label>
+        {{#each currentServices}}
+        <fieldset class="span4">{{title}}</fieldset>
+        {{/each}}
+    {{/if}}
     </div>
-    
 </template>
 
 <template name="markers">
