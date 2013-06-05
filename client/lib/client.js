@@ -112,7 +112,7 @@ Template.loggedInMenu.events({
 // adds a new 'group' and stores userid as record 'owner'
 
 Template.add_group.events({
-    'click input.add_group': function(evt,tmpl){
+    'click button.add_group': function(evt,tmpl){
         var record ={},elements = tmpl.findAll(".group_visibility"),checked_element = undefined;
         record.owner = Meteor.userId();
         record.name = tmpl.find(".group_title").value;
@@ -314,7 +314,7 @@ Template.groups.selected_visibility = function(evt,tmpl){
     if(Meteor.userId() && group_id){
         // just return entire html block with the select menu and the appropriate value selected SUCH A PITA!!!
         for(var n = 0,vis = ['public','private','invite'],result='',q=groups.findOne({_id: group_id},{visibility:1}); n< vis.length;n++)
-            result += '<input type="radio" name="group_visbility" class="group_visibility" id="gv_'+vis[n]+'" value="'+vis[n]+'" '+(vis[n] == q.visibility ? ' CHECKED ':'' )+'  ><label>'+vis[n]+'</label>';
+            result += '<label class="radio inline"><input type="radio" name="group_visbility" class="group_visibility" id="gv_'+vis[n]+'" value="'+vis[n]+'" '+(vis[n] == q.visibility ? ' CHECKED ':'' )+'  >'+vis[n]+'</label>';
 
         
         return result;

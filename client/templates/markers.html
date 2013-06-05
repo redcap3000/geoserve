@@ -43,7 +43,7 @@
            <option id="{{_id}}">{{title}}
         {{/each}}
         </select>
-        <input type="button" class="add_service" value="Add Service">
+        <input type="button" class="btn add_service" value="Add Service">
         
     {{else}}
         <label>Please create a new service to add to this marker.</label>
@@ -51,7 +51,9 @@
     </fieldset>
     
 
-        <fieldset><input type="text" placeholder="New Service" class="new_service_input"><input type="button" class="new_service" value="New Service"/></fieldset>
+      
+    
+    
 </template>
 
 <template name="edit_marker">
@@ -67,8 +69,15 @@
         <input type="text"   placeholder="Group" class="group_id" value="{{group}}">
         
         {{>services_offered}}
-        <input type="button" class="edit_marker" value="Update">
-        <fieldset class="span4"><input type="button" class="del_marker" value="x">Remove</fieldset>
+        <br/>
+        <input type="button" class="btn-primary edit_marker" value="Update">
+        <fieldset class="span4"><input type="button" class="btn del_marker" value="Remove"></fieldset>
+
+        <div class="input-append">
+            <input class="span2 new_service_input" id="appendedInputButton" type="text">
+            <button class="btn new_service" type="button">New Service</button>
+        </div>
+    
 
     {{else}}
         <label>{{name}} - {{type}}</label>
