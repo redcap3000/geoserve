@@ -352,6 +352,7 @@ Template.add_marker.markerTypes = function(evt,tmpl){
 Template.services_offered.services = function(evt,tmpl){
     if(typeof services_sub != 'undefined')
         if(services_sub.ready()){
+            console.log('services offered ready');
             var q = services.find({},{});
             q = q.fetch();
             return q;
@@ -375,6 +376,8 @@ Template.edit_marker.currentServices = function(evt,tmpl){
         }
     }
 };
+
+Template.marker_services.currentServices = Template.edit_marker.currentServices;
 
 /* 
  *
