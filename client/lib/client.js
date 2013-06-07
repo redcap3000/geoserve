@@ -247,17 +247,16 @@ Template.edit_marker.events = {
         lookForMarkers();
     },
     'click .del_marker_service' : function(evt,tmpl){
-        marker_services.remove({_id: tmpl.find('.del_marker_service').id});
-    }
-};
-
-// handles creating a new service (adding it to the services collection)
-// adding a service to a marker (creating a record in marker_services that refers to the other collections)
-// removing a service from a marker (removing the record from marker_services)
-
-Template.services_offered.events({
-    'click button.new_service' : function(evt,tmpl){
-    alert('new service clicked');
+        console.log('deleting marker service');
+//        console.log(evt.currentTarget.attributes.id);
+  //      console.log(tmpl);
+        var the_id = evt.currentTarget.attributes;
+        console.log(the_id[0].value);
+  //      console.log('"' + the_id.toString() + '"');
+        marker_services.remove({_id: the_id[0].value});
+    },
+    
+        'click button.new_service' : function(evt,tmpl){
         if(Meteor.userId()){
             var new_service = tmpl.find('.new_service_input').value,
             record = {title:new_service,owner:Meteor.userId()};
@@ -281,11 +280,13 @@ Template.services_offered.events({
         }else{
             alert('No selected marker to apply new service to');
         }
-    },
-    'click .del_marker_service' : function(evt,tmpl){
-        marker_services.remove({_id: tmpl.find('.del_marker_service').id});
     }
-});
+};
+
+// handles creating a new service (adding it to the services collection)
+// adding a service to a marker (creating a record in marker_services that refers to the other collections)
+// removing a service from a marker (removing the record from marker_services)
+
 
 /*
  *

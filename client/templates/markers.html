@@ -68,6 +68,14 @@
         </div>
 </template>
 
+<template name="marker_services">
+            <legend>Marker Services</legend>
+
+     {{#each currentServices}}
+            <fieldset class="span4"><a href="#" class="btn del_marker_service" id="{{_id}}">x</a>&nbsp;{{title}}</fieldset>
+    {{/each}}
+</template>
+
 <template name="edit_marker">
 <div id ="marker_edit">
     {{#if canEdit}}
@@ -96,13 +104,7 @@
                 <input type="button" class="btn del_marker" value="Remove"></fieldset>
             </fieldset>
             
-            <legend>Marker Services</legend>
-            {{#each currentServices}}
-            <fieldset class="span4"><a href="#" class="del_marker_service btn" id="{{_id}}">x</a>&nbsp;{{title}}</fieldset>
-        
-            {{/each}}
-
-            
+            {{>marker_services}}
             
             {{>services_offered}}
 
