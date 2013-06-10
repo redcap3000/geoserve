@@ -251,9 +251,10 @@ Template.edit_marker.events = {
 //        console.log(evt.currentTarget.attributes.id);
   //      console.log(tmpl);
         var the_id = evt.currentTarget.attributes;
-        console.log(the_id[0].value);
-  //      console.log('"' + the_id.toString() + '"');
-        marker_services.remove({_id: the_id[0].value});
+        console.log(the_id);
+        // THIS is terrible .... the attributes are listed in alpha order...
+        console.log(the_id[2].value);
+        marker_services.remove({_id: the_id[2].value});
     },
     
         'click button.new_service' : function(evt,tmpl){
