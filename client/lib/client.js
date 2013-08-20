@@ -152,15 +152,17 @@ Template.add_marker.events({
         if(typeof geocoder != 'undefined' && Meteor.userId()){
             var geo_term=tmpl.find(".marker_address").value;
             geocoder.geocode({'address':geo_term},function(results,status){
+		    console.log(status);
                 results = results[0];
                 if(status == google.maps.GeocoderStatus.OK){
+			console.log(results);
                     map.setCenter(results.geometry.location);
                     var record ={};
                     record.name = tmpl.find(".marker_name").value;
                     record.type = tmpl.find(".marker_type").value;
                     record.group = tmpl.find(".marker_group").value;
                     // set loc field to geometry locations given in geocoder
-                    record.loc = [results.geometry.location.jb,results.geometry.location.kb];
+                    record.loc = [results.geometry.location.mb,results.geometry.location.nb];
                     // set owner field to person who created it so they may re-edit what they have created
                     record.owner = Meteor.userId();
                     console.log(record);

@@ -56,22 +56,22 @@ if(Meteor.isClient){
     setMapCenter = function(q){
         map.setCenter(new google.maps.LatLng(q[0],q[1]));
     }
-    if(typeof google != 'undefined')
-        geocoder = new google.maps.Geocoder();
-    
+       
     // GMAPS Geocoder success/error functions
     successFunction = function(success) {
               var navLatLng = new google.maps.LatLng(success.coords.latitude, success.coords.longitude);
               // annoying...
               //createMap(navLatLng);
               // send it true option to use different marker
+	      setMapCenter([success.coords.latitude, success.coords.longitude]);
               placeNavMarker(navLatLng,true);
+
               lookForMarkers([navLatLng.jb,navLatLng.kb]);
             };
 
     errorFunction = function(success) {
         // set this to a default location? define it somewhere...?
-        var latlng = new google.maps.LatLng(37.808631, -122.474470);
+        var navLatLng = new google.maps.LatLng(37.808631, -122.474470);
         //createMap(latlng);
         placeNavMarker(navLatLng);
     //  addAutocomplete();
