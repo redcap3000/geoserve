@@ -18,24 +18,25 @@
 
                 <fieldset class="row">
                     <fieldset class="span">
-                    <label class="inline">Type
-                    <select class="marker_type">
+			    <label class="inline">Type
+				    {{#isolate}}
+			    <select class="marker_type">
                         {{#each markerTypes}}
                         <option value="{{name}}">{{name}}</option>
-                        {{/each}}
+			{{/each}}
+			{{/isolate}}
                     </select>
                     </label>
                     
                     </fieldset>
                     <fieldset class="span2">
-                    <label class="inline">Group
+                    <label class="inline">Group{{#isolate}}
                     <select class="marker_group">
                         <option value="">None</option>
-
-                        {{#each userGroups}}
+			{{#each userGroups}}
                         <option value="{{_id}}">{{name}}</option>
                         {{/each}}
-                    </select>
+		</select>{{/isolate}}
                     </label>
                     </fieldset>
                 </fieldset>
@@ -49,7 +50,8 @@
 <template name="services_offered">
 <legend>Services offered</legend>
     <div class="input-append">
-        <fieldset>
+	    <fieldset>
+		    {{#isolate}}
         {{#if services}}
             <select name="services_offered" class="span2 add_services">
             {{#each services}}
@@ -59,7 +61,8 @@
         <button class="btn add_service" type="button">Add Service</button>
         {{else}}
             <label>Please create a new service to add to this marker.</label>
-        {{/if}}
+	    {{/if}}
+	    {{/isolate}}
         </fieldset>
         
         <div class="input-append">
@@ -71,10 +74,9 @@
 
 <template name="marker_services">
             <legend>Marker Services</legend>
-
      {{#each currentServices}}
             <fieldset class="span4"><a id="{{_id}}" href="#" class="btn del_marker_service">x</a>&nbsp;{{title}}</fieldset>
-    {{/each}}
+	    {{/each}}
 </template>
 
 <template name="edit_marker">
@@ -84,7 +86,7 @@
             <legend>Marker Editor</legend>
             <div class="input-prepend">
                 <span class="span add-on">Name</span>
-                <input class="span2 marker_name" id="prependedInput" type="text" placeholder="Marker Name" value="{{name}}">
+		<input class="span2 marker_name" id="prependedInput" type="text" placeholder="Marker Name" value="{{name}}">
             </div>
 
             <div class="input-prepend">
@@ -102,8 +104,8 @@
             
             <fieldset>
                 <input type="button" class="btn-primary edit_marker" value="Update">
-                <input type="button" class="btn del_marker" value="Remove"></fieldset>
-            </fieldset>
+		<input type="button" class="btn del_marker" value="Remove">
+	    </fieldset>
             
             {{>marker_services}}
             
@@ -111,11 +113,11 @@
 
     
         </fieldset>
-    {{else}}
+	{{else}}
         <label>{{name}} - {{type}}</label>
         {{#each currentServices}}
         <fieldset class="span4">{{title}}</fieldset>
-        {{/each}}
+	{{/each}}
     {{/if}}
     </div>
 </template>

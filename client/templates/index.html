@@ -5,7 +5,9 @@
 </head>
 
 <body>
-    {{> nav}}
+{{#isolate}}
+{{> nav}}
+{{/isolate}}
     {{> content}}
 </body>
 
@@ -17,5 +19,5 @@
 </template>
 
 <template name="map">
-  <div id="map_canvas"></div>
+<div id="map_canvas"></div>
 </template>
