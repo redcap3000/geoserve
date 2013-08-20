@@ -48,10 +48,9 @@
 </template>
 
 <template name="services_offered">
-<legend>Services offered</legend>
+<legend>Service Manager</legend>
     <div class="input-append">
 	    <fieldset>
-		    {{#isolate}}
         {{#if services}}
             <select name="services_offered" class="span2 add_services">
             {{#each services}}
@@ -62,14 +61,18 @@
         {{else}}
             <label>Please create a new service to add to this marker.</label>
 	    {{/if}}
-	    {{/isolate}}
         </fieldset>
         
-        <div class="input-append">
+</div>
+{{>new_marker_service}}
+	</template>
+
+<template name="new_marker_service">
+	<div class="input-append"><fieldset>
             <input class="span2 new_service_input" id="appendedInputButton" type="text">
-            <button class="btn new_service" type="button">New Service</button>
+	    <button class="btn new_service" type="button">New Service</button></fieldset>
         </div>
-        </div>
+
 </template>
 
 <template name="marker_services">
@@ -107,16 +110,16 @@
 		<input type="button" class="btn del_marker" value="Remove">
 	    </fieldset>
             
-            {{>marker_services}}
-            
+                     
             {{>services_offered}}
+   	    {{>marker_services}}
 
     
         </fieldset>
 	{{else}}
         <label>{{name}} - {{type}}</label>
         {{#each currentServices}}
-        <fieldset class="span4">{{title}}</fieldset>
+        <span class="marker_service">{{title}}</span>
 	{{/each}}
     {{/if}}
     </div>

@@ -1,8 +1,3 @@
-/* @override http://192.168.3.1:3000/client/css/client.css?32f6499ae697b33aaac049b0d5e39baa95f78daa */
-
-/* @override http://192.168.3.1:3000/client/css/client.css?c4228303eefde1b6420a4a5ef3a96a1a3130a56a */
-
-
 html, body {
     height: 100%;
     margin: 0;
@@ -19,21 +14,20 @@ p {
 }
 
 nav {
-    overflow:auto;
+    overflow:hidden;
     font-size: 25px;
-    width: 15em;
+    width: 15.95em;
     height: 100%;
     background-color: rgba(51,51,51,0.7);
     z-index: 1;
-    text-shadow: 0 -1px 0 #bbb;
     color: #eee;
     font-family: Helvetica Neue, Helvetica, arial;
-    margin-left: .5em;
 }
 
 #login-name-link {
 margin-top: .5em;
-	font-size: .8em;float: left;
+	font-size: .8em;
+	margin-right: .5em;
 }
 
 #login-buttons-facebook,div.or {
@@ -134,12 +128,19 @@ nav li{
 
 .login{
   font-size: 1em;
+  float: left;
+  width: 99%;
   text-align: right;
-  float: right;
-  width: 100%;
+  padding: .4em 0;
+  background-color: white;
+  color: black;
 }
 
 
+
+div#the_editor {
+	border-top: 1px solid black;
+}
 
 label {
 color: black;text-align: left;
@@ -149,6 +150,15 @@ font-size: .75em;
 
 }
 
+#marker_edit label {
+	color: teal;
+	font-size: 1.3em;
+	margin: 0;
+	text-align: center;
+	padding-bottom: .25em;
+	border-bottom: 1px solid black;
+	margin-bottom: .25em;
+}
 
 #main_menu div{
 	background-color:white;
@@ -156,6 +166,7 @@ font-size: .75em;
 
 #the_markers {
 	clear: both;
+	padding: .4em 0;
 }
 
 #group_add span.span textarea.group_desc {
@@ -171,15 +182,14 @@ input{
 #main_menu {
 	float: left;background-color: white;
 	padding: 0 .5em ;
+	width: 93%;
 }
 
 legend {
 	border-bottom: solid gray .05em;float: left;margin: .75em 0 .5em  0;
 }
 
-#login-name-link {
-	margin: 0;padding: 0;font-size: .65em;color: white;line-height: 1.2em;
-}
+
 
 
 
@@ -192,7 +202,24 @@ margin-top: .5em;
 
 #main_menu img,a.geolocate img{background-color: white;width: 1.5em;height: 1.5em;border-radius: 5px;border-bottom-right-radius:0px; border-bottom-left-radius: 0px;
 	margin-right: .7em;
-	float: left;clear: none;padding: .2em .4em;
+	float: left;clear: none;padding: .5em .4em;
+}
+
+a.edit_marker {
+	padding: .5em;
+}
+
+div#marker_edit {
+	float: left;
+	width: 100%;
+	padding: .5em 0;clear: both;
+}
+
+span.marker_service {
+	float: left;	color: black;
+	width: 40%;
+	padding: .2em .4em;
+	font-size: 21px;
 }
 
 a.geolocate img{
@@ -245,8 +272,3 @@ div.input-append fieldset button.btn {
 float: right;
 margin-top: .45em;
 }
-
-
-
-
-
