@@ -154,7 +154,6 @@ font-size: .75em;
 	color: teal;
 	font-size: 1.3em;
 	margin: 0;
-	text-align: center;
 	padding-bottom: .25em;
 	border-bottom: 1px solid black;
 	margin-bottom: .25em;
@@ -272,3 +271,4 @@ div.input-append fieldset button.btn {
 float: right;
 margin-top: .45em;
 }
+

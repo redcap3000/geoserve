@@ -5,7 +5,6 @@
             <label>Create Marker</label>
 
             <div class="span input-prepend">
-
                 <span class="span add-on">Name</span>
                 <input class="span2 marker_name" id="prependedInput" type="text" placeholder="Marker Name">
             </div>
@@ -15,7 +14,6 @@
                 <input type="text"   placeholder="Street Address" class="marker_address">
             </div>
             
-
                 <fieldset class="row">
                     <fieldset class="span">
 			    <label class="inline">Type
@@ -72,7 +70,6 @@
             <input class="span2 new_service_input" id="appendedInputButton" type="text">
 	    <button class="btn new_service" type="button">New Service</button></fieldset>
         </div>
-
 </template>
 
 <template name="marker_services">
@@ -84,6 +81,8 @@
 
 <template name="edit_marker">
 <div id ="marker_edit">
+	 <label>{{name}} - {{type}}</label>
+
     {{#if canEdit}}
         <fieldset class="span">
             <legend>Marker Editor</legend>
@@ -97,8 +96,6 @@
                 <input class="span2 marker_type" id="prependedInput" type="text" placeholder="Marker Type" value="{{type}}">
             </div>
             
-            
-            
             <div class="input-prepend">
                 <span class="span add-on">Group</span>
                 <input class="span2 group_id" id="prependedInput" type="text" placeholder="Marker Type" value="{{group}}">
@@ -110,15 +107,12 @@
 		<input type="button" class="btn del_marker" value="Remove">
 	    </fieldset>
             
-                     
             {{>services_offered}}
    	    {{>marker_services}}
 
-    
         </fieldset>
 	{{else}}
-        <label>{{name}} - {{type}}</label>
-        {{#each currentServices}}
+               {{#each currentServices}}
         <span class="marker_service">{{title}}</span>
 	{{/each}}
     {{/if}}
