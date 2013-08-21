@@ -17,24 +17,22 @@
                 <fieldset class="row">
                     <fieldset class="span">
 			    <label class="inline">Type
-				    {{#isolate}}
 			    <select class="marker_type">
                         {{#each markerTypes}}
                         <option value="{{name}}">{{name}}</option>
 			{{/each}}
-			{{/isolate}}
                     </select>
                     </label>
                     
                     </fieldset>
                     <fieldset class="span">
-                    <label class="inline">Group{{#isolate}}
+                    <label class="inline">Group
                     <select class="marker_group">
                         <option value="">None</option>
 			{{#each userGroups}}
                         <option value="{{_id}}">{{name}}</option>
                         {{/each}}
-		</select>{{/isolate}}
+		</select>
                     </label>
                     </fieldset>
                 </fieldset>
@@ -105,7 +103,7 @@
                 <span class="span add-on">Group</span>
                 <select class="span marker_group">
                 <option value="">None</option>
-                {{#each getUserGroups this._id}}
+                {{#each getUserGroups this.group}}
                 <option value="{{_id}}" {{selected}}>{{name}}</option>
                 {{/each}}
                 </select>
