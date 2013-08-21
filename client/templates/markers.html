@@ -95,15 +95,18 @@
                 <span class="span add-on">Type</span>
                 <input class="span2 marker_type" id="prependedInput" type="text" placeholder="Marker Type" value="{{type}}">
             </div>
-            
-            <div class="input-prepend">
-                <span class="span add-on">Group</span>
-                <input class="span2 group_id" id="prependedInput" type="text" placeholder="Marker Type" value="{{group}}">
+            {{#if userGroups}}
+            <label class="inline">Group</label>
+                <select class="span2 marker_group">
+                <option value="">None</option>
+                {{#each getUserGroups this._id}}
+                <option value="{{_id}}" {{selected}}>{{name}}</option>
+                {{/each}}
+                </select>
+            {{/if}}
 
-            </div>
-            
             <fieldset>
-                <input type="button" class="btn-primary edit_marker" value="Update">
+                <input type="button" class="btn-primary update_marker" value="Update">
 		<input type="button" class="btn del_marker" value="Remove">
 	    </fieldset>
             

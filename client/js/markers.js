@@ -13,17 +13,13 @@ Template.add_marker.events({
     */
         if(typeof geocoder == 'undefined'){
               geocoder = new google.maps.Geocoder();
-              console.log('trying to make geocoder');
-              console.log(geocoder);
  
         }
         if(typeof geocoder != 'undefined' && Meteor.userId()){
             var geo_term=tmpl.find(".marker_address").value;
             geocoder.geocode({'address':geo_term},function(results,status){
-		    console.log(status);
                 results = results[0];
                 if(status == google.maps.GeocoderStatus.OK){
-			console.log(results);
                     map.setCenter(results.geometry.location);
                     var record ={};
                     record.name = tmpl.find(".marker_name").value;
@@ -33,7 +29,6 @@ Template.add_marker.events({
                     record.loc = [results.geometry.location.mb,results.geometry.location.nb];
                     // set owner field to person who created it so they may re-edit what they have created
                     record.owner = Meteor.userId();
-                    console.log(record);
                     var record_id = markers.insert(record);
                     
                     Session.set('selected_marker',record_id);
@@ -79,7 +74,6 @@ Template.markers.events({
         map.setCenter(latlng);
         var curMarker = Session.get('selected_marker');
         if(curMarker != tmpl.data._id){
-            console.log('Session: selected_marker set to ' + tmpl.data._id);
             Session.set('selected_marker',tmpl.data._id);
         }
         $('div#groups').hide();
@@ -102,10 +96,8 @@ Template.edit_marker.events = {
         }else{
             alert('Must be logged in to create new services to add to markers');
         }
-        console.log(record);
     },
     'click button.add_service' : function(evt,tmpl){
-        console.log('adding this service');
         var new_service = tmpl.find('.add_services'),
             record = {},
             marker_id = Session.get('selected_marker');
@@ -119,8 +111,34 @@ Template.edit_marker.events = {
         }else{
             alert('No selected marker to apply new service to');
         }
+    },
+    'click .update_marker':function(evt,tmpl){
+//        alert('click edit marker');
+        var record ={};
+                    record.name = tmpl.find(".marker_name").value;
+                    record.type = tmpl.find(".marker_type").value;
+                    record.group = tmpl.find(".marker_group").value;
+
+      console.log(record);
+//        var changeable_fields = ['group','name','type'];
+//        var old_record = markers.findOne({_id:this._id});
+//        console.log(old_record);
+//        var compare = _.pick(old_record,'group','name','type');
+//        console.log(_.pairs(record));
+       // if(!_.isEqual(compare,record)){
+            alert('updating');
+            console.log(markers.update({_id:this._id},{"$set":record}));
+//        }else{
+//            console.log(compare);
+//            console.log(record);
+//            alert('No change to update.');
+//        }
+  //      markers.update(this._id,
+        
+        
     }
 };
+
 
 // handles creating a new service (adding it to the services collection)
 // adding a service to a marker (creating a record in marker_services that refers to the other collections)
@@ -142,30 +160,22 @@ Template.edit_marker.canEdit = function(evt,tmpl){
     if(can_edit == marker_id && user_id)
         return true;
     else if(marker_id && user_id)
-        Meteor.call('canEdit',marker_id,function(error,result){ if(result) Session.set('can_edit',result); });
+        Meteor.call('canEdit',marker_id,'markers',Meteor.userId(),function(error,result){ if(result) Session.set('can_edit',result); });
     return false;
 }
 
 
 
-Template.add_marker.userGroups = Template.group_menu.userGroups;
 
 Template.add_marker.markerTypes = function(evt,tmpl){
-    var q = marker_types.find({},{});
-    q = q.fetch();
-    return q;
+
+    return marker_types.find({},{});
 };
 
 Template.services_offered.services = function(evt,tmpl){
-    if(typeof services_sub != 'undefined')
-        if(services_sub.ready()){
-            console.log('services offered ready');
-            var q = services.find({},{});
-            q = q.fetch();
-            return q;
-        }else
-            console.log('services sub not ready');
-};
+
+            return services.find({},{});
+    }
 
 Template.edit_marker.currentServices = function(evt,tmpl){
     var curMarker = Session.get('selected_marker');
@@ -184,7 +194,36 @@ Template.edit_marker.currentServices = function(evt,tmpl){
     }
 };
 
+
 Template.marker_services.currentServices = Template.edit_marker.currentServices;
+
+/*
+    Overloading various functions.. should possibly be rolled into same function?
+    probably not...
+*/
+Template.edit_marker.userGroups = Template.group_menu.userGroups;
+
+Template.edit_marker.getUserGroups = function(selected_group_id){
+
+    var q = Template.edit_marker.userGroups();
+    
+    q.filter(function(arr){
+        console.log(arr._id + ' ' +  this._id + ' passed:' + selected_group_id );
+        var r = arr;
+        if(r._id == selected_group_id){
+            r.selected='selected=true';
+        }else
+            r.selected='';
+        return r;
+    });
+    
+    console.log(q);
+    return q;
+}
+
+Template.edit_marker.markerTypes = Template.add_marker.markerTypes;
+
+Template.add_marker.userGroups = Template.group_menu.userGroups;
 
 /* 
  *
