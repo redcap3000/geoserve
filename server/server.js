@@ -39,6 +39,11 @@ Meteor.publish("groupCodes",function(){
     return group_codes.find({owner:Meteor.userId()},{});
 });
 
+Meteor.publish("publicGroups",function(){
+    return groups.find({visibility:'public'});
+});
+// find all 'public' markers .. i.e.. markers that belong to a public group? should i generate a listing
+// of all public groups and look for markers belonging to those? in deps!!!
 
 
 /*
@@ -107,17 +112,14 @@ Meteor.startup(function () {
  
 // basic function that determines if the user can edit
 Meteor.methods({
-    canEdit : function(curMarker,theCollection){
-        if(curMarker && typeof theCollection == 'undefined'){
-            console.log('findoning one');
-            var q = markers.findOne({_id: curMarker, owner: Meteor.userId()});
-
+    canEdit : function(curMarker,theCollection,userId){
+    console.log(curMarker + ' , ' + theCollection + ' , ' + userId);
+        if(curMarker && theCollection == 'markers'){
+            var q = markers.findOne({_id: curMarker, owner: userId });
         }else if(typeof theCollection != 'undefined'){
             if(theCollection == 'groups')
-                // use a switch but for now support groups ?
-                var q = groups.findOne({_id:curMarker,owner:Meteor.userId()});
-                //else if(theCollection ==''){
-                //   var q = groups.findOne({_id:curMarker,owner:Meteor.userId()});
+                // use a switch but for now support groups ? 
+                var q = groups.findOne({_id:curMarker,owner:userId});
         }
         if(q){
             console.log(q);
