@@ -123,7 +123,6 @@ Template.edit_marker.events = {
                     record.type = tmpl.find(".marker_type").value;
                     record.group = tmpl.find(".marker_group").value;
 
-      console.log(record);
 //        var changeable_fields = ['group','name','type'];
 //        var old_record = markers.findOne({_id:this._id});
 //        console.log(old_record);
@@ -212,7 +211,6 @@ Template.edit_marker.getUserGroups = function(selected_group_id){
     var q = Template.edit_marker.userGroups();
     
     q.filter(function(arr){
-        console.log(arr._id + ' ' +  this._id + ' passed:' + selected_group_id );
         var r = arr;
         if(r._id == selected_group_id){
             r.selected='selected=true';
@@ -221,11 +219,27 @@ Template.edit_marker.getUserGroups = function(selected_group_id){
         return r;
     });
     
-    console.log(q);
     return q;
 }
 
 Template.edit_marker.markerTypes = Template.add_marker.markerTypes;
+
+
+Template.edit_marker.getMarkerTypes = function(selected_type){
+
+    var q = marker_types.find().fetch();
+    q.filter(function(arr){
+        var r = arr;
+        if(r.name == selected_type){
+            r.selected='selected=true';
+        }else
+            r.selected='';
+        return r;
+    });
+    
+    return q;
+}
+
 
 Template.add_marker.userGroups = Template.group_menu.userGroups;
 
