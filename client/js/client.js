@@ -40,7 +40,9 @@ Template.loggedInMenu.events({
     },
     'click .geolocate': function(evt,tmpl){
         if(navigator.geolocation){
-            navigator.geolocation.getCurrentPosition(successFunction, errorFunction);
+//            alert('geolcating..');
+//            console.log(navigator.geolocation);
+            navigator.geolocation.getCurrentPosition(function(success){Session.set('geoResult',success);}, function(error){Session.set('geoError',error)});
         }else{
             alert('Could not geolocate');
         }

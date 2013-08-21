@@ -55,13 +55,13 @@ setMapCenter = function(q){
 }
    
 // GMAPS Geocoder success/error functions
-var 
+
 successFunction = function(success) {
           var navLatLng = new google.maps.LatLng(success.coords.latitude, success.coords.longitude);
           // annoying...
           //createMap(navLatLng);
           // send it true option to use different marker
-      setMapCenter([success.coords.latitude, success.coords.longitude]);
+     map.setCenter( new google.maps.LatLng([success.coords.latitude, success.coords.longitude]));
           placeNavMarker(navLatLng,true);
 
           lookForMarkers([navLatLng.jb,navLatLng.kb]);
