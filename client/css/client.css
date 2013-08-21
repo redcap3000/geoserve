@@ -1,3 +1,5 @@
+/* @override http://localhost:3000/client/css/client.css?7872dee05c79d615ee64606b4f36574da4da7e7e */
+
 html, body {
     height: 100%;
     margin: 0;
@@ -39,8 +41,6 @@ padding-top: .5em;
 width: auto;float: left;
 }
 
-
-
 #map_canvas { 
   height: 100%;
   position: absolute;
@@ -51,12 +51,9 @@ width: auto;float: left;
   overflow: hidden;
 }
 
-
-
 #group_add span.marker {
 	line-height:1.5em;padding: .25em .45em;float: left;
 }
-
 
 #login-name-link {
 	width: 100%;
@@ -139,6 +136,7 @@ nav li{
 
 
 div#the_editor {
+	clear: left;
 	border-top: 1px solid black;
 }
 
@@ -159,45 +157,17 @@ font-size: .75em;
 	margin-bottom: .25em;
 }
 
-#main_menu div{
-	background-color:white;
-}
-
-#the_markers {
-	clear: both;
-	padding: .4em 0;
-}
-
-#group_add span.span textarea.group_desc {
-	width: 89%;
-}
-
-input{
-	width: 84%;
-}
-
-
-
 #main_menu {
-	float: left;background-color: white;
-	padding: 0 .5em ;
-	width: 93%;
+    height: 100%;
+	background-color: white;
+	padding: .5em ;
 }
 
 legend {
 	border-bottom: solid gray .05em;float: left;margin: .75em 0 .5em  0;
 }
 
-
-
-
-
 /* for geolocate */
-
-select{
- width: 90%;
-margin-top: .5em;	
-}
 
 #main_menu img,a.geolocate img{background-color: white;width: 1.5em;height: 1.5em;border-radius: 5px;border-bottom-right-radius:0px; border-bottom-left-radius: 0px;
 	margin-right: .7em;
@@ -205,13 +175,12 @@ margin-top: .5em;
 }
 
 a.edit_marker {
-	padding: .5em;
+	padding: .25em;
+	float: left;
 }
 
 div#marker_edit {
-	float: left;
-	width: 100%;
-	padding: .5em 0;clear: both;
+	padding-top: .5em;
 }
 
 span.marker_service {
@@ -225,8 +194,6 @@ a.geolocate img{
 background-color: green;
 	border-radius: 10px;	
 }
-
-
 
 #login-buttons-password {
 	height: auto;float: left;clear: both;width: 90%;
@@ -242,21 +209,14 @@ background-color: green;
 	width: 55%;
 }
 
-
 #marker_edit input.add_service {
 float: left;	clear: both;
 width: 92%;
 }
 
-
-
 #marker_edit fieldset.span4 {
 	float: left;font-size: .55em;
 	margin-left: 1em;
-}
-
-#marker_edit fieldset {
-	margin: .25em;clear: both;
 }
 
 span.span.add-on {
@@ -268,7 +228,4 @@ div.input-prepend input{
 }
 
 div.input-append fieldset button.btn {
-float: right;
-margin-top: .45em;
 }
-
