@@ -1,46 +1,42 @@
 <template name="add_marker">
 
-            <div  id="marker_add" class="row">
-            <br/>&nbsp;
-            <label>Create Marker</label>
+    <div  id="marker_add" class="span">
+        <legend>Create Marker</legend>
 
-            <div class="span input-prepend">
-                <span class="span add-on">Name</span>
-                <input class="span marker_name" id="prependedInput" type="text" placeholder="Marker Name">
-            </div>
-            
-            <div class="span input-prepend">
-                <span class="span add-on">Address</span>
-                <input type="text"   placeholder="Street Address" class="marker_address">
-            </div>
-            
-                <fieldset class="row">
-                    <fieldset class="span">
-			    <label class="inline">Type
-			    <select class="marker_type">
-                        {{#each markerTypes}}
-                        <option value="{{name}}">{{name}}</option>
-			{{/each}}
-                    </select>
-                    </label>
-                    
-                    </fieldset>
-                    <fieldset class="span">
-                    <label class="inline">Group
-                    <select class="marker_group">
-                        <option value="">None</option>
-			{{#each userGroups}}
-                        <option value="{{_id}}">{{name}}</option>
-                        {{/each}}
-		</select>
-                    </label>
-                    </fieldset>
-                </fieldset>
-        <fieldset class="span">
-        <input type="button" class="btn-primary add_marker" value="Add">
-        <legend></legend>
-        </fieldset>
+        <div class="row input-prepend">
+            <span class="span add-on">Name</span>
+            <input class="span marker_name" id="prependedInput" type="text" placeholder="Marker Name">
         </div>
+        
+        <div class="row input-prepend">
+            <span class="span add-on">Address</span>
+            <input type="text"   placeholder="Street Address" class="marker_address">
+        </div>
+        
+        <div class="row input-prepend">
+            <span class="span add-on">Type</span>
+            <select class="span marker_type">
+            {{#each markerTypes}}
+            <option value="{{name}}" >{{name}}</option>
+            {{/each}}
+            </select>
+        </div>
+
+        <div class="row input-prepend">
+            <span class="span add-on">Group</span>
+            <select class="span marker_group">
+            <option value="">None</option>
+            {{#each userGroups}}
+            <option value="{{_id}}" >{{name}}</option>
+            {{/each}}
+            </select>
+        </div>
+
+        <fieldset class="row">
+            <input type="button" class="btn-primary add_marker" value="Add">
+            <legend></legend>
+        </fieldset>
+    </div>
 </template>
 
 <template name="services_offered">
@@ -88,47 +84,43 @@
 	 <label class="span">{{name}} - {{type}}</label>
 
     {{#if canEdit}}
-            <div class="input-prepend">
-                <span class="span add-on">Name</span>
-                <input class="span marker_name" id="prependedInput" type="text" placeholder="Marker Name" value="{{name}}">
-            </div>
+    <div class="input-prepend">
+        <span class="span add-on">Name</span>
+        <input class="span marker_name" id="prependedInput" type="text" placeholder="Marker Name" value="{{name}}">
+        </div>
 
-    
-    
-            <div class="input-prepend">
-                <span class="span add-on">Type </span>
-                <select class="span marker_type">
-                {{#each getMarkerTypes this.type}}
-                <option value="{{name}}" {{selected}}>{{name}}</option>
-                {{/each}}
-                </select>
-            </div>
-    
-    
-            {{#if userGroups}}
-        <fieldset>
-            <div class="input-prepend">
-                <span class="span add-on">Group</span>
-                <select class="span marker_group">
+        <div class="input-prepend">
+        <span class="span add-on">Type </span>
+        <select class="span marker_type">
+            {{#each getMarkerTypes this.type}}
+            <option value="{{name}}" {{selected}}>{{name}}</option>
+            {{/each}}
+        </select>
+    </div>
+    {{#if userGroups}}
+    <fieldset>
+        <div class="input-prepend">
+            <span class="span add-on">Group</span>
+            <select class="span marker_group">
                 <option value="">None</option>
                 {{#each getUserGroups this.group}}
                 <option value="{{_id}}" {{selected}}>{{name}}</option>
                 {{/each}}
-                </select>
-            </div>
-        </fieldset>
-            {{/if}}
+            </select>
+        </div>
+    </fieldset>
+    {{/if}}
 
-            {{>marker_services}}
-            <legend></legend>
-    
-                {{>services_offered}}
-            <legend></legend>
-                <fieldset class="span">
-                    <input type="button" class="btn-primary update_marker" value="Update">
-                    <input type="button" class="btn del_marker" value="Remove">
-                </fieldset>
-            
+    {{>marker_services}}
+    <legend></legend>
+
+    {{>services_offered}}
+    <legend></legend>
+    <fieldset class="span">
+        <input type="button" class="btn-primary update_marker" value="Update">
+        <input type="button" class="btn del_marker" value="Remove">
+    </fieldset>
+
 	{{else}}
         {{#if currentServices}}
                {{#each currentServices}}
@@ -137,11 +129,9 @@
         {{/if}}
         {{/if}}
     </form>
-
     </div>
 </template>
 
 <template name="markers">
-<span class="marker"><a href="#" class="edit_marker">
-{{name}}</a></span>
+<span class="marker"><a href="#" class="edit_marker">{{name}}</a></span>
 </template>
