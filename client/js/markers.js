@@ -82,7 +82,11 @@ Template.markers.events({
 
 Template.edit_marker.events = {
     'click input.del_marker' : function(){
-        markers.remove({_id:this._id});
+        if(markers.remove({_id:this._id})){
+             Session.set('selected_marker',false);
+            // remove associated services ?
+        }
+        
     },
     'click .del_marker_service' : function(){
         marker_services.remove({_id: this._id});

@@ -2,81 +2,79 @@
  *
  *
  */
-if(Meteor.isClient){
- 
 
- 
-     lookForMarkers = function(theBox){
-        c = markers.find({}, {fields: {_id: 1}}).fetch();
-        if(c.length > 0)
-            for(var i=0;i<c.length;i++){
-                var arr= c[i];
-                if(typeof arr['loc'] != 'undefined'){
-                    var co = new google.maps.LatLng(arr['loc'][0], arr['loc'][1]), marker_type = '';
-                    if(arr['type'] == 'Shelter' || arr['type'] == 'Hospital' || arr['type'] == 'Other' || arr['type'] == 'Pharmacy')
-                    // default
-                        marker_type = arr['type'];
-                    else
-                        marker_type = undefined;
-                    placeNavMarker(co,marker_type,function(){alert(arr['name'] + ' ' + arr['type']);});
-                }
+lookForMarkers = function(theBox){
+    c = markers.find({}, {fields: {_id: 1}}).fetch();
+    if(c.length > 0)
+        for(var i=0;i<c.length;i++){
+            var arr= c[i];
+            if(typeof arr['loc'] != 'undefined'){
+                var co = new google.maps.LatLng(arr['loc'][0], arr['loc'][1]), marker_type = '';
+                if(arr['type'] == 'Shelter' || arr['type'] == 'Hospital' || arr['type'] == 'Other' || arr['type'] == 'Pharmacy')
+                // default
+                    marker_type = arr['type'];
+                else
+                    marker_type = undefined;
+                placeNavMarker(co,marker_type,function(){alert(arr['name'] + ' ' + arr['type']);});
             }
+        }
+};
+
+createMap = function(latLng) {
+    var mapOptions = {
+        disableDoubleClick: true,
+        streetViewControl: false,
+        scrollwheel: false,
+        zoom: 15,
+        center: latLng,
+        mapTypeId: google.maps.MapTypeId.ROADMAP
     };
+    map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+};
 
-    createMap = function(latLng) {
-        var mapOptions = {
-            disableDoubleClick: true,
-            streetViewControl: false,
-            scrollwheel: false,
-            zoom: 15,
-            center: latLng,
-            mapTypeId: google.maps.MapTypeId.ROADMAP
-        };
-        map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
-    };
+placeNavMarker = function(latLng,image,clickCallBack) {
+    if(typeof image == 'undefined')
+        var image = "Other.png";
+    else if(typeof image == 'string')
+    // dont show this marker for the geocoded location
+        var image = image + ".png";
+    else
+        var image = "http://gmaps-samples.googlecode.com/svn/trunk/markers/blue/blank.png";
+    // this map is not always there>>>?
+    var new_marker = new google.maps.Marker({
+        position: latLng,
+        map: map,
+        icon: image
+        });
+    if(typeof clickCallBack == 'function')
+        google.maps.event.addListener(new_marker,"click",clickCallBack);
+};
 
-    placeNavMarker = function(latLng,image,clickCallBack) {
-        if(typeof image == 'undefined')
-            var image = "Other.png";
-        else if(typeof image == 'string')
-        // dont show this marker for the geocoded location
-            var image = image + ".png";
-        else
-            var image = "http://gmaps-samples.googlecode.com/svn/trunk/markers/blue/blank.png";
-        // this map is not always there>>>?
-        var new_marker = new google.maps.Marker({
-            position: latLng,
-            map: map,
-            icon: image
-            });
-        if(typeof clickCallBack == 'function')
-            google.maps.event.addListener(new_marker,"click",clickCallBack);
-    };
-    
-    setMapCenter = function(q){
-        map.setCenter(new google.maps.LatLng(q[0],q[1]));
-    }
-       
-    // GMAPS Geocoder success/error functions
-    successFunction = function(success) {
-              var navLatLng = new google.maps.LatLng(success.coords.latitude, success.coords.longitude);
-              // annoying...
-              //createMap(navLatLng);
-              // send it true option to use different marker
-	      setMapCenter([success.coords.latitude, success.coords.longitude]);
-              placeNavMarker(navLatLng,true);
-
-              lookForMarkers([navLatLng.jb,navLatLng.kb]);
-            };
-
-    errorFunction = function(success) {
-        // set this to a default location? define it somewhere...?
-        var navLatLng = new google.maps.LatLng(37.808631, -122.474470);
-        //createMap(latlng);
-        placeNavMarker(navLatLng);
-    //  addAutocomplete();
-        };
+setMapCenter = function(q){
+    map.setCenter(new google.maps.LatLng(q[0],q[1]));
 }
+   
+// GMAPS Geocoder success/error functions
+var 
+successFunction = function(success) {
+          var navLatLng = new google.maps.LatLng(success.coords.latitude, success.coords.longitude);
+          // annoying...
+          //createMap(navLatLng);
+          // send it true option to use different marker
+      setMapCenter([success.coords.latitude, success.coords.longitude]);
+          placeNavMarker(navLatLng,true);
+
+          lookForMarkers([navLatLng.jb,navLatLng.kb]);
+        },
+
+errorFunction = function(success) {
+    // set this to a default location? define it somewhere...?
+    var navLatLng = new google.maps.LatLng(37.808631, -122.474470);
+    //createMap(latlng);
+    placeNavMarker(navLatLng);
+//  addAutocomplete();
+    };
+
 /*
  *
  * END GMAPS

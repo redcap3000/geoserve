@@ -12,7 +12,7 @@ Meteor.startup(function(){
     marker_services_sub = Meteor.subscribe("allMarkerServices");
 
     Deps.autorun(function(){
-            if(marker_sub.ready() && marker_types_sub.ready() && groups_sub.ready() && services_sub.ready() && marker_services_sub.ready()){
+        //    if(marker_sub.ready() && marker_types_sub.ready() && groups_sub.ready() && services_sub.ready() && marker_services_sub.ready()){
                 // this sets the new loc prematurely?
                 var curMarker = Session.get('selected_marker');
                 if(curMarker){
@@ -29,6 +29,7 @@ Meteor.startup(function(){
                 
                 // probably show something that allows us to edit the selected marker?
                 }else{
+                    // console.log('else');
                     var mCheck = markers.find({},{}).fetch();
                     // maybe not 'create the map new each time?
                     if(typeof map === 'undefined' && !mCheck){
@@ -39,7 +40,7 @@ Meteor.startup(function(){
                         if(typeof emCheck != 'undefined')
                             emCheck = emCheck['loc'];
                         else{
-                            alert('It appears you are running geoserve for the first time!');
+                            //alert('It appears you are running geoserve for the first time!');
                             // ideally show the add marker screen
                             emCheck = [0,0];
                         }
@@ -48,7 +49,7 @@ Meteor.startup(function(){
                         setMapCenter([0,0]);
                     lookForMarkers();
                 }
-            }
+            //}
     });
       
 });
