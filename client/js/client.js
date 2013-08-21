@@ -57,20 +57,10 @@ Template.loggedInMenu.events({
 
 
 Template.services_offered.services = function(evt,tmpl){
-    if(typeof services_sub != 'undefined')
-        if(services_sub.ready()){
-            console.log('services offered ready');
-            var q = services.find({},{});
-            q = q.fetch();
-            return q;
-        }else
-            console.log('services sub not ready');
+    return services.find({},{});
 };
 
-
-
-
-/* 
+/*
  *
  *
  *   Logged in menu template functions  to generate menu for markers, and also to handle the selected marker
@@ -87,9 +77,9 @@ Template.loggedInMenu.marker_index = function(evt,tmpl){
 Template.loggedInMenu.selectedMarker = function(evt,tmpl){
     var curMarker = Session.get('selected_marker');
     if(curMarker){
-        var q = markers.findOne({_id: curMarker});
-       return q;
+        return markers.findOne({_id: curMarker});
     }
+    return [];
 }
 
 /* 

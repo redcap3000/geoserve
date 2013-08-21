@@ -5,20 +5,18 @@
 
 Meteor.startup(function(){
     createMap();
-    marker_sub = Meteor.subscribe("allMarkers");
+    var marker_sub = Meteor.subscribe("allMarkers"),
+    groups_sub = Meteor.subscribe("allGroups"),
+    marker_types_sub = Meteor.subscribe("allMarkerTypes"),
+    services_sub = Meteor.subscribe("allServices"),
+    marker_services_sub = Meteor.subscribe("allMarkerServices");
+
     Deps.autorun(function(){
-        if(marker_sub.ready()){
-            groups_sub = Meteor.subscribe("allGroups"),
-            marker_types_sub = Meteor.subscribe("allMarkerTypes"),
-            services_sub = Meteor.subscribe("allServices");
-            marker_services_sub = Meteor.subscribe("allMarkerServices");
-            if(marker_types_sub.ready() && groups_sub.ready() && services_sub.ready() && marker_services_sub.ready()){
+            if(marker_sub.ready() && marker_types_sub.ready() && groups_sub.ready() && services_sub.ready() && marker_services_sub.ready()){
                 // this sets the new loc prematurely?
                 var curMarker = Session.get('selected_marker');
                 if(curMarker){
                     // load marker services and all services - but also need to trigger this when creating a new record...
-                   
-                    console.log('cur marker set inside of autorun');
                     var q = markers.findOne({_id: curMarker});
                     if(q)
                         if(typeof q['loc'] != 'undefined')
@@ -51,7 +49,6 @@ Meteor.startup(function(){
                     lookForMarkers();
                 }
             }
-        }
     });
       
 });
