@@ -6,14 +6,44 @@
 
 // Deals with navigation showing/hiding elements; going to create screen/edit screen, and geolocation button.
 
+// for hiding the loginto instagram button ..
+Template.nav.hasInstaCode = function(){
+    return (Session.get('access_token') ? true : false);
+}
+Template.nav.events = {'click .instaLogin' : function () {
+            var doesHaveAccess = Session.get('access_token');
+            if(!doesHaveAccess){
+                Meteor.call('authenticate',
+                    function(error,result){
+                        if(typeof error != 'undefined'){
+                            console.log('error');
+                        }else
+                            // redirect here...
+                           window.location.replace(result);
+                        });
+                        }else if(doesHaveAccess){
+                            Meteor.call('request_auth_code',doesHaveAccess,Meteor.settings.redirect_uri,
+                                function(error,result){
+                                    if(typeof error =='undefined'){
+                                        Session.set('access_token',result.access_token);
+                                        Session.set('user_info',result.user);
+                                    }else
+                                        console.log(error);
+                                }
+                            );
+                        }
+        }
+    }
+
+
 Template.loggedInMenu.events({
-    'click .groupAdd' : function(evt,tmpl){
+    'click a.groupAdd' : function(evt,tmpl){
         Template.loggedInMenu.rendered();
         $('div#the_markers').hide();
         $('div#marker_edit').hide();
         $('div#groups').show();
     },
-    'click .showMarkers' : function(evt,tmpl){
+    'click a.showMarkers' : function(evt,tmpl){
         Template.loggedInMenu.rendered();
         $('div#groups').hide();
         $('div#the_markers').show();
@@ -21,24 +51,24 @@ Template.loggedInMenu.events({
             $('div#marker_edit').show();
  
     },
-    'click .markerEditShow': function(evt,tmpl){
+    'click a.markerEditShow': function(evt,tmpl){
         Template.loggedInMenu.rendered();
         $('div#groups').hide();
         $('div#marker_edit').show();
     },
-    'click .markerAddShow': function(evt,tmpl){
+    'click a.markerAddShow': function(evt,tmpl){
         Template.loggedInMenu.rendered();
         $('div#groups').hide();
         $('div#marker_add').show();
         $('div#the_markers').hide();
         $('div#marker_edit').hide();
     },
-    'click .settingsShow': function(evt,tmpl){
+    'click a.settingsShow': function(evt,tmpl){
         Template.loggedInMenu.rendered();
         $('div#groups').hide();
         $('div#user_settings').show();
     },
-    'click .geolocate': function(evt,tmpl){
+    'click a.geolocate': function(evt,tmpl){
         if(navigator.geolocation){
 //            alert('geolcating..');
 //            console.log(navigator.geolocation);
@@ -46,7 +76,8 @@ Template.loggedInMenu.events({
         }else{
             alert('Could not geolocate');
         }
-    }
+    },
+      
 });
 
 // adds a new 'group' and stores userid as record 'owner'

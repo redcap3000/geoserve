@@ -49,7 +49,17 @@ Meteor.startup(function(){
                         setMapCenter([0,0]);
                     lookForMarkers();
                 }
-            //}
+                
+                /* instagram stuff */
+                
+                var access_token = window.location.href.split("#");
+                if(access_token.length > 1 && !doesHaveAccess){
+                    var doesHaveAccess = Session.get('access_token');
+                    access_token = access_token[1].split("=")[1];
+    //                access_token = access_token[1];
+                    Session.set('access_token', access_token);
+                 // forward to new place without the ugly code in the url?
+                }
     });
       
 });

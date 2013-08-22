@@ -126,5 +126,54 @@ Meteor.methods({
             return q._id;
         }
         return false;
-    }
-});
+    },
+           
+     authenticate : function(client_id){
+        var settings = Meteor.settings;
+        if(typeof settings.redirect_uri != 'undefined'){
+            var redirect_uri = settings.redirect_uri,
+            client_id = settings.client_id;
+
+            if(typeof settings.client_id !== 'undefined'){
+                if(typeof client_id != 'undefined' && typeof redirect_uri != 'undefined')
+                    return 'https://api.instagram.com/oauth/authorize/?client_id='+client_id+'&redirect_uri='+redirect_uri+'&response_type=token';
+                else
+                    return {error: 'missing client id and/or redirect uri'};
+            }else
+                console.log('Could not initalize settings, was meteor deployed with --settings deploy_settings.json');
+            }
+        },
+     request_auth_code : function(code){
+        
+        var settings = Meteor.settings;
+        if(typeof settings.client_id !== 'undefined'){
+            var client_id = settings.client_id;
+            var client_secret = settings.secret;
+            var redirect_uri = settings.redirect_uri;
+        
+            var base_url = 'https://api.instagram.com/oauth/access_token';
+            // does NOT like the slashes....
+            var url_params = { params:{
+                'client_id' : client_id,
+                'client_secret' : client_secret,
+                'grant_type' : 'authorization_code',
+                'redirect_uri' : redirect_uri,
+                'code' : code
+            
+            }};
+            this.unblock();
+            var request = HTTP.get(base_url,url_params,function(error,result){if(result) return result;});
+            
+            /*
+            var request = Meteor.http.post(base_url,url_params,function(error,result){
+                        if(result){
+                            return result;
+                        }
+            });                */
+
+            }else{
+                console.log('Could not initalize settings, was meteor deployed with --settings deploy_settings.json');
+            }
+        return false;
+    }}
+   );
