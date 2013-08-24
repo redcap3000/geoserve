@@ -32,13 +32,13 @@ createMap = function(latLng) {
     map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
 };
 
-placeNavMarker = function(latLng,image,clickCallBack) {
-    if(typeof image == 'undefined')
+placeNavMarker = function(latLng,image,title,clickCallBack) {
+   // if(typeof image == 'undefined')
         var image = "Other.png";
-    else if(typeof image == 'string')
+//    else if(typeof image == 'string')
     // dont show this marker for the geocoded location
-        var image = image + ".png";
-    else
+  //      var image = image ;
+   // else
         var image = "http://gmaps-samples.googlecode.com/svn/trunk/markers/blue/blank.png";
     // this map is not always there>>>?
     var new_marker = new google.maps.Marker({
