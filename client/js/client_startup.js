@@ -59,10 +59,10 @@ Meteor.startup(function(){
                             
                             // check if r.id and Meteor.userId() do not exist before insertion ..
                             
-                            console.log(insta_grams.findOne({id:r.id}));
+                            //console.log(insta_grams.findOne({id:r.id}));
                             var existing_check = insta_grams.findOne({id:r.id});
-                            console.log(existing_check);
-                            if(!insta_grams.findOne({id:r.id})){
+                            //console.log(existing_check);
+                            if(!existing_check){
                                 r.lat = arr.location.latitude;
                                 r.lon = arr.location.longitude;
                                 r.owner = Meteor.userId();
@@ -70,15 +70,10 @@ Meteor.startup(function(){
                             }else{
                                 // verif any updates to object..
                                 if(arr.likes != null && existing_check.likes != arr.likes.count){
-                                    console.log('updating likes ..');
-                                    console.log(existing_check.likes);
-                                    console.log(arr.likes)
-                                    console.log(insta_grams.update(existing_check._id,{"$set" :{ likes : arr.likes.count}}));
+                                    insta_grams.update(existing_check._id,{"$set" :{ likes : arr.likes.count}});
                                 }else{
-                                    console.log('likes same.. ');
                                 }
                             
-                                console.log('exists');
                             }
                             instaLocations.push({id: arr.id,x:arr.location.latitude,y:arr.location.longitude});
                         }
@@ -87,7 +82,7 @@ Meteor.startup(function(){
                     instaGram = Session.set('instaCurrentMarkers',instaLocations);
   //                  console.log(instaThumbnails);
                 }else if(instaGram && instaCurrentMarkers){
-                    //
+                    // recheck if feed has been updated ? set interval ?
                 }
                 
     });
