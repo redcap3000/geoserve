@@ -33,6 +33,15 @@ Template.nav.events = {'click .instaLogin' : function () {
                                         Session.set('user_info',result.user);
                                         // do default call for user feed ... to populate map with markers...
                                         
+                                        Meteor.call('user_self',result.access_token,function(error,result){
+                                                if(typeof error =='undefined'){
+                                                    Session.set('user_self',result);
+                                                }else{
+                                                   // alert('error');
+                                                    console.log(error);
+                                            }}
+                                        );
+                                        
                                         
                                     }else
                                         console.log(error);
@@ -42,8 +51,8 @@ Template.nav.events = {'click .instaLogin' : function () {
         },
         'click .user_self' : function(){
             var access_token = Session.get('access_token');
-            var user_feed = Session.get('user_self');
-             if(access_token && !user_feed)
+            //var user_feed = Session.get('user_self');
+             if(access_token)
                  Meteor.call('user_self',access_token,function(error,result){
                                     if(typeof error =='undefined'){
                                         Session.set('user_self',result);
@@ -60,12 +69,12 @@ Template.nav.events = {'click .instaLogin' : function () {
 
 Template.loggedInMenu.instaMarkers = function(){
 // check if marker sub is ready?
-    return insta_grams.find();
+    return insta_grams.find({},{sort:{id: -1}});
 }
 
 Template.instaMarker.events = {
 
-    "click a.focus_marker" : function(){
+    "click .focus_marker" : function(){
         setMapCenter([this.lat,this.lon]);
     }
 }
