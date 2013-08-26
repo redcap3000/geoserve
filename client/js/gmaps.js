@@ -33,19 +33,21 @@ createMap = function(latLng) {
 };
 
 placeNavMarker = function(latLng,image,title,clickCallBack) {
-   // if(typeof image == 'undefined')
-        var image = "Other.png";
-//    else if(typeof image == 'string')
-    // dont show this marker for the geocoded location
-  //      var image = image ;
-   // else
-        var image = "http://gmaps-samples.googlecode.com/svn/trunk/markers/blue/blank.png";
+        var image = image;
+//        var image = "http://gmaps-samples.googlecode.com/svn/trunk/markers/blue/blank.png";
     // this map is not always there>>>?
+    if(typeof title == 'undefined')
+        title =null;
+    
+    
     var new_marker = new google.maps.Marker({
         position: latLng,
         map: map,
-        icon: image
-        });
+        'title': title,
+        icon: { url:image ,scaledSize: new google.maps.Size(50,50)} }
+        );
+    
+    
     if(typeof clickCallBack == 'function')
         google.maps.event.addListener(new_marker,"click",clickCallBack);
 };
