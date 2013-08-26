@@ -27,18 +27,30 @@
        
         </div>
        
+        {{else}}
+    
+        <h3 style="color:green;">Geoserve</h3>
+            
+        <div class="span" style="color:black">
+            <em>An <a href="http://instagram.com/developer/">Instagram-API</a> and Google Maps-API powered visualization of instagram posts with location data!</em>
+            <ul style="padding-top:.5em;"><li>Log in / create an account</li><li>Press log into instagram</li><li>Press 'instaFeed' at any time to update your feed..</p></li></ul>
+            
+            <b><a href="http://redcapmedia.com">Ronaldo Barbachano 2013</a></b>
+        </div>
+       
         {{/if}}
+        
     </div>
 </template>
 
 
 <template name="instaMarker">
-    <span class="row column marker">
+    <div class="span focus_marker">
     
-    
+    <hr/>
+    <img src="{{image_thumb}}"/>
     <b style="color:orange;float:right"><a href="{{link}}" target="_new">{{likes}}</a></b>
-    <a href="#" class="focus_marker" {{#if caption}}title="{{caption}}"{{/if}}><img src="{{image_low}}"/>
+    <a href="#" STYLE="float:left" {{#if caption}}title="{{caption}}"{{/if}}>
     {{username}}</a>
-    
-    </span>
+    </div>
 </template>

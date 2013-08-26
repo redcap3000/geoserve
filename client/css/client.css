@@ -1,5 +1,3 @@
-/* @override http://192.168.0.190:3000/client/css/client.css?de027f9f675b6dad7051be2ab504425fa5e7444f */
-
 html, body {
     height: 100%;
     margin: 0;
@@ -13,14 +11,32 @@ p {
 }
 
 nav {
-    overflow:auto;
     font-size: 25px;
-    width: 12.95em;
+    width: 15.95em;
+    overflow:scroll;
     height: 100%;
     background-color: white;
     z-index: 1;
     color: #eee;
     font-family: Helvetica Neue, Helvetica, arial;
+}
+
+div.span.focus_marker {
+	width: 14em;
+	margin: 0;
+	margin-left: .5em;
+	display: block;
+	cursor: pointer;
+}
+
+#the_markers div.span.focus_marker img {
+	float: left;
+	margin-right: .5em;
+}
+
+#the_markers div.span.focus_marker b a {
+	clear: both;float: left;width: 100%;
+	
 }
 
 #login-name-link {
@@ -102,6 +118,5 @@ div#the_markers {
 	border-top: 1px solid gray;
 	float: left;
 	width: 100%;
-	height: 70%;
-	overflow: scroll;
+	overflow: auto;
 }
