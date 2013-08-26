@@ -8,14 +8,13 @@
 
 // for hiding the loginto instagram button ..
 
-Template.nav.helpers = {
-    instaPostReady : function(){
+    Template.nav.instaPostReady = function(){
             return !Session.equals("user_self",false);
-        },
-    hasInstaCode : function(){
+        };
+    Template.nav.hasInstaCode = function(){
             return (Session.get('access_token') ? true : false);
-        },
-    };
+        };
+
 
 
 Template.nav.events = {

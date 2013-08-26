@@ -5,7 +5,7 @@
         
             {{loginButtons align="right"}}
                 {{#if currentUser}}
-                    {{#if hasInstaCode}}{{#if instaPostsReady}}<a class="btn user_self">instaFeed</a>{{else}}<b>requesting...</b>{{/if}}{{else}}<button class="button primary instaLogin" >Loginto Instagram</button>{{/if}}
+                    {{#if hasInstaCode}}{{#if instaPostReady}}<a class="btn user_self">instaFeed</a>{{else}}<b>requesting...</b>{{/if}}{{else}}<button class="button primary instaLogin" >Loginto Instagram</button>{{/if}}
                  {{/if}}
 
        </span>
@@ -28,7 +28,9 @@
         </div>
        
         {{else}}
-    
+        {{#if loggingIn}}
+            <b style="color:black;">logging in...</b>
+        {{else}}
         <h3 style="color:green;">Geoserve</h3>
             
         <div class="span" style="color:black">
@@ -37,7 +39,7 @@
             
             <b><a href="http://redcapmedia.com">Ronaldo Barbachano 2013</a></b>
         </div>
-       
+        {{/if}}
         {{/if}}
         
     </div>
