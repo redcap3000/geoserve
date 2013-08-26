@@ -24,7 +24,6 @@ Meteor.startup(function(){
             var instaLocations = [], instaThumbnails = [];
             instaGram.filter(function(arr){
                 if(arr.location != null){
-                    placeNavMarker(new google.maps.LatLng(arr.location.latitude,arr.location.longitude),arr.images.thumbnail.url, function(){$(arr.id).toggle()});
                     // this is checking if insta_grams is present client/side so it gets reinserted! wait for the insta_grams collection to be ready?
                     var existing_check = insta_grams.findOne({id:arr.id});
                     if(existing_check){
@@ -71,7 +70,6 @@ Meteor.startup(function(){
             // make first call ..
              if(access_token)
                  Meteor.call('user_self',access_token,function(error,result){
-                            console.log('caaling user_self');
                                     if(typeof error =='undefined'){
                                         Session.set('user_self',result);
                                     }else{

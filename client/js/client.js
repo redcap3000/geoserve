@@ -75,7 +75,14 @@ Template.loggedInMenu.instaMarkers = function(){
 Template.instaMarker.events = {
 
     "click .focus_marker" : function(){
+    
+    // probably check to see that the marker doesn't already exist ?
         setMapCenter([this.lat,this.lon]);
+        
+        
     }
 }
 
+Template.instaMarker.created = function(){
+       placeNavMarker(new google.maps.LatLng(this.data.lat,this.data.lon),this.image_thumbnail);
+}
