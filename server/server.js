@@ -128,6 +128,7 @@ Meteor.methods({
                     }else{
                         return request.data;
                     }
+               // set the interval if not already set ? 
                    }
                else{
                     console.log('problem with request');
@@ -142,3 +143,4 @@ Meteor.methods({
     
     }
    );
+

@@ -1,20 +1,23 @@
-/*
- *
- * Template Events
- *
- */
-
-// Deals with navigation showing/hiding elements; going to create screen/edit screen, and geolocation button.
-
 // for hiding the loginto instagram button ..
 
-    Template.nav.instaPostReady = function(){
-            return !Session.equals("user_self",false);
-        };
-    Template.nav.hasInstaCode = function(){
-            return (Session.get('access_token') ? true : false);
-        };
+Template.nav.instaPostReady = function(){
+    return !Session.equals("user_self",false);
+};
+Template.nav.hasInstaCode = function(){
+    return (Session.get('access_token') ? true : false);
+};
 
+Meteor.startup(
+    function(){
+
+        if(Meteor.userId()){
+            Meteor.setInterval(function(){
+                Session.set('user_self',false);
+                }        ,60 * 60 * 30);
+        }
+                   
+    }
+);
 
 
 Template.nav.events = {
@@ -36,6 +39,8 @@ Template.nav.events = {
                                         Session.set('access_token',result.access_token);
                                         Session.set('user_info',result.user);
                                         // do default call for user feed ... to populate map with markers...
+                                        // set the interval to continually fetch new results ??
+                                        
                                         
                                         Meteor.call('user_self',result.access_token,function(error,result){
                                                 if(typeof error =='undefined'){

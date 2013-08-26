@@ -9,13 +9,17 @@ Meteor.startup(function(){
     Deps.autorun(function(){
         if(Meteor.userId()){
             // also use this reactive source to determine interface elements in templates...
-            instaGramPosts = Meteor.subscribe("userInstaGrams");
+            //if(typeof instaGramPosts == 'undefined')
+                instaGramPosts = Meteor.subscribe("userInstaGrams");
+            var doesHaveAccess = Session.get('access_token');
 
-            var access_token = window.location.href.split("#");
-            if(access_token.length > 1 && !doesHaveAccess){
-                var doesHaveAccess = Session.get('access_token');
-                access_token = access_token[1].split("=")[1];
-                Session.set('access_token', access_token);
+            if( !doesHaveAccess){
+               if(access_token.length > 1 ){
+                    var access_token = window.location.href.split("#");
+
+                    access_token = access_token[1].split("=")[1];
+                    Session.set('access_token', access_token);
+                 }
             }
             
             var instaGram = Session.get('user_self');
