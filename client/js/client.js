@@ -7,13 +7,19 @@
 // Deals with navigation showing/hiding elements; going to create screen/edit screen, and geolocation button.
 
 // for hiding the loginto instagram button ..
-Template.nav.hasInstaCode = function(){
-    return (Session.get('access_token') ? true : false);
-}
-Template.nav.instaPostsReady = function(){
-    return !Session.equals("user_self",false);
-}
-Template.nav.events = {'click .instaLogin' : function () {
+
+Template.nav.helpers = {
+    instaPostReady : function(){
+            return !Session.equals("user_self",false);
+        },
+    hasInstaCode : function(){
+            return (Session.get('access_token') ? true : false);
+        },
+    };
+
+
+Template.nav.events = {
+    'click .instaLogin' : function () {
             var doesHaveAccess = Session.get('access_token');
             if(!doesHaveAccess){
                 Meteor.call('authenticate',
@@ -47,25 +53,24 @@ Template.nav.events = {'click .instaLogin' : function () {
                                 }
                             );
                         }
-        },
-        'click .user_self' : function(){
-            var access_token = Session.get('access_token');
-            //var user_feed = Session.get('user_self');
-            // only run this if 
-             if(access_token){
-                Session.set('user_self',false);
-                 Meteor.call('user_self',access_token,function(error,result){
-                                    if(typeof error =='undefined'){
-                                        Session.set('user_self',result);
-                                    }else{
-                                       // alert('error');
-                                        console.log(error);
-                                }}
-                                );
-            }
-            
+            },
+    'click .user_self' : function(){
+        var access_token = Session.get('access_token');
+        //var user_feed = Session.get('user_self');
+        // only run this if 
+         if(access_token){
+            Session.set('user_self',false);
+             Meteor.call('user_self',access_token,function(error,result){
+                                if(typeof error =='undefined'){
+                                    Session.set('user_self',result);
+                                }else{
+                                   // alert('error');
+                                    console.log(error);
+                            }}
+                            );
         }
     }
+};
 
 Template.loggedInMenu.instaMarkers = function(){
 // check if marker sub is ready?
@@ -73,16 +78,13 @@ Template.loggedInMenu.instaMarkers = function(){
 }
 
 Template.instaMarker.events = {
-
     "click .focus_marker" : function(){
-    
-    // probably check to see that the marker doesn't already exist ?
         setMapCenter([this.lat,this.lon]);
-        
-        
     }
 }
 
 Template.instaMarker.created = function(){
        placeNavMarker(new google.maps.LatLng(this.data.lat,this.data.lon),this.image_thumbnail);
 }
+
+Template.instaMarker.preserve = ['img','.instaUser'];
