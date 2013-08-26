@@ -74,7 +74,7 @@ Meteor.methods({
                
                     if(typeof request.data.data != 'undefined'){
                         // filter data
-                        var r = [];
+                        var result = [];
                
                
                
@@ -116,6 +116,7 @@ Meteor.methods({
                                 r.lat = arr.location.latitude;
                                 r.lon = arr.location.longitude;
                                 r.owner = Meteor.userId();
+                                result.push(r);
                                 insta_grams.insert(r);
                             }
                             }
