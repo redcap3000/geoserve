@@ -7,16 +7,19 @@ Meteor.startup(function(){
     createMap();
 
     Deps.autorun(function(){
-        instaGramPosts = Meteor.subscribe("userInstaGrams");
+        if(Meteor.userId()){
+            // also use this reactive source to determine interface elements in templates...
+            instaGramPosts = Meteor.subscribe("userInstaGrams");
 
-        var access_token = window.location.href.split("#");
-        if(access_token.length > 1 && !doesHaveAccess){
-            var doesHaveAccess = Session.get('access_token');
-            access_token = access_token[1].split("=")[1];
-            Session.set('access_token', access_token);
+            var access_token = window.location.href.split("#");
+            if(access_token.length > 1 && !doesHaveAccess){
+                var doesHaveAccess = Session.get('access_token');
+                access_token = access_token[1].split("=")[1];
+                Session.set('access_token', access_token);
+            }
+            
+            var instaGram = Session.get('user_self');
         }
-        
-        var instaGram = Session.get('user_self');
         if(Meteor.userId() && instaGram && instaGramPosts.ready()){
             var instaLocations = [], instaThumbnails = [];
             instaGram.filter(function(arr){

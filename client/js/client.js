@@ -10,9 +10,8 @@
 Template.nav.hasInstaCode = function(){
     return (Session.get('access_token') ? true : false);
 }
-Template.nav.instaCurrentMarkers = function(){
-    alert('insta current markers');
-        return Session.get('instaCurrentMarkers');
+Template.nav.instaPostsReady = function(){
+    return !Session.equals("user_self",false);
 }
 Template.nav.events = {'click .instaLogin' : function () {
             var doesHaveAccess = Session.get('access_token');
@@ -52,7 +51,9 @@ Template.nav.events = {'click .instaLogin' : function () {
         'click .user_self' : function(){
             var access_token = Session.get('access_token');
             //var user_feed = Session.get('user_self');
-             if(access_token)
+            // only run this if 
+             if(access_token){
+                Session.set('user_self',false);
                  Meteor.call('user_self',access_token,function(error,result){
                                     if(typeof error =='undefined'){
                                         Session.set('user_self',result);
@@ -61,8 +62,7 @@ Template.nav.events = {'click .instaLogin' : function () {
                                         console.log(error);
                                 }}
                                 );
-             else
-                return user_feed;
+            }
             
         }
     }
