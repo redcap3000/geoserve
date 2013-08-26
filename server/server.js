@@ -70,10 +70,59 @@ Meteor.methods({
                 var request = HTTP.get(base_url);
                 if(request.statusCode === 200 && typeof request.data != 'undefined'){
                
-                    console.log(request);
+                    //console.log(request);
                
                     if(typeof request.data.data != 'undefined'){
-                        return request.data.data;
+                        // filter data
+                        var r = [];
+               
+               
+               
+               
+
+                        request.data.data.filter(function(arr){
+                            if(arr.location != null){
+                        // this is checking if insta_grams is present client/side so it gets reinserted! wait for the insta_grams collection to be ready?
+                                var existing_check = insta_grams.findOne({id:arr.id});
+                            if(existing_check){
+                                if(arr.likes != null && existing_check.likes != arr.likes.count){
+                                    insta_grams.update(existing_check._id,{"$set" :{ likes : arr.likes.count}});
+                                }
+                            }else{
+
+                                var r = {
+                                    id : arr.id,
+                                    username : arr.user.username,
+                                    link : arr.link,
+                                    created_time : arr.created_time,
+                                    image_low : arr.images.low_resolution.url,
+                                    image_standard : arr.images.standard_resolution.url,
+                                    image_thumb : arr.images.thumbnail.url,
+                                    type : arr.type
+                                };
+                                
+                                if(arr.caption != null){
+                                    r.caption = arr.caption.text,
+                                    r.caption_id = arr.caption.id;
+                                }
+                                
+                                if(arr.tags != null){
+                                    r.tags = arr.tags;
+                                }
+                                
+                                if(arr.likes != null){
+                                     r.likes = arr.likes.count;
+                                }
+                                r.lat = arr.location.latitude;
+                                r.lon = arr.location.longitude;
+                                r.owner = Meteor.userId();
+                                insta_grams.insert(r);
+                            }
+                            }
+               
+                        });
+//                        return request.data.data;
+                            return true;
                
                     }else{
                         return request.data;
