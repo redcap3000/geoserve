@@ -9,15 +9,16 @@ Meteor.publish("usersGroupCodes",function(){
 //
 
 
-Meteor.startup(
-
-function(){
     instaFilter =
     function(arr){
         if(arr.location != null){
-
+            var the_owner = this.userId;
+            if(the_owner == null || !the_owner){
+                the_owner = Meteor.userId();
+                
+            }
     // this is checking if insta_grams is present client/side so it gets reinserted! wait for the insta_grams collection to be ready?
-            var existing_check = insta_grams.findOne({id:arr.id});
+            var existing_check = insta_grams.findOne({id:arr.id,owner:this.userId});
         if(existing_check){
         
         
@@ -26,7 +27,6 @@ function(){
             }
         }else{
 
-            console.log(arr.id);
             var r = {
                 id : arr.id,
                 username : arr.user.username,
@@ -55,18 +55,20 @@ function(){
             
             if(typeof insertUserId != 'undefined')
                 r.owner = insertUserId;
-            else
+            else if(Meteor.userId())
             // owner saved as null WTF?
                 r.owner = Meteor.userId();
-            console.log(insta_grams.insert(r));
+            else if(this.userId)
+                r.owner = this.userId;
+            if(typeof r.owner != 'undefined' && r.owner != null){
+                console.log(insta_grams.insert(r));
+            }else{
+                console.log('no owner for record!!');
+            }
         }
         }
 
-    }
-}
-
-);
-
+    };
 
 // should allow to filter nearly any response from instaGram and store it ...? hope scopes are ok for this !
 
@@ -148,7 +150,61 @@ Meteor.methods({
                                         console.log(error);
                                 }
                             );
-                            request.data.data.filter(instaFilter);
+                            request.data.data.filter(function(arr){
+        if(arr.location != null){
+
+    // this is checking if insta_grams is present client/side so it gets reinserted! wait for the insta_grams collection to be ready?
+            var existing_check = insta_grams.findOne({id:arr.id,owner:Meteor.userId()});
+        if(existing_check){
+        
+        
+            if(arr.likes != null && existing_check.likes != arr.likes.count){
+                insta_grams.update(existing_check._id,{"$set" :{ likes : arr.likes.count}});
+            }
+        }else{
+
+            var r = {
+                id : arr.id,
+                username : arr.user.username,
+                link : arr.link,
+                created_time : arr.created_time,
+                image_low : arr.images.low_resolution.url,
+                image_standard : arr.images.standard_resolution.url,
+                image_thumb : arr.images.thumbnail.url,
+                type : arr.type
+            };
+            
+            if(arr.caption != null){
+                r.caption = arr.caption.text,
+                r.caption_id = arr.caption.id;
+            }
+            
+            if(arr.tags != null){
+                r.tags = arr.tags;
+            }
+            
+            if(arr.likes != null){
+                 r.likes = arr.likes.count;
+            }
+            r.lat = arr.location.latitude;
+            r.lon = arr.location.longitude;
+            
+            if(typeof insertUserId != 'undefined')
+                r.owner = insertUserId;
+            else if(Meteor.userId())
+            // owner saved as null WTF?
+                r.owner = Meteor.userId();
+            else if(this.userId)
+                r.owner = this.userId;
+            if(typeof r.owner != 'undefined' && r.owner != null){
+                console.log(insta_grams.insert(r));
+            }else{
+                console.log('no owner for record!!');
+            }
+        }
+        }
+
+    });
                             return true;
                    
                         }else{
@@ -191,7 +247,65 @@ Meteor.methods({
                         Meteor.call('user_self_backlog',request.data.pagination.next_url,Meteor.userId());
                     }
                    
-                    request.data.data.filter(instaFilter);
+                    request.data.data.filter(function(arr){
+        console.log('insta filter');
+        console.log(this.userId);
+        console.log(Meteor.userId());
+        if(arr.location != null){
+        
+    // this is checking if insta_grams is present client/side so it gets reinserted! wait for the insta_grams collection to be ready?
+            var existing_check = insta_grams.findOne({id:arr.id,owner:Meteor.userId()});
+        if(existing_check){
+        
+        
+            if(arr.likes != null && existing_check.likes != arr.likes.count){
+                insta_grams.update(existing_check._id,{"$set" :{ likes : arr.likes.count}});
+            }
+        }else{
+
+            console.log(arr.id);
+            var r = {
+                id : arr.id,
+                username : arr.user.username,
+                link : arr.link,
+                created_time : arr.created_time,
+                image_low : arr.images.low_resolution.url,
+                image_standard : arr.images.standard_resolution.url,
+                image_thumb : arr.images.thumbnail.url,
+                type : arr.type
+            };
+            
+            if(arr.caption != null){
+                r.caption = arr.caption.text,
+                r.caption_id = arr.caption.id;
+            }
+            
+            if(arr.tags != null){
+                r.tags = arr.tags;
+            }
+            
+            if(arr.likes != null){
+                 r.likes = arr.likes.count;
+            }
+            r.lat = arr.location.latitude;
+            r.lon = arr.location.longitude;
+            
+            if(typeof insertUserId != 'undefined')
+                r.owner = insertUserId;
+            else if(Meteor.userId())
+            // owner saved as null WTF?
+                r.owner = Meteor.userId();
+            else if(this.userId)
+                r.owner = this.userId;
+            if(typeof r.owner != 'undefined' && r.owner != null){
+                console.log(insta_grams.insert(r));
+            }else{
+                console.log('no owner for record!!');
+            }
+        }
+        }
+
+    });
                     return true;
            
                 }else{
