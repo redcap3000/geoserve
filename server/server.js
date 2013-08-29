@@ -52,7 +52,7 @@ function(){
             r.lat = arr.location.latitude;
             r.lon = arr.location.longitude;
             // owner saved as null WTF?
-            r.owner = Meteor.userId();
+            r.owner = this.userId;
             console.log(insta_grams.insert(r));
         }
         }
