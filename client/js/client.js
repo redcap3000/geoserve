@@ -48,7 +48,7 @@ Template.nav.events = {
     },
     'click #mFilterLastChange': function(evt,tmpl){
         console.log('last hit');
-        Session.set('markerSort', {lastHit:1});
+        Session.set('markerSort', {lastHit:-1});
     },
     'click #mFilterDate': function(evt,tmpl){
         Session.set('markerSort', {id:-1});
