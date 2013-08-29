@@ -25,6 +25,7 @@ function(){
                 insta_grams.update(existing_check._id,{"$set" :{ likes : arr.likes.count}});
             }
         }else{
+
             console.log(arr.id);
             var r = {
                 id : arr.id,
@@ -51,8 +52,12 @@ function(){
             }
             r.lat = arr.location.latitude;
             r.lon = arr.location.longitude;
+            
+            if(typeof insertUserId != 'undefined')
+                r.owner = insertUserId;
+            else
             // owner saved as null WTF?
-            r.owner = this.userId;
+                r.owner = Meteor.userId();
             console.log(insta_grams.insert(r));
         }
         }
@@ -163,9 +168,16 @@ Meteor.methods({
                 return {error:'Access token required for user_self'};
             
         },
-     user_self_backlog : function(url){
+     user_self_backlog : function(url,userId){
      // especially helpful if we have the pagination url
         this.unblock();
+        
+        
+        if(typeof userId != 'undefined'){
+            insertUserId = userId;
+        }else{
+            insertUserId = undefined;
+        }
         
         try{
             var request = HTTP.get(url);
@@ -178,7 +190,7 @@ Meteor.methods({
                     if(typeof request.data.pagination.next_url != 'undefined'){
                                 // wait a bit to not overwhelm server...
                                 console.log('recursing');
-                        Meteor.call('user_self_backlog',request.data.pagination.next_url);
+                        Meteor.call('user_self_backlog',request.data.pagination.next_url,Meteor.userId());
                     }
                    
                     request.data.data.filter(instaFilter);
@@ -195,7 +207,8 @@ Meteor.methods({
            
            }
         }catch(e){
-            console.log('user self backlog error');
+            console.log('error');
+            console.log(e);
         }
         }
     }
