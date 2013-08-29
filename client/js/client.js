@@ -91,10 +91,26 @@ Template.instaMarker.created = function(){
 };
 
 Template.loggedInMenu.destroyed = function(){
-    console.log('destroy!!');
     map = undefined;
+    gmapsMarkers = [];
 };
 
+Template.instaMarker.destroyed = function(){
+        if(gmapsMarkers.length > 0){
+            var pTitle = this.data.likes + ' likes' + (this.data.tags.length > 0  ? '\n' + this.data.tags.join(', ')  :''),killIndex = false;
+            gmapsMarkers.filter(function(arr,i){
+                if(typeof arr != 'undefined' && arr != undefined)
+                    if(arr.title == pTitle){
+                        arr.setMap(null);
+                        killIndex = i;
+                        }
+            
+            });
+            if(killIndex !== false)
+                gmapsMarkers[killIndex] = undefined;
+        }
+ 
+};
 Template.instaMarker.rendered = function(){
 //    console.log(firstMarker);
         if(typeof map != 'undefined' && typeof firstMarker != 'undefined'){

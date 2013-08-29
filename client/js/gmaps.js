@@ -3,6 +3,8 @@
  *
  */
 
+gmapsMarkers = [];
+
 lookForMarkers = function(theBox){
     c = markers.find({}, {fields: {_id: 1}}).fetch();
     if(c.length > 0)
@@ -50,6 +52,8 @@ placeNavMarker = function(latLng,image,title,clickCallBack) {
     
     if(typeof clickCallBack == 'function')
         google.maps.event.addListener(new_marker,"click",clickCallBack);
+//    console.log(new_marker);
+    gmapsMarkers.push(new_marker);
 };
 
 setMapCenter = function(q){
