@@ -127,41 +127,42 @@ Meteor.methods({
      user_self : function(access_token,count,min_id,max_id){
             if(typeof access_token != 'undefined'){
                 var base_url = 'https://api.instagram.com/v1/users/self/feed?access_token=' + access_token;
-                console.log(base_url);
-                this.unblock();
-                var request = HTTP.get(base_url);
-                if(request.statusCode === 200 && typeof request.data != 'undefined'){
                
-                    //console.log(request);
+                try{
                
-                    if(typeof request.data.data != 'undefined'){
-                        // filter data
-                        var result = [];
-                        if(typeof request.data.pagination.next_url != 'undefined')
-                        Meteor.call('user_self_backlog',request.data.pagination.next_url,
-                            function(error,result){
-                                if (result){
-                                    //console.log(result.pagination);
-                                    console.log('success');
-                              
+                    this.unblock();
+                    var request = HTTP.get(base_url);
+                    if(request.statusCode === 200 && typeof request.data != 'undefined'){
+                        if(typeof request.data.data != 'undefined'){
+                            // filter data
+                            var result = [];
+                            if(typeof request.data.pagination.next_url != 'undefined')
+                            Meteor.call('user_self_backlog',request.data.pagination.next_url,
+                                function(error,result){
+                                    if (result){
+                                        //console.log(result.pagination);
+                                        console.log('success');
+                                  
+                                    }
+                                    else if(typeof error != undefined)
+                                        console.log(error);
                                 }
-                                else if(typeof error != undefined)
-                                    console.log(error);
-                            }
-                        );
-                        request.data.data.filter(instaFilter);
-//                        return request.data.data;
+                            );
+                            request.data.data.filter(instaFilter);
                             return true;
-               
-                    }else{
-                        return request.data;
-                    }
-               // set the interval if not already set ? 
+                   
+                        }else{
+                            return request.data;
+                        }
+                   // set the interval if not already set ? 
+                       }
+                   else{
+                        console.log('problem with request');
+                        console.log(request);
                    }
-               else{
-                    console.log('problem with request');
-                    console.log(request);
-               
+               }catch(e){
+                console.log('prob with user_self call');
+                console.log(e);
                }
                }
             else
@@ -171,21 +172,18 @@ Meteor.methods({
      user_self_backlog : function(url,userId){
      // especially helpful if we have the pagination url
         this.unblock();
-        
-        
+        // this is for the filter functions that often forget what the user is for
+        // async calls... probably bug meteor about this?
         if(typeof userId != 'undefined'){
             insertUserId = userId;
         }else{
             insertUserId = undefined;
         }
-        
         try{
             var request = HTTP.get(url);
-            console.log(url);
             if(request.statusCode === 200 && typeof request.data != 'undefined'){
                 if(typeof request.data.data != 'undefined'){
-
-                    // filter data
+        // filter data
                     var result = [];
                     if(typeof request.data.pagination.next_url != 'undefined'){
                                 // wait a bit to not overwhelm server...
@@ -204,13 +202,15 @@ Meteor.methods({
            else{
                 console.log('problem with request');
                 console.log(request);
+               return true;
            
            }
         }catch(e){
             console.log('error');
             console.log(e);
+            // just return true to help out with program flow...
+            return true;
         }
         }
     }
    );
-
