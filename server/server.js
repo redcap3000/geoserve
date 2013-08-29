@@ -110,7 +110,7 @@ Meteor.methods({
                 'code' : code
             
             }};
-            this.unblock();
+//            this.unblock();
             var request = HTTP.get(base_url,url_params,function(error,result){if(result) return result;});
             
             /*
@@ -132,7 +132,7 @@ Meteor.methods({
                
                 try{
                
-                    this.unblock();
+//                    this.unblock();
                     var request = HTTP.get(base_url);
                     if(request.statusCode === 200 && typeof request.data != 'undefined'){
                         if(typeof request.data.data != 'undefined'){
@@ -227,7 +227,7 @@ Meteor.methods({
         },
      user_self_backlog : function(url,userId){
      // especially helpful if we have the pagination url
-        this.unblock();
+//        this.unblock();
         // this is for the filter functions that often forget what the user is for
         // async calls... probably bug meteor about this?
         if(typeof userId != 'undefined'){
