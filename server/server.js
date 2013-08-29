@@ -166,32 +166,37 @@ Meteor.methods({
      user_self_backlog : function(url){
      // especially helpful if we have the pagination url
         this.unblock();
-        var request = HTTP.get(url);
-        console.log(url);
-        if(request.statusCode === 200 && typeof request.data != 'undefined'){
-            if(typeof request.data.data != 'undefined'){
+        
+        try{
+            var request = HTTP.get(url);
+            console.log(url);
+            if(request.statusCode === 200 && typeof request.data != 'undefined'){
+                if(typeof request.data.data != 'undefined'){
 
-                // filter data
-                var result = [];
-                if(typeof request.data.pagination.next_url != 'undefined'){
-                            // wait a bit to not overwhelm server...
-                            console.log('recursing');
-                    Meteor.call('user_self_backlog',request.data.pagination.next_url);
+                    // filter data
+                    var result = [];
+                    if(typeof request.data.pagination.next_url != 'undefined'){
+                                // wait a bit to not overwhelm server...
+                                console.log('recursing');
+                        Meteor.call('user_self_backlog',request.data.pagination.next_url);
+                    }
+                   
+                    request.data.data.filter(instaFilter);
+                    return true;
+           
+                }else{
+                    return request.data;
                 }
-               
-                request.data.data.filter(instaFilter);
-                return true;
-       
-            }else{
-                return request.data;
-            }
-       // set the interval if not already set ? 
+           // set the interval if not already set ? 
+               }
+           else{
+                console.log('problem with request');
+                console.log(request);
+           
            }
-       else{
-            console.log('problem with request');
-            console.log(request);
-       
-       }
+        }catch(e){
+            console.log('user self backlog error');
+        }
         }
     }
    );
