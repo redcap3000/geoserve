@@ -9,19 +9,23 @@ Meteor.publish("usersGroupCodes",function(){
 //
 
 
+Meteor.startup(
 
-// should allow to filter nearly any response from instaGram and store it ...? hope scopes are ok for this !
-instaFilter =
+function(){
+    instaFilter =
     function(arr){
         if(arr.location != null){
+
     // this is checking if insta_grams is present client/side so it gets reinserted! wait for the insta_grams collection to be ready?
             var existing_check = insta_grams.findOne({id:arr.id});
         if(existing_check){
+        
+        
             if(arr.likes != null && existing_check.likes != arr.likes.count){
                 insta_grams.update(existing_check._id,{"$set" :{ likes : arr.likes.count}});
             }
         }else{
-
+            console.log(arr.id);
             var r = {
                 id : arr.id,
                 username : arr.user.username,
@@ -47,12 +51,19 @@ instaFilter =
             }
             r.lat = arr.location.latitude;
             r.lon = arr.location.longitude;
+            // owner saved as null WTF?
             r.owner = Meteor.userId();
             console.log(insta_grams.insert(r));
         }
         }
 
-    };
+    }
+}
+
+);
+
+
+// should allow to filter nearly any response from instaGram and store it ...? hope scopes are ok for this !
 
 
 // basic function that determines if the user can edit
@@ -127,11 +138,7 @@ Meteor.methods({
                                 if (result){
                                     //console.log(result.pagination);
                                     console.log('success');
-                                    if(typeof result.pagination != 'undefined'){
-                                    // wait a bit to not overwhelm server...
-                                        console.log('recursing');
-                                        var pagination_timeout = Meteor.setTimeout(Meteor.call('user_self_backlog',result.pagination.next_url),60*60*1);
-                                    }
+                              
                                 }
                                 else if(typeof error != undefined)
                                     console.log(error);
@@ -157,38 +164,35 @@ Meteor.methods({
             
         },
      user_self_backlog : function(url){
-         //   if(typeof access_token != 'undefined'){
-                this.unblock();
-                var request = HTTP.get(url);
-                if(request.statusCode === 200 && typeof request.data != 'undefined'){
-                    if(typeof request.data.data != 'undefined'){
-                        // filter data
-                        var result = [];
-                        if(typeof request.data.pagination.next_url != 'undefined'){
-                                    // wait a bit to not overwhelm server...
-                            Meteor.call('user_self_backlog',request.data.pagination.next_url);
-                        }
+     // especially helpful if we have the pagination url
+        this.unblock();
+        var request = HTTP.get(url);
+        console.log(url);
+        if(request.statusCode === 200 && typeof request.data != 'undefined'){
+            if(typeof request.data.data != 'undefined'){
+
+                // filter data
+                var result = [];
+                if(typeof request.data.pagination.next_url != 'undefined'){
+                            // wait a bit to not overwhelm server...
+                            console.log('recursing');
+                    Meteor.call('user_self_backlog',request.data.pagination.next_url);
+                }
                
-               
-               
-                        request.data.data.filter(instaFilter);
-                        return true;
-               
-                    }else{
-                        return request.data;
-                    }
-               // set the interval if not already set ? 
-                   }
-               else{
-                    console.log('problem with request');
-                    console.log(request);
-               
-               }
-          //     }
-          //  else
-          //      return {error:'Access token required for user_self'};
-            
-        }   
+                request.data.data.filter(instaFilter);
+                return true;
+       
+            }else{
+                return request.data;
+            }
+       // set the interval if not already set ? 
+           }
+       else{
+            console.log('problem with request');
+            console.log(request);
+       
+       }
+        }
     }
    );
 
