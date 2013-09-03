@@ -1,8 +1,9 @@
 Meteor.publish("userInstaGrams",function(userId){
     console.log(this.userId);
-    if(this.userId != null){
-        console.log(insta_grams.find({owner:userId}));
-        return insta_grams.find({owner:this.userId});
+    console.log('publishing ' + userId);
+    if(typeof userId != "undefined" && userId != null){
+//        console.log(insta_grams.find({owner:userId}));
+        return insta_grams.find({owner:userId});
     }
     else
         return false;
