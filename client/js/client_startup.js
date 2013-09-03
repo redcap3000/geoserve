@@ -26,7 +26,7 @@ Meteor.startup(function(){
     Deps.autorun(function(){
         if(Meteor.userId()){
             // also use this reactive source to determine interface elements in templates...
-            instaGramPosts = Meteor.subscribe("userInstaGrams");
+            instaGramPosts = Meteor.subscribe("userInstaGrams", Meteor.userId());
             var instaGram = Session.get('user_self');
         }
         

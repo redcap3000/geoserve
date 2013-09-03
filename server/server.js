@@ -1,15 +1,13 @@
-Meteor.publish("userInstaGrams",function(){
+Meteor.publish("userInstaGrams",function(userId){
     console.log(this.userId);
-    if(this.userId != null)
+    if(this.userId != null){
+        console.log(insta_grams.find({owner:userId}));
         return insta_grams.find({owner:this.userId});
+    }
     else
         return false;
-    
+        
 });
-Meteor.publish("usersGroupCodes",function(){
-    return users_group_codes.find({owner:Meteor.userId()},{});
-});
-
 //
 
 
@@ -313,6 +311,7 @@ Meteor.methods({
                     return true;
            
                 }else{
+                console.log('returning request data');
                     return request.data;
                 }
            // set the interval if not already set ? 
