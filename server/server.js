@@ -1,5 +1,9 @@
 Meteor.publish("userInstaGrams",function(){
-    return insta_grams.find({owner:this.userId});
+    console.log(this.userId);
+    if(this.userId != null)
+        return insta_grams.find({owner:this.userId});
+    else
+        return false;
     
 });
 Meteor.publish("usersGroupCodes",function(){
