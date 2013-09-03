@@ -7,10 +7,11 @@ Meteor.startup(function(){
     createMap();
     // continually refresh feed
     if(Meteor.userId()){
+    // should set interval elsewhere.... probably...
         Meteor.setInterval(function(){
             Session.set('user_self',false);
-            }        ,60 * 60 * 30);
-                                     Session.set('markerSort',undefined);
+            }        ,60 * 60 * 45);
+        Session.set('markerSort',undefined);
 
     }
     
