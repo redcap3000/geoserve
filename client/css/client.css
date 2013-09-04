@@ -1,7 +1,3 @@
-/* @override 
-	http://localhost:3000/client/css/client.css?f5a41eb7b38f4e42c8fa4b9ad3753d381fdb2b91
-	http://localhost:3000/client/css/client.css?e68e435f58465de02842a1143a026aaf6e5cc7e7 */
-
 html, body {
 
     height: 100%;
@@ -39,8 +35,7 @@ background-color: white;
 	padding: .5em;
 	float: right;
 	opacity: 0.85;
-	position: relative;
-	top: 70px;
+	margin-top: -98%;
 }
 
 
