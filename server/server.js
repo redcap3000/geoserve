@@ -1,70 +1,62 @@
 Meteor.publish("userInstaGrams",function(userId){
     if(typeof userId != "undefined" && userId != null){
-//        console.log(insta_grams.find({owner:userId}));
         return insta_grams.find({owner:userId});
     }
     else
         return false;
 });
-//
-
-
-instaFilter =
-    function(arr){
-        if(arr.location != null){
-
-    // this is checking if insta_grams is present client/side so it gets reinserted! wait for the insta_grams collection to be ready?
-            var existing_check = insta_grams.findOne({id:arr.id,owner:Meteor.userId()},{owner:1});
-        if(existing_check){
-            if(arr.likes != null && existing_check.likes != arr.likes.count){
-                insta_grams.update(existing_check._id,{"$set" :{ likes : arr.likes.count}});
-            }
-        }else{
-            var r = {
-                id : arr.id,
-                username : arr.user.username,
-                link : arr.link,
-                created_time : arr.created_time,
-                image_low : arr.images.low_resolution.url,
-                image_standard : arr.images.standard_resolution.url,
-                image_thumb : arr.images.thumbnail.url,
-                type : arr.type
-            };
-            
-            if(arr.caption != null){
-                r.caption = arr.caption.text,
-                r.caption_id = arr.caption.id;
-            }
-            
-            if(arr.tags != null){
-                r.tags = arr.tags;
-            }
-            
-            if(arr.likes != null){
-                 r.likes = arr.likes.count;
-            }
-            r.lat = arr.location.latitude;
-            r.lon = arr.location.longitude;
-            
-            if(typeof insertUserId != 'undefined')
-                r.owner = insertUserId;
-            else if(Meteor.userId())
-            // owner saved as null WTF?
-                r.owner = Meteor.userId();
-            else if(this.userId)
-                r.owner = this.userId;
-            if(typeof r.owner != 'undefined' && r.owner != null){
-                console.log(insta_grams.insert(r));
-            }else{
-                console.log('no owner for record!!');
-            }
-        }
-    }
-
-};
-
 
 Meteor.methods({
+    instaInsert : function(the_owner,arr){
+         if(arr.location != null){
+            if(the_owner == null || !the_owner) {
+                console.log('** OTHER OWNER**');
+                return false;
+            }
+            // this is checking if insta_grams is present client/side so it gets reinserted! wait for the insta_grams collection to be ready?
+            var existing_check = insta_grams.findOne({id:arr.id,owner:the_owner});
+            if(existing_check){
+                if(arr.likes != null && existing_check.likes != arr.likes.count){
+                    insta_grams.update(existing_check._id,{"$set" :{ likes : arr.likes.count}});
+                }
+            }else{
+                var r = {
+                    id : arr.id,
+                    username : arr.user.username,
+                    link : arr.link,
+                    created_time : arr.created_time,
+                    image_low : arr.images.low_resolution.url,
+                    image_standard : arr.images.standard_resolution.url,
+                    image_thumb : arr.images.thumbnail.url,
+                    type : arr.type
+                };
+                
+                if(arr.caption != null){
+                    r.caption = arr.caption.text,
+                    r.caption_id = arr.caption.id;
+                }
+                
+                if(arr.tags != null){
+                    r.tags = arr.tags;
+                }
+                
+                if(arr.likes != null){
+                     r.likes = arr.likes.count;
+                }
+                r.lat = arr.location.latitude;
+                r.lon = arr.location.longitude;
+                
+                r.owner = the_owner;
+               
+                if(typeof r.owner != 'undefined'){
+                    insta_grams.insert(r);
+                }else{
+                    console.log('no owner for record!!');
+                }
+            }
+        }
+
+    },
            
      authenticate : function(client_id){
         var settings = Meteor.settings;
@@ -96,11 +88,9 @@ Meteor.methods({
                 'client_secret' : client_secret,
                 'grant_type' : 'authorization_code',
                 'redirect_uri' : redirect_uri,
-                'code' : code
-            
-            }};
+                'code' : code}}
+
             var request = HTTP.get(base_url,url_params,function(error,result){if(result) return result;});
-            
 
             }else{
                 console.log('Could not initalize settings, was meteor deployed with --settings deploy_settings.json');
@@ -108,32 +98,30 @@ Meteor.methods({
         return false;
     },
     
-     user_self : function(access_token,count,min_id,max_id){
-            if(typeof access_token != 'undefined'){
+     user_self : function(access_token,client_id,count,min_id,max_id){
+        // do a check to determine if access_token matches value that could be stored for client id instead
+        // of continually logging in/out....
+            if(typeof access_token != 'undefined' && typeof client_id != 'undefined'){
                 var base_url = 'https://api.instagram.com/v1/users/self/feed?access_token=' + access_token;
-               
                 try{
-               
-//                    this.unblock();
                     var request = HTTP.get(base_url);
                     if(request.statusCode === 200 && typeof request.data != 'undefined'){
                         if(typeof request.data.data != 'undefined'){
                             // filter data
                             var result = [];
-                            request.data.data.filter(instaFilter);
-                            // recurse....
                             if(typeof request.data.pagination.next_url != 'undefined')
-                                Meteor.call('user_self_backlog',request.data.pagination.next_url,
-                                    function(error,result){
-                                        if (result){
-                                            //console.log(result.pagination);
-                                            console.log('success');
-                                      
-                                        }
-                                        else if(typeof error != undefined)
-                                            console.log(error);
+                            Meteor.call('user_self_backlog',request.data.pagination.next_url,client_id,
+                                function(error,result){
+                                    if (result){
+                                        return true;
                                     }
-                                );
+                                    else if(typeof error != undefined)
+                                        console.log(error);
+                                }
+                            );
+                            request.data.data.filter(function(arr){
+                                Meteor.call('instaInsert',client_id,arr);
+                            });
                             return true;
                    
                         }else{
@@ -156,9 +144,7 @@ Meteor.methods({
         },
      user_self_backlog : function(url,userId){
      // especially helpful if we have the pagination url
-//        this.unblock();
         // this is for the filter functions that often forget what the user is for
-        // async calls... probably bug meteor about this?
         if(typeof userId != 'undefined'){
             insertUserId = userId;
         }else{
@@ -168,16 +154,16 @@ Meteor.methods({
             var request = HTTP.get(url);
             if(request.statusCode === 200 && typeof request.data != 'undefined'){
                 if(typeof request.data.data != 'undefined'){
-        // filter data
+                // filter data
                     var result = [];
-                    request.data.data.filter(instaFilter);
-
                     if(typeof request.data.pagination.next_url != 'undefined'){
-                                // wait a bit to not overwhelm server...
-                        console.log('recursing');
-                        Meteor.call('user_self_backlog',request.data.pagination.next_url,Meteor.userId());
+                        // wait a bit to not overwhelm server...
+                        Meteor.call('user_self_backlog',request.data.pagination.next_url,userId);
                     }
                    
+                    request.data.data.filter(function(arr){
+                        Meteor.call('instaInsert',userId,arr);
+                    });
                     return true;
            
                 }else{
