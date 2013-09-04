@@ -19,8 +19,9 @@
                                 <input id="mOrder" name="mOrder" type="radio" value="postOrderAsc"/> Ascending
                                 <input id="mOrder" name="mOrder" type="radio" value="postOrderD"/> Descending
                             </fieldset>
-                            -->
                             <a class="btn user_self">instaFeed</a>
+                            -->
+                            
 
                             </form>
                         {{else}}
@@ -63,9 +64,8 @@
 
 <template name="instaMarker">
     <div class="span focus_marker instaMarker">
-    <hr/>
-    <img src="{{image_thumb}}"/>
-    <b style="color:orange;float:right"><a href="{{link}}" target="_new">{{likes}}</a></b>
+    <img src="{{image_standard}}"/>
+    <a href="{{link}}" target="_new">{{likes}}</a>
     <a href="#" class="instaUser" style="float:left" {{#if caption}}title="{{caption}}"{{/if}}>
     {{username}}</a>
     </div>
