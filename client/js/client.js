@@ -119,7 +119,7 @@ Template.instaMarker.rendered = function(){
         }else{
             firstMarker = [this.data.lat,this.data.lon];
         }
-
+         placeNavMarker(new google.maps.LatLng(this.data.lat,this.data.lon),this.data.image_thumb,this.data.likes + ' likes' + (this.data.tags.length > 0  ? '\n' + this.data.tags.join(', ')  :'') );
 };
 
 Template.instaMarker.preserve = ['img','.instaUser'];
