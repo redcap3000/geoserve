@@ -15,7 +15,6 @@ Meteor.startup(function(){
         var doesHaveAccess = Session.get('access_token');
 
     }
-
     Deps.autorun(function(){
         if(Meteor.userId()){
             // also use this reactive source to determine interface elements in templates...
@@ -23,28 +22,25 @@ Meteor.startup(function(){
             var instaGram = Session.get('user_self');
         }
         
-   
-        
         if(Meteor.userId() && Session.get('access_token') && !Session.get('user_self')){
             var access_token = Session.get('access_token');
              if(access_token){
                 // set this to true so deps doesn't re run while its waiting for the response...
                  Session.set('user_self',true);
 
-                 Meteor.call('user_self',access_token,
+                 Meteor.call('user_self',access_token,Meteor.userId(),
                     function(error,result){
                         if(typeof error =='undefined'){
                             Session.set('user_self',result);
                              if(Meteor.userId()){
                             // should set interval elsewhere.... probably...
                                 Meteor.setInterval(function(){
+                                    console.log('unsetting user_self');
                                     Session.set('user_self',false);
                                     }        ,60 * 60 * 45);
                                 Session.set('markerSort',undefined);
 
                             }
-
-                            
                         }else{
                             console.log(error);
                     }});
