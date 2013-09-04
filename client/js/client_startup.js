@@ -6,15 +6,7 @@
 Meteor.startup(function(){
     createMap();
     // continually refresh feed
-    if(Meteor.userId()){
-    // should set interval elsewhere.... probably...
-        Meteor.setInterval(function(){
-            Session.set('user_self',false);
-            }        ,60 * 60 * 45);
-        Session.set('markerSort',undefined);
-
-    }
-    
+       
     var access_token = window.location.href.split("#");
     
     if(access_token.length > 1 && !doesHaveAccess){
@@ -43,6 +35,16 @@ Meteor.startup(function(){
                     function(error,result){
                         if(typeof error =='undefined'){
                             Session.set('user_self',result);
+                             if(Meteor.userId()){
+                            // should set interval elsewhere.... probably...
+                                Meteor.setInterval(function(){
+                                    Session.set('user_self',false);
+                                    }        ,60 * 60 * 45);
+                                Session.set('markerSort',undefined);
+
+                            }
+
+                            
                         }else{
                             console.log(error);
                     }});
