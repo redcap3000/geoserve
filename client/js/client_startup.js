@@ -23,31 +23,33 @@ Meteor.startup(function(){
     }
     Deps.autorun(function(){
         
-        
-        if(Meteor.userId() && Session.get('access_token') && !Session.get('user_self')){
-            var access_token = Session.get('access_token');
-             if(access_token){
+        var locations = Session.get('locations_search'), access_token = Session.get('access_token'), userId = Meteor.userId() ;
+        if(userId && access_token ){
+            if(!Session.get('user_self')){
                 // set this to true so deps doesn't re run while its waiting for the response...
-                 Session.set('user_self',true);
+             Session.set('user_self',true);
 
-                 Meteor.call('user_self',access_token,Meteor.userId(),
-                    function(error,result){
-                        if(typeof error =='undefined'){
-                            Session.set('user_self',result);
-                             if(Meteor.userId()){
-                            // should set interval elsewhere.... probably...
-                                Meteor.setInterval(function(){
-                                    console.log('unsetting user_self');
-                                    Session.set('user_self',false);
-                                    }        ,60 * 60 * 45);
-                                Session.set('markerSort',undefined);
+             Meteor.call('user_self',access_token,Meteor.userId(),
+                function(error,result){
+                    if(typeof error =='undefined'){
+                        Session.set('user_self',result);
+                         if(Meteor.userId()){
+                        // should set interval elsewhere.... probably...
+                            Meteor.setInterval(function(){
+                                console.log('unsetting user_self');
+                                Session.set('user_self',false);
+                                }        ,60 * 60 * 45);
+                            Session.set('markerSort',undefined);
 
-                            }
-                        }else{
-                            console.log(error);
-                    }});
+                        }
+                    }else{
+                        console.log(error);
+                }});
             }
+            // attempt to render markers from the locations_search api call .. probably do this in the server side call back...
+         
         }
+        
     });
       
 });
