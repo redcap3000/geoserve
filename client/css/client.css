@@ -121,6 +121,20 @@ fieldset {
     height: 95%;
 	background-color: black;
 	padding: .25em ;
+	color: white;
+}
+
+#main_menu div.span {
+	color: white !IMPORTANT;
+}
+#main_menu ul{
+	list-style-type: none;
+	
+}
+
+#main_menu li{
+	padding-bottom: .45em;
+	line-height:1.5em;
 }
 
 span.span.add-on {
