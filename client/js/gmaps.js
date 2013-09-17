@@ -5,22 +5,8 @@
 
 gmapsMarkers = [];
 
-lookForMarkers = function(theBox){
-    c = markers.find({}, {fields: {_id: 1}}).fetch();
-    if(c.length > 0)
-        for(var i=0;i<c.length;i++){
-            var arr= c[i];
-            if(typeof arr['loc'] != 'undefined'){
-                var co = new google.maps.LatLng(arr['loc'][0], arr['loc'][1]), marker_type = '';
-                if(arr['type'] == 'Shelter' || arr['type'] == 'Hospital' || arr['type'] == 'Other' || arr['type'] == 'Pharmacy')
-                // default
-                    marker_type = arr['type'];
-                else
-                    marker_type = undefined;
-                placeNavMarker(co,marker_type,function(){alert(arr['name'] + ' ' + arr['type']);});
-            }
-        }
-};
+locationsMarkers = [];
+
 
 createMap = function(latLng) {
     var mapOptions = {
@@ -55,6 +41,31 @@ placeNavMarker = function(latLng,image,title,clickCallBack) {
 //    console.log(new_marker);
     gmapsMarkers.push(new_marker);
 };
+
+placeLocationMarker = function(latLng,title,theId){
+     if(typeof latLng == 'object' && typeof title != 'undefined' && theId != 'undefined'){
+        lMarkerExists = false;
+        locationsMarkers.filter(function(arr){
+            if(arr.instaId == theId){
+                lMarkerExists = true;
+                return;
+            }
+        });
+        if(!lMarkerExists){
+            var new_marker = new google.maps.Marker({
+                instaId : theId,
+                position: latLng,
+                map: map,
+                'title': title }
+                );
+            
+            locationsMarkers.push(new_marker);
+        }else{
+            console.log('avoiding duplicate marker');
+        }
+    }
+// just use default markers these are for when people click on an image and want nearby things...
+}
 
 setMapCenter = function(q){
     map.setCenter(new google.maps.LatLng(q[0],q[1]));

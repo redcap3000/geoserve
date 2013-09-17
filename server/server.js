@@ -106,7 +106,41 @@ Meteor.methods({
             }
         return false;
     },
-    
+     locations_search : function(access_token,lat,lng){
+            if(typeof access_token != 'undefined' && typeof lat != 'undefined' && typeof lng != 'undefined'){
+                  //  console.log('search');
+
+                var base_url = 'https://api.instagram.com/v1/locations/search?lat='+lat+'&lng='+lng+'&distance=10&access_token=' + access_token;
+               console.log(base_url);
+                try{
+                    var request = HTTP.get(base_url);
+                    if(request.statusCode === 200 && typeof request.data != 'undefined'){
+                        if(typeof request.data.data != 'undefined'){
+                            // filter data
+                            //console.log(request.data);
+                            return request.data.data;
+                            //return true;
+                   
+                        }else{
+                            console.log(request.data);
+                            return request.data;
+                        }
+                   // set the interval if not already set ? 
+                       }
+                   else{
+                        console.log('problem with request');
+                        console.log(request);
+                   }
+               }catch(e){
+                console.log('prob with locations_search call');
+                console.log(e);
+               }
+               }
+            else
+                return {error:'Access token required for user_self'};
+            
+        }
+     ,
      user_self : function(access_token,client_id,count,min_id,max_id){
         // do a check to determine if access_token matches value that could be stored for client id instead
         // of continually logging in/out....
