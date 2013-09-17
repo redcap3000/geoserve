@@ -1,5 +1,6 @@
 Meteor.publish("userInstaGrams",function(userId){
     if(typeof userId != "undefined" && userId != null){
+        console.log(userId);
         return insta_grams.find({owner:userId});
     }
     else
@@ -17,14 +18,22 @@ Meteor.methods({
             var existing_check = insta_grams.findOne({id:arr.id,owner:the_owner});
             if(existing_check){
                 if(arr.likes != null && existing_check.likes != arr.likes.count){
-                    insta_grams.update(existing_check._id,{"$set" :{ likes : arr.likes.count}});
+                    var the_time = new Date().getTime();
+                    insta_grams.update(existing_check._id,
+                        {"$set" :
+                            { likes : arr.likes.count,
+                             last_hit : the_time}
+                        }
+                    );
                 }
             }else{
+                var created_time = parseInt(arr.created_time);
                 var r = {
                     id : arr.id,
                     username : arr.user.username,
                     link : arr.link,
-                    created_time : arr.created_time,
+                    created_time : parseInt(arr.created_time),
+                    last_hit : created_time,
                     image_low : arr.images.low_resolution.url,
                     image_standard : arr.images.standard_resolution.url,
                     image_thumb : arr.images.thumbnail.url,
@@ -33,7 +42,7 @@ Meteor.methods({
                 
                 if(arr.caption != null){
                     r.caption = arr.caption.text,
-                    r.caption_id = arr.caption.id;
+                    r.caption_id = parseInt(arr.caption.id);
                 }
                 
                 if(arr.tags != null){
