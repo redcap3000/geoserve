@@ -87,7 +87,10 @@ Template.instaMarker.events = {
  *  previous values ?
  */
 Template.instaMarker.created = function(){
+//    console.log('created likes : '  + this.data.id);
        placeNavMarker(new google.maps.LatLng(this.data.lat,this.data.lon),this.data.image_thumb,this.data.likes + ' likes' + (this.data.tags.length > 0  ? '\n' + this.data.tags.join(', ')  :'') );
+    
+    
 };
 
 Template.loggedInMenu.destroyed = function(){
@@ -95,31 +98,7 @@ Template.loggedInMenu.destroyed = function(){
     gmapsMarkers = [];
 };
 
-Template.instaMarker.destroyed = function(){
-        if(gmapsMarkers.length > 0){
-            var pTitle = this.data.likes + ' likes' + (this.data.tags.length > 0  ? '\n' + this.data.tags.join(', ')  :''),killIndex = false;
-            gmapsMarkers.filter(function(arr,i){
-                if(typeof arr != 'undefined' && arr != undefined)
-                    if(arr.title == pTitle){
-                        arr.setMap(null);
-                        killIndex = i;
-                        }
-            
-            });
-            if(killIndex !== false)
-                gmapsMarkers[killIndex] = undefined;
-        }
- 
-};
-Template.instaMarker.rendered = function(){
-//    console.log(firstMarker);
-        if(typeof map != 'undefined' && typeof firstMarker != 'undefined'){
-            setMapCenter(firstMarker);
-            firstMarker = undefined;
-        }else{
-            firstMarker = [this.data.lat,this.data.lon];
-        }
-         placeNavMarker(new google.maps.LatLng(this.data.lat,this.data.lon),this.data.image_thumb,this.data.likes + ' likes' + (this.data.tags.length > 0  ? '\n' + this.data.tags.join(', ')  :'') );
-};
+
+
 
 Template.instaMarker.preserve = ['img','.instaUser'];
