@@ -1,7 +1,6 @@
 Meteor.publish("userInstaGrams",function(userId){
     if(typeof userId != "undefined" && userId != null){
-        console.log(userId);
-        return insta_grams.find({owner:userId});
+        return insta_grams.find({owner:userId},{id:1,caption:1,likes:1,lat:1,lon:1,tags:1,link:1,username:1,image_low:1,image_thumb:1,caption_id:1,created_time:1,last_hit:1});
     }
     else
         return false;
@@ -106,35 +105,57 @@ Meteor.methods({
             }
         return false;
     },
-     locations_search : function(access_token,lat,lng){
-            if(typeof access_token != 'undefined' && typeof lat != 'undefined' && typeof lng != 'undefined'){
+     locations_search : function(access_token,lat,lng,postId){
+            if(typeof access_token != 'undefined' && typeof lat != 'undefined' && typeof lng != 'undefined' && typeof postId != 'undefined'){
                   //  console.log('search');
-
-                var base_url = 'https://api.instagram.com/v1/locations/search?lat='+lat+'&lng='+lng+'&distance=10&access_token=' + access_token;
-               console.log(base_url);
-                try{
-                    var request = HTTP.get(base_url);
-                    if(request.statusCode === 200 && typeof request.data != 'undefined'){
-                        if(typeof request.data.data != 'undefined'){
-                            // filter data
-                            //console.log(request.data);
-                            return request.data.data;
-                            //return true;
-                   
-                        }else{
-                            console.log(request.data);
-                            return request.data;
-                        }
-                   // set the interval if not already set ? 
+                // query server side database for cooards? this is kinda weird way to store data sets... data will be repeated incessantly...
+                // shall i round lat and lng ?
+                var locations_check = insta_grams.findOne({_id : postId, locations: {"$exists":true}},{locations:1});
+                console.log(locations_check);
+                if(typeof locations_check == 'undefined'){
+                    console.log('undefined2');
+                    var base_url = 'https://api.instagram.com/v1/locations/search?lat='+lat+'&distance=1&lng='+lng+'&access_token=' + access_token;
+                   console.log(base_url);
+                    try{
+                        var request = HTTP.get(base_url);
+                        if(request.statusCode === 200 && typeof request.data != 'undefined'){
+                            if(typeof request.data.data != 'undefined'){
+                                // filter data
+                                //console.log(request.data);
+                                 console.log(insta_grams.update(postId,
+                                    {"$set" :{
+                                         locations : request.data.data}
+                                    }
+                                 ));
+                                return request.data.data;
+                                //return true;
+                       
+                            }else{
+               
+               
+                                  console.log(insta_grams.update(postId,
+                                    {"$set" :{
+                                         locations : request.data}
+                                    }
+                                 ));
+               
+                                console.log(request.data);
+                                return request.data;
+                            }
+                       // set the interval if not already set ? 
+                           }
+                       else{
+                            console.log('problem with request');
+                            console.log(request);
                        }
-                   else{
-                        console.log('problem with request');
-                        console.log(request);
+                   }catch(e){
+                    console.log('prob with locations_search call');
+                    console.log(e);
                    }
-               }catch(e){
-                console.log('prob with locations_search call');
-                console.log(e);
-               }
+                   
+                }else{
+                    return locations_check.locations;
+                }
                }
             else
                 return {error:'Access token required for user_self'};

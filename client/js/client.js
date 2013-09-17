@@ -71,19 +71,23 @@ Template.loggedInMenu.instaMarkers = function(){
         filter.sort = Session.get('markerSort');
     }else{
         filter.sort = {id:-1,lastHit:1,likes:-1};
+        
     }
+    
+    filter.locations = 0;
     return insta_grams.find({},filter);
 }
 
 Template.instaMarker.events = {
     "click .focus_marker" : function(){
-        if(typeof this.wasClicked == 'undefined'){
+        if(typeof this.wasClicked == 'undefined' && typeof this.locations == 'undefined') {
             // find stuff near it ..
-            Meteor.call('locations_search',Session.get('access_token'),this.lat,this.lon,
+            Meteor.call('locations_search',Session.get('access_token'),this.lat,this.lon,this._id,
                         function(error,result){
                             if(typeof error =='undefined' && typeof result != 'undefined'){
                                if(typeof map != 'undefined'){
                                     if(result.length > 0){
+                        
                                         result.filter(function(arr){
                                             placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,arr.id);
                                         });
@@ -95,7 +99,7 @@ Template.instaMarker.events = {
                                 // do default call for user feed ... to populate map with markers...
                                 // set the interval to continually fetch new results ??
                             }else{
-                                this.wasClicked = 'undefined';
+                                this.wasClicked = false;
                                 console.log('Please reclick to retry locations search');
                                 // maybe attempt to make call again?
                                 console.log(error);
@@ -103,8 +107,12 @@ Template.instaMarker.events = {
                             }
                         }
             );
-        
                 this.wasClicked = true;
+            }else if(typeof this.wasClicked == 'undefined' && typeof this.locations != 'undefined'){
+                this.locations.filter(function(arr){
+                placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,arr.id);
+                });
+            
             }
         setMapCenter([this.lat,this.lon]);
     }
