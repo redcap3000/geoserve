@@ -82,38 +82,48 @@ Template.instaMarker.events = {
     "click .focus_marker" : function(){
         if(typeof this.wasClicked == 'undefined' && typeof this.locations == 'undefined') {
             // find stuff near it ..
-            Meteor.call('locations_search',Session.get('access_token'),this.lat,this.lon,this._id,
-                        function(error,result){
-                            if(typeof error =='undefined' && typeof result != 'undefined'){
-                               if(typeof map != 'undefined'){
-                                    if(result.length > 0){
-                        
-                                        result.filter(function(arr){
-                                            placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,arr.id);
-                                        });
-                                        
-                                    }
-                                    else
-                                        console.log('no nearby markers in search..');
-                                }
-                                // do default call for user feed ... to populate map with markers...
-                                // set the interval to continually fetch new results ??
-                            }else{
-                                this.wasClicked = false;
-                                console.log('Please reclick to retry locations search');
-                                // maybe attempt to make call again?
-                                console.log(error);
-                                console.log(result);
-                            }
-                        }
-            );
-                this.wasClicked = true;
-            }else if(typeof this.wasClicked == 'undefined' && typeof this.locations != 'undefined'){
-                this.locations.filter(function(arr){
-                placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,arr.id);
-                });
+            var access_token = Session.get('access_token');
             
+            if(access_token){
+            // coming soon....
+            /*
+                Meteor.call('locations_search',access_token,this.lat,this.lon,this._id,
+                            function(error,result){
+                                if(typeof error =='undefined' && typeof result != 'undefined'){
+                                   if(typeof map != 'undefined'){
+                                        if(result.length > 0){
+                            
+                                            result.filter(function(arr){
+                                                placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,arr.id);
+                                            });
+                                            
+                                        }
+                                        else
+                                            console.log('no nearby markers in search..');
+                                    }
+                                    // do default call for user feed ... to populate map with markers...
+                                    // set the interval to continually fetch new results ??
+                                }else{
+                                    this.wasClicked = false;
+                                    console.log('Please reclick to retry locations search');
+                                    // maybe attempt to make call again?
+                                    console.log(error);
+                                    console.log(result);
+                                }
+                            }
+             
+                );
+                */
+             
             }
+            this.wasClicked = true;
+
+        }else if(typeof this.wasClicked == 'undefined' && typeof this.locations != 'undefined'){
+            this.locations.filter(function(arr){
+            placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,arr.id);
+            });
+        
+        }
         setMapCenter([this.lat,this.lon]);
     }
 }
@@ -123,7 +133,7 @@ Template.instaMarker.events = {
  *  previous values ?
  */
 Template.instaMarker.created = function(){
-       placeNavMarker(new google.maps.LatLng(this.data.lat,this.data.lon),this.data.image_thumb,this.data.likes + ' likes' + (this.data.tags.length > 0  ? '\n' + this.data.tags.join(', ')  :'') );
+       placeNavMarker(new google.maps.LatLng(this.data.lat,this.data.lon),this.data );
     
 };
 

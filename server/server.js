@@ -162,6 +162,23 @@ Meteor.methods({
             
         }
      ,
+     locations_media_recent : function(access_token,locationId){
+             if(typeof access_token != 'undefined' && typeof locationId != 'undefined'){
+                var base_url = 'https://api.instagram.com/v1/locations/' + locationId + '/media/recent?access_token=' + access_token;
+               
+               try{
+                    var request = HTTP.get(base_url);
+                    if(request.statusCode === 200 && typeof request.data != 'undefined'){
+                        return request.data;
+               
+                    }
+               }catch(e){
+                  console.log('prob with locations_meda_recent call');
+                console.log(e);
+               }
+               
+            }
+     },
      user_self : function(access_token,client_id,count,min_id,max_id){
         // do a check to determine if access_token matches value that could be stored for client id instead
         // of continually logging in/out....
