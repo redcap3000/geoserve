@@ -86,7 +86,7 @@ Template.instaMarker.events = {
             
             if(access_token){
             // coming soon....
-            /*
+            
                 Meteor.call('locations_search',access_token,this.lat,this.lon,this._id,
                             function(error,result){
                                 if(typeof error =='undefined' && typeof result != 'undefined'){
@@ -107,13 +107,12 @@ Template.instaMarker.events = {
                                     this.wasClicked = false;
                                     console.log('Please reclick to retry locations search');
                                     // maybe attempt to make call again?
-                                    console.log(error);
-                                    console.log(result);
+                                    
                                 }
                             }
              
                 );
-                */
+                
              
             }
             this.wasClicked = true;
