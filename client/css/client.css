@@ -61,7 +61,9 @@ background-color: white;
     display: none;
 }
 
-
+.infoWindow{
+    color:black;
+}
 
 #map_canvas { 
   height: 100%;

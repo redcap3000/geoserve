@@ -5,6 +5,8 @@
 
 gmapsMarkers = [];
 
+infoWindows = [];
+
 locationsMarkers = [];
 
 
@@ -20,13 +22,12 @@ createMap = function(latLng) {
     map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
 };
 
-placeNavMarker = function(latLng,image,title,clickCallBack) {
-        var image = image;
-//        var image = "http://gmaps-samples.googlecode.com/svn/trunk/markers/blue/blank.png";
-    // this map is not always there>>>?
-    if(typeof title == 'undefined')
-        title =null;
+placeNavMarker = function(latLng,data) {
+    var image = data.image_thumb,likes = data.likes ,
+        tags = (data.tags.length > 0  ? '\n' + data.tags.join(', ')  :false),
+
     
+        title = data.caption;
     
     var new_marker = new google.maps.Marker({
         position: latLng,
@@ -34,12 +35,32 @@ placeNavMarker = function(latLng,image,title,clickCallBack) {
         'title': title,
         icon: { url:image ,scaledSize: new google.maps.Size(50,50)} }
         );
+    var infoWindow = new google.maps.InfoWindow({
+        maxWidth: 150,
+
+        content: '<div class="infoWindow"><b>'+data.username+'</b><img src="'+image+'"/><h4>' + likes + '</h4>' + (title ? '<b>' + title + '</b>' : '') + (tags ? '<em>' + tags + '</em>' : '' ) + '</div>'
+    });
     
+    infoWindows.push(infoWindow);
+    
+    google.maps.event.addListener(new_marker, 'click', function() {
+        if(infoWindows.length > 0)
+            infoWindows.filter(function(arr){
+               arr.close(map,new_marker);
+            });
+        infoWindow.open(map,new_marker);
+    });
+    
+    if(typeof map == 'undefined')
+        console.log('no map for marker...');
+
     
     if(typeof clickCallBack == 'function')
         google.maps.event.addListener(new_marker,"click",clickCallBack);
 //    console.log(new_marker);
     gmapsMarkers.push(new_marker);
+       
+
 };
 
 placeLocationMarker = function(latLng,title,theId){
@@ -58,7 +79,12 @@ placeLocationMarker = function(latLng,title,theId){
                 map: map,
                 'title': title }
                 );
-            
+            // do back end call to search for location markers?
+            Meteor.call('locations_media_recent',Session.get('access_token'),theId,function(error,result){
+                if(typeof error == 'undefined'){
+                    console.log(result);
+                }
+            });
             locationsMarkers.push(new_marker);
         }else{
             console.log('avoiding duplicate marker');
