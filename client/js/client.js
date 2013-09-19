@@ -85,8 +85,6 @@ Template.instaMarker.events = {
             var access_token = Session.get('access_token');
             
             if(access_token){
-            // coming soon....
-            
                 Meteor.call('locations_search',access_token,this.lat,this.lon,this._id,
                             function(error,result){
                                 if(typeof error =='undefined' && typeof result != 'undefined'){
@@ -107,21 +105,23 @@ Template.instaMarker.events = {
                                     this.wasClicked = false;
                                     console.log('Please reclick to retry locations search');
                                     // maybe attempt to make call again?
-                                    
+                                    console.log(error);
+                                    console.log(result);
                                 }
                             }
-             
                 );
-                
-             
+               
             }
             this.wasClicked = true;
-
         }else if(typeof this.wasClicked == 'undefined' && typeof this.locations != 'undefined'){
+            console.log('we have locations...');
             this.locations.filter(function(arr){
             placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,arr.id);
             });
-        
+            // only call this server side once... for now .. later create options to 'refresh locations' (that simply deletes the fields and refreshes...)
+            // write client side calls to do (public) image streams on markers and store in local minimongo...
+            this.wasClicked = true;
+
         }
         setMapCenter([this.lat,this.lon]);
     }

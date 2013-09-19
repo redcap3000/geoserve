@@ -63,10 +63,7 @@
 </template>
 
 <template name="instaMarker">
-    <div class="span focus_marker instaMarker">
-    <img src="{{image_standard}}"/>
-    <a href="{{link}}" target="_new">{{likes}}</a>
-    <a href="#" class="instaUser" style="float:left" {{#if caption}}title="{{caption}}"{{/if}}>
-    {{username}}</a>
+    <div id="{{_id}}" class="span focus_marker instaMarker">
+    <img src="{{image_thumb}}"/>
     </div>
 </template>

@@ -1,3 +1,4 @@
+
 html, body {
 
     height: 100%;
@@ -11,9 +12,13 @@ p {
 	font-size: .75em;letter-spacing:.1em;margin: 1em;
 }
 
+div.infoWindow p {
+float: left;	font-size: 1em;width: 5em;
+}
+
 nav {
     font-size: 25px;
-    width: 28.95em;
+    width: 7.95em;
     overflow:scroll;
     height: 100%;
     z-index: 1;
@@ -23,7 +28,6 @@ nav {
 
 div.span.focus_marker {
 	margin: 0;
-	margin-left: .1em;
 	padding: 0;
 	display: block;
 	cursor: pointer;
@@ -40,11 +44,31 @@ background-color: white;
 
 
 #the_markers div.span.focus_marker img {
-	float: left;
-	margin-right: .5em;
-	width: 100%;
+	float: left;clear:left;
+
 }
 
+
+
+div.infoWindow b {
+color: blue;
+clear: both;float: right;
+}
+
+b.instaTitle {
+	color: black !IMPORTANT;
+	clear: both;
+	margin-top: 1em;
+}
+
+div.infoWindow p {
+	float: right;	width: 14em;
+}
+
+div.infoWindow p strong {
+	float: right;
+	clear: both;
+}
 #the_markers div.span.focus_marker b{
 	clear: both;float: left;width: 100%;
 	padding: 0;
@@ -68,7 +92,7 @@ background-color: white;
 #map_canvas { 
   height: 100%;
   position: absolute;
-  left: 48.5em;
+  left: 13.5em;
   right: 0;
   top: 0;
   bottom: 0;
@@ -83,8 +107,9 @@ background-color: white;
 
 #login-dropdown-list {
 margin-top: 3em;
-margin-right: 1.35em;
+margin-left: 13.35em;
 }
+
 
 .close {
   position:fixed;
@@ -101,7 +126,7 @@ margin-right: 1.35em;
 .login{
   font-size: 1em;
   float: left;
-  width:28.25em;
+  width:7.25em;
   height: 3.5em;
   text-align: right;
   padding: .4em 0;
@@ -109,6 +134,10 @@ margin-right: 1.35em;
   z-index: 10;
   color: black;
   position: fixed;
+}
+
+#login-name-link {
+	font-size: .55em;
 }
 
 a.btn.user_self {
@@ -122,13 +151,10 @@ fieldset {
 #main_menu {
     height: 95%;
 	background-color: black;
-	padding: .25em ;
 	color: white;
 }
 
-#main_menu div.span {
-	color: white !IMPORTANT;
-}
+
 #main_menu ul{
 	list-style-type: none;
 	
@@ -148,11 +174,23 @@ span.span.add-on {
 	height: auto;float: left;clear: both;width: 90%;
 }
 
+div#login-dropdown-list.accounts-dialog {
+	margin-top: 1.7em;
+	margin-right: -3em;	
+	position: absolute;
+}
+
+#map_canvas em {
+float: right;
+clear: both;
+margin-top: .5em;
+	
+}
+
 div#the_markers {
 	border-top: 1px solid gray;
 	margin-top: 5em;
 	float: left;
-	width: 100%;
 	background-color: black;
 }
 

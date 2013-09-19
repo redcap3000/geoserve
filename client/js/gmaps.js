@@ -23,7 +23,7 @@ createMap = function(latLng) {
 };
 
 placeNavMarker = function(latLng,data) {
-    var image = data.image_thumb,likes = data.likes ,
+    var image = data.image_low,likes = data.likes ,
         tags = (data.tags.length > 0  ? '\n' + data.tags.join(', ')  :false),
 
     
@@ -36,9 +36,7 @@ placeNavMarker = function(latLng,data) {
         icon: { url:image ,scaledSize: new google.maps.Size(50,50)} }
         );
     var infoWindow = new google.maps.InfoWindow({
-        maxWidth: 150,
-
-        content: '<div class="infoWindow"><b>'+data.username+'</b><img src="'+image+'"/><h4>' + likes + '</h4>' + (title ? '<b>' + title + '</b>' : '') + (tags ? '<em>' + tags + '</em>' : '' ) + '</div>'
+        content: '<div class="infoWindow"><img src="'+image+'"/><p><b>'+data.username+'</b><strong>' + likes + '</strong>' + (title ? '<b class="instaTitle">' + title + '</b>' : '') + (tags ? '<em>' + tags + '</em>' : '' ) + '</p></div>'
     });
     
     infoWindows.push(infoWindow);
@@ -54,10 +52,6 @@ placeNavMarker = function(latLng,data) {
     if(typeof map == 'undefined')
         console.log('no map for marker...');
 
-    
-    if(typeof clickCallBack == 'function')
-        google.maps.event.addListener(new_marker,"click",clickCallBack);
-//    console.log(new_marker);
     gmapsMarkers.push(new_marker);
        
 
