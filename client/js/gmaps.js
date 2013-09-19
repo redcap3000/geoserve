@@ -80,11 +80,13 @@ placeLocationMarker = function(latLng,title,theId){
                 'title': title }
                 );
             // do back end call to search for location markers?
+            /*
             Meteor.call('locations_media_recent',Session.get('access_token'),theId,function(error,result){
                 if(typeof error == 'undefined'){
                     console.log(result);
                 }
             });
+            */
             locationsMarkers.push(new_marker);
         }else{
             console.log('avoiding duplicate marker');
