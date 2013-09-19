@@ -9,6 +9,11 @@ infoWindows = [];
 
 locationsMarkers = [];
 
+closeInfoWindows = function(){if(infoWindows.length > 0)
+            return infoWindows.filter(function(arr){
+               arr.close();
+               return false;
+            });}
 
 createMap = function(latLng) {
     var mapOptions = {
@@ -42,10 +47,7 @@ placeNavMarker = function(latLng,data) {
     infoWindows.push(infoWindow);
     
     google.maps.event.addListener(new_marker, 'click', function() {
-        if(infoWindows.length > 0)
-            infoWindows.filter(function(arr){
-               arr.close(map,new_marker);
-            });
+        closeInfoWindows();
         infoWindow.open(map,new_marker);
     });
     

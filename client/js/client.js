@@ -123,6 +123,7 @@ Template.instaMarker.events = {
             this.wasClicked = true;
 
         }
+        closeInfoWindows();
         setMapCenter([this.lat,this.lon]);
     }
 }
