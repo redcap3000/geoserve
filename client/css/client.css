@@ -1,3 +1,5 @@
+/* @override http://localhost:3000/client/css/client.css?4c6f94aef8b06d7b0b42fbf694fbaa6b42c51c6f */
+
 
 html, body {
 
@@ -146,6 +148,7 @@ a.btn.user_self {
 }
 
 fieldset {
+font-size: .65em; padding: .4em;float: left;clear: right;
 }
 
 #main_menu {
