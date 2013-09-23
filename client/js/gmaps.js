@@ -48,6 +48,56 @@ placeNavMarker = function(latLng,data) {
     
     google.maps.event.addListener(new_marker, 'click', function() {
         closeInfoWindows();
+        // how to issue template event?
+ 
+         if(typeof new_marker.wasClicked == 'undefined' && typeof data.locations == 'undefined') {
+            // find stuff near it ..
+            var access_token = Session.get('access_token');
+            
+            if(access_token){
+                Meteor.call('locations_search',access_token,data.lat,data.lon,this._id,
+                            function(error,result){
+                                if(typeof error =='undefined' && typeof result != 'undefined'){
+                                   if(typeof map != 'undefined'){
+                                        if(result.length > 0){
+                                            result.filter(function(arr){
+                                                placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,arr.id);
+                                            });
+                                        }
+                                        else
+                                            console.log('no nearby markers in search..');
+                                    }
+                                    // do default call for user feed ... to populate map with markers...
+                                    // set the interval to continually fetch new results ??
+                                }else{
+                                    new_marker.wasClicked = false;
+                                    console.log('Please reclick to retry locations search');
+                                    // maybe attempt to make call again?
+                                }
+                            }
+                );
+               
+            }
+            new_marker.wasClicked = true;
+        }else if(typeof new_marker.wasClicked == 'undefined' && typeof data.locations != 'undefined'){
+        
+            insta_locations.find({id : {"$in" : data.locations}}).fetch().filter(function(arr){
+                    var lId = parseInt(arr.id);
+                    var location_feed = insta_locations_grams.findOne({id: lId});
+                    if(location_feed && typeof location_feed.data != 'undefined'){
+                        if(location_feed.data.length > 0)
+                    // pass data to build info window to place location marker...
+                            placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,lId,location_feed.data);
+                        else
+                            console.log('no location data');
+                    }else{
+                        console.log('problem with insta_locations_grams.findOne() query');
+                    }
+            });
+            new_marker.wasClicked = true;
+
+        }
+
         infoWindow.open(map,new_marker);
     });
     

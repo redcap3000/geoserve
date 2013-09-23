@@ -152,12 +152,11 @@ Meteor.methods({
                                     // take arr and begin lookup and store that insta_locations_posts ?
                                     
                                  });
-                                  console.log(locations_result);
-                                 console.log(insta_grams.update(postId,
+                                 insta_grams.update(postId,
                                     {"$set" :{
                                          locations : locations_result}
                                     }
-                                 ));
+                                 );
                                 // return from local database ???
                                 
                                 return request.data.data;
