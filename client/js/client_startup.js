@@ -23,16 +23,16 @@ Meteor.startup(function(){
     if(Meteor.userId()){
             // also use this reactive source to determine interface elements in templates...
             instaGramPosts = Meteor.subscribe("userInstaGrams", Meteor.userId());
-            var instaGram = Session.get('user_self');
+            instaGramLocations = Meteor.subscribe("allLocations");
+            instaGramLocationsPosts = Meteor.subscribe("locationsPosts");
     }
     Deps.autorun(function(){
+        var access_token = Session.get('access_token'), userId = Meteor.userId() ;
         
-        var locations = Session.get('locations_search'), access_token = Session.get('access_token'), userId = Meteor.userId() ;
         if(userId && access_token ){
             if(!Session.get('user_self')){
                 // set this to true so deps doesn't re run while its waiting for the response...
              Session.set('user_self',true);
-
              Meteor.call('user_self',access_token,Meteor.userId(),
                 function(error,result){
                     if(typeof error =='undefined'){
@@ -40,7 +40,6 @@ Meteor.startup(function(){
                          if(Meteor.userId()){
                         // should set interval elsewhere.... probably...
                             Session.set('markerSort',undefined);
-
                         }
                     }else{
                         console.log(error);
@@ -49,7 +48,5 @@ Meteor.startup(function(){
             // attempt to render markers from the locations_search api call .. probably do this in the server side call back...
          
         }
-        
     });
-      
 });

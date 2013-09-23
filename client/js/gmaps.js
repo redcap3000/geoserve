@@ -59,7 +59,7 @@ placeNavMarker = function(latLng,data) {
 
 };
 
-placeLocationMarker = function(latLng,title,theId){
+placeLocationMarker = function(latLng,title,theId,theData){
      if(typeof latLng == 'object' && typeof title != 'undefined' && theId != 'undefined'){
         lMarkerExists = false;
         locationsMarkers.filter(function(arr){
@@ -68,8 +68,49 @@ placeLocationMarker = function(latLng,title,theId){
                 return;
             }
         });
-        if(!lMarkerExists){
-            var new_marker = new google.maps.Marker({
+        // hmm
+        if(!lMarkerExists && typeof theData != 'undefined'){
+            var theInfoWindow = '<h1>' + title + '</h1>';
+                theData.filter(function(arr){
+                    // DRY !!!
+                    /*
+                    var created_time = parseInt(arr.created_time);
+                    var r = {
+                        id : arr.id,
+                        username : arr.user.username,
+                        link : arr.link,
+                        created_time : parseInt(arr.created_time),
+                        last_hit : created_time,
+                        image_low : arr.images.low_resolution.url,
+                        image_standard : arr.images.standard_resolution.url,
+                        image_thumb : arr.images.thumbnail.url,
+                        type : arr.type
+                    };
+                    
+                    if(arr.caption != null){
+                        r.caption = arr.caption.text,
+                        r.caption_id = parseInt(arr.caption.id);
+                    }
+                    
+                    if(arr.tags != null){
+                        r.tags = arr.tags;
+                    }
+                    
+                    if(arr.likes != null){
+                         r.likes = arr.likes.count;
+                    }
+                    r.lat = arr.location.latitude;
+                    r.lon = arr.location.longitude;
+                    */
+                        theInfoWindow = theInfoWindow + '<a href="'+arr.link+'" target="_new"><img alt="image" src="'+arr.images.low_resolution.url+'"/></a><div id="'+arr.id+'" class="instaLocPost"><h5>'+arr.user.username+'</h5><b>'+arr.likes.count+'</b>' + (arr.caption != null && typeof arr.caption.text != 'undefined' && arr.caption.text != '' ? "<p>" + arr.caption.text + "</p>" : "") + '</div>';
+                    
+                });
+                var infoWindow2 = new google.maps.InfoWindow({
+                    content: theInfoWindow
+                });
+            infoWindows.push(infoWindow2);
+            
+            var new_marker2 = new google.maps.Marker({
                 instaId : theId,
                 position: latLng,
                 map: map,
@@ -83,9 +124,25 @@ placeLocationMarker = function(latLng,title,theId){
                 }
             });
             */
-            locationsMarkers.push(new_marker);
-        }else{
+            
+            google.maps.event.addListener(new_marker2, 'click', function() {
+                closeInfoWindows();
+                console.log(infoWindow2);
+                infoWindow2.open(map,new_marker2);
+            });
+            
+            //console.log(insta_locations_grams.findOne({id:parseInt(theId)},{data:1}));
+            locationsMarkers.push(new_marker2);
+        }else if(lMarkerExists){
             console.log('avoiding duplicate marker');
+        }else{
+        // look up data ???
+            //console.log(insta_locations.findOne({id : theId}));
+            var locationGrams = insta_locations_grams.findOne({id : theId},{data:1});
+            if(locationGrams && typeof locationGrams.data != 'undefined' && locationGrams.data.length > 0)
+                placeLocationMarker(latLng,title,theId,locationGrams.data)
+            else
+                console.log('problem with insta_locations_grams query or length is zero');
         }
     }
 // just use default markers these are for when people click on an image and want nearby things...
@@ -94,28 +151,7 @@ placeLocationMarker = function(latLng,title,theId){
 setMapCenter = function(q){
     map.setCenter(new google.maps.LatLng(q[0],q[1]));
 }
-   
-// GMAPS Geocoder success/error functions
-
-successFunction = function(success) {
-          var navLatLng = new google.maps.LatLng(success.coords.latitude, success.coords.longitude);
-          // annoying...
-          //createMap(navLatLng);
-          // send it true option to use different marker
-     map.setCenter( new google.maps.LatLng([success.coords.latitude, success.coords.longitude]));
-          placeNavMarker(navLatLng,true);
-
-          lookForMarkers([navLatLng.jb,navLatLng.kb]);
-        },
-
-errorFunction = function(success) {
-    // set this to a default location? define it somewhere...?
-    var navLatLng = new google.maps.LatLng(37.808631, -122.474470);
-    //createMap(latlng);
-    placeNavMarker(navLatLng);
-//  addAutocomplete();
-    };
-
+ 
 /*
  *
  * END GMAPS

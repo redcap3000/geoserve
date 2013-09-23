@@ -8,7 +8,6 @@ Template.nav.hasInstaCode =  function(){
     return (Session.get("access_token")?true:false);
 };
 
-
 Template.nav.events = {
     'click .instaLogin' : function () {
             var doesHaveAccess = Session.get('access_token');
@@ -26,7 +25,6 @@ Template.nav.events = {
                     function(error,result){
                         if(typeof error =='undefined'){
                             Session.set('access_token',result.access_token);
-                            Session.set('user_info',result.user);
                             Session.set('user_self',false);
                             // do default call for user feed ... to populate map with markers...
                             // set the interval to continually fetch new results ??
@@ -90,11 +88,9 @@ Template.instaMarker.events = {
                                 if(typeof error =='undefined' && typeof result != 'undefined'){
                                    if(typeof map != 'undefined'){
                                         if(result.length > 0){
-                            
                                             result.filter(function(arr){
                                                 placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,arr.id);
                                             });
-                                            
                                         }
                                         else
                                             console.log('no nearby markers in search..');
@@ -105,8 +101,6 @@ Template.instaMarker.events = {
                                     this.wasClicked = false;
                                     console.log('Please reclick to retry locations search');
                                     // maybe attempt to make call again?
-                                    console.log(error);
-                                    console.log(result);
                                 }
                             }
                 );
@@ -114,12 +108,20 @@ Template.instaMarker.events = {
             }
             this.wasClicked = true;
         }else if(typeof this.wasClicked == 'undefined' && typeof this.locations != 'undefined'){
-            console.log('we have locations...');
-            this.locations.filter(function(arr){
-            placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,arr.id);
+        
+            insta_locations.find({_id : {"$in" : this.locations}}).fetch().filter(function(arr){
+                    var lId = parseInt(arr.id);
+                    var location_feed = insta_locations_grams.findOne({id: lId});
+                    if(location_feed && typeof location_feed.data != 'undefined'){
+                        if(location_feed.data.length > 0)
+                    // pass data to build info window to place location marker...
+                            placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,lId,location_feed.data);
+                        else
+                            console.log('no location data');
+                    }else{
+                        console.log('problem with insta_locations_grams.findOne() query');
+                    }
             });
-            // only call this server side once... for now .. later create options to 'refresh locations' (that simply deletes the fields and refreshes...)
-            // write client side calls to do (public) image streams on markers and store in local minimongo...
             this.wasClicked = true;
 
         }
