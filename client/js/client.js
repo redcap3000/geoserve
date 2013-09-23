@@ -9,35 +9,6 @@ Template.nav.hasInstaCode =  function(){
 };
 
 Template.nav.events = {
-    'click .instaLogin' : function () {
-            var doesHaveAccess = Session.get('access_token');
-            if(!doesHaveAccess){
-                console.log('does not have access running authenticate...');
-                Meteor.call('authenticate',
-                    function(error,result){
-                        if(typeof error != 'undefined'){
-                            console.log('error');
-                        }else
-                            // redirect here...
-                            window.open(result, '_self', 'toolbar=0,location=0,menubar=0');
-//                           window.location.replace(result);
-                        });
-            }else if(doesHaveAccess){
-                Meteor.call('request_auth_code',doesHaveAccess,Meteor.settings.redirect_uri,
-                    function(error,result){
-                        if(typeof error =='undefined'){
-                            Session.set('access_token',result.access_token);
-                            Session.set('user_self',false);
-                            // do default call for user feed ... to populate map with markers...
-                            // set the interval to continually fetch new results ??
-                            
-                        }else
-                            console.log(error);
-                    }
-                );
-            }
-        },
-    
     'click #mFilterLikes': function(evt,tmpl){
         Session.set('markerSort', {likes:-1});
     },
