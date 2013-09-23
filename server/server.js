@@ -1,6 +1,6 @@
 Meteor.publish("userInstaGrams",function(userId){
     if(typeof userId != "undefined" && userId != null){
-        return insta_grams.find({owner:userId},{id:1,caption:1,likes:1,lat:1,lon:1,tags:1,link:1,username:1,image_low:1,image_thumb:1,caption_id:1,created_time:1,last_hit:1});
+        return insta_grams.find({owner:userId},{id:1,caption:1,likes:1,lat:1,lon:1,tags:1,link:1,username:1,image_low:1,image_thumb:1,caption_id:1,created_time:1,last_hit:1,locations:1});
     }
     else
         return false;
@@ -11,10 +11,15 @@ Meteor.publish("allLocations",function(){
     return insta_locations.find({},{});
 });
 
-Meteor.publish("locationsPosts",function(){
+Meteor.publish("locationsPosts",function(theFilter){
+// the filter refers to an array with ID's of the grams to retreve ...
 // eventually use geojson to only get locations near by? automagically ... ?
-    //console.log(this.added("insta_locations_grams"));
-    return insta_locations_grams.find({},{});
+    //console.log(this.added("insta_locations_grams"));\// tooo much DATA
+    if(typeof theFilter != 'undefined' && theFilter.length > 0)
+        return insta_locations_grams.find({id:{"$in" : theFilter}},{});
+    else{
+        console.log('no locations to load... from filter');
+    }
 });
 
 Meteor.methods({
@@ -152,13 +157,14 @@ Meteor.methods({
                                     // take arr and begin lookup and store that insta_locations_posts ?
                                     
                                  });
-                                 insta_grams.update(postId,
+                                // updated associated post with list of location ID's as organized via instagram api (not the mongo id)
+                                 insta_grams.update({_id:postId},
                                     {"$set" :{
                                          locations : locations_result}
                                     }
                                  );
                                 // return from local database ???
-                                
+                                // just return true..
                                 return request.data.data;
                                 //return true;
                        

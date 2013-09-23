@@ -55,7 +55,7 @@ placeNavMarker = function(latLng,data) {
             var access_token = Session.get('access_token');
             
             if(access_token){
-                Meteor.call('locations_search',access_token,data.lat,data.lon,this._id,
+                Meteor.call('locations_search',access_token,data.lat,data.lon,data._id,
                             function(error,result){
                                 if(typeof error =='undefined' && typeof result != 'undefined'){
                                    if(typeof map != 'undefined'){
@@ -80,20 +80,19 @@ placeNavMarker = function(latLng,data) {
             }
             new_marker.wasClicked = true;
         }else if(typeof new_marker.wasClicked == 'undefined' && typeof data.locations != 'undefined'){
-        
-            insta_locations.find({id : {"$in" : data.locations}}).fetch().filter(function(arr){
-                    var lId = parseInt(arr.id);
-                    var location_feed = insta_locations_grams.findOne({id: lId});
-                    if(location_feed && typeof location_feed.data != 'undefined'){
-                        if(location_feed.data.length > 0)
-                    // pass data to build info window to place location marker...
-                            placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,lId,location_feed.data);
-                        else
-                            console.log('no location data');
-                    }else{
-                        console.log('problem with insta_locations_grams.findOne() query');
-                    }
+            console.log('local search..');
+            locationsFilter = [];
+            // first modify add the sub for the locations_posts to avoid getting everything ?
+            
+            data.locations.filter(function(arr){
+                if(locationsFilter.indexOf(arr) == -1){
+                    locationsFilter.push(arr);
+                }
             });
+            
+            console.log(locationsFilter);
+            Session.set('locationsFilter',locationsFilter);
+            // do we need to run this find?
             new_marker.wasClicked = true;
 
         }
@@ -121,6 +120,8 @@ placeLocationMarker = function(latLng,title,theId,theData){
         // hmm
         if(!lMarkerExists && typeof theData != 'undefined'){
             var theInfoWindow = '<ul class="locInfoContainer"><li class="title"><h1>' + title + '</h1></li>';
+            
+                if(typeof theData == 'object'){
                 theData.filter(function(arr){
                     // DRY !!!
                     /*
@@ -155,6 +156,9 @@ placeLocationMarker = function(latLng,title,theId,theData){
                         theInfoWindow = theInfoWindow + '<li class="locInfoWindow"><a href="'+arr.link+'" target="_new"><img alt="image" src="'+arr.images.low_resolution.url+'"/></a><div id="'+arr.id+'" class="instaLocPost"><h5>'+arr.user.username+ ' ' + arr.likes.count+ '</h5>' + (arr.caption != null && typeof arr.caption.text != 'undefined' && arr.caption.text != '' ? "<p>" + arr.caption.text + "</p>" : "") + '</div></li>';
                     
                 });
+                }else{
+                    theInfoWindow = theData;
+                }
                 var infoWindow2 = new google.maps.InfoWindow({
                     content: theInfoWindow + "</ul>"
                 });
