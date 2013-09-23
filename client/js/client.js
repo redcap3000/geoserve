@@ -10,6 +10,11 @@ Template.nav.hasInstaCode =  function(){
     return (Session.get("access_token")?true:false);
 };
 
+Template.loggedInMenu.hasInstaCode = function(){
+    return (Session.get("access_token")?true:false);
+};
+
+
 Template.nav.events = {
     'click #mFilterLikes': function(evt,tmpl){
         Session.set('markerSort', {likes:-1});
@@ -58,28 +63,28 @@ Template.instaMarker.events = {
  *  previous values ?
  */
 Template.instaMarker.created = function(){
-       placeNavMarker(new google.maps.LatLng(this.data.lat,this.data.lon),this.data );
-    
+    placeNavMarker(new google.maps.LatLng(this.data.lat,this.data.lon),this.data );
+
+};
+Template.public_view.rendered = function(){
+    map = undefined;
+    gmapsMarkers = [];
+    infoWindows = [];
+    locationsMarkers = [];
 };
 
-Template.instaMarker.destroyed = function(){
-    console.log('destroying logged in menu..');
-    if(map !== undefined){
-        map = undefined;
-        
-        gmapsMarkers = [];
-        
-        infoWindows = [];
+Template.public_view.destroyed = function(){
+    createMap();
+};
 
-        locationsMarkers = [];
-        window.location.replace('/');
-    
-    }else{
-        // redirect to different url to get rid of access_token ?
-        console.log('already destroyed');
-                
-
+Template.loggedInMenu.rendered = function(){
+    if(typeof map != 'undefined' && typeof gmapsMarkers[0] != 'undefined'){
+//        console.log(gmapsMarkers[0].getPosition());
+       var get_pos = gmapsMarkers[0].getPosition();
+       if(get_pos)
+        setMapCenter(get_pos);
     }
-};
+}
+
 
 Template.instaMarker.preserve = ['img','.instaUser'];

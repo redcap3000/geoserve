@@ -4,17 +4,23 @@
  */
     
 Meteor.startup(function(){
-    createMap();
-    var access_token = window.location.href.split("#");
-    if(access_token.length > 1 && !doesHaveAccess){
-        access_token = access_token[1].split("=")[1];
-        Session.set('access_token', access_token);
-        var doesHaveAccess = Session.get('access_token');
-
-    }
+    //createMap();
+ 
     // continually refreshes client feed... should probably unset this interval on destroy...
     Meteor.setInterval(function(){Session.set('user_self',false);},60 * 60 * 45);
     Deps.autorun(function(){
+       var access_token = window.location.href.split("#");
+        if(access_token.length > 1 && Meteor.userId()){
+            access_token = access_token[1].split("=")[1];
+            Session.set('access_token', access_token);
+            var doesHaveAccess = Session.get('access_token');
+
+        }else if(access_token.length >1){
+            // get rid of token if logged out
+            window.location.replace('/');
+        }
+    
+    
          if(Meteor.userId()){
             var locationsFilter = Session.get('locationsFilter');
             // also use this reactive source to determine interface elements in templates...
