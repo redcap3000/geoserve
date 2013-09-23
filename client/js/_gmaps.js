@@ -7,6 +7,8 @@
  *
  */
 
+Meteor.startup(function(){
+
 gmapsMarkers = [];
 
 infoWindows = [];
@@ -183,9 +185,9 @@ placeLocationMarker = function(latLng,title,theId,theData){
 }
 
 setMapCenter = function(q){
-    map.setCenter(new google.maps.LatLng(q[0],q[1]));
+    map.setCenter((typeof q == 'object' && q.length == 2? new google.maps.LatLng(q[0],q[1]) : (typeof q == 'object' ? q: new google.maps.LatLng(0,0))));
 }
- 
+ });
 /*
  *
  * END GMAPS
