@@ -22,32 +22,29 @@
                  {{/if}}
 
        </span>
-            {{>loggedInMenu}}
+       {{#if currentUser}}
+            {{#if hasInstaCode}}
+                {{>loggedInMenu}}
+            {{/if}}
+        {{else}}
+            {{>public_view}}
+        {{/if}}
     </nav>
 </template>
 
 <template name="loggedInMenu">
     <div id="main_menu">
-    {{#if currentUser}}
-        <div id="the_markers">
-           {{#each instaMarkers}}
-                {{>instaMarker}}
-           {{/each}}
-        </div>
-    {{else}}
         {{#if loggingIn}}
             <b style="color:black;">working...</b>
         {{else}}
-        <h3 style="padding-top:4em;margin-left:1.25em;">Instageo</h3>
-            
-        <div class="span" style="padding-top:2em;color:black">
-            <em>An <a href="http://instagram.com/developer/">Instagram-API</a> and Google Maps-API powered visualization of instagram posts with location data!</em>
-            <ul style="padding-top:.5em;"><li>Log in / create an account</li><li>Press log into instagram (easier if you're already logged into instagram)</li><li>Click sidebar thumbnails to center map. Click thumbnail image markers to pull up post information and search for nearby locations. Click red location markers to find related public posts to that location. </p></li></ul>
-            
-            <b><a href="http://redcapmedia.com">Ronaldo Barbachano 2013</a></b>
-        </div>
+            {{#if hasInstaCode}}
+              <div id="the_markers">
+                {{#each instaMarkers}}
+                    {{>instaMarker}}
+                {{/each}}
+                </div>
+            {{/if}}
         {{/if}}
-    {{/if}}
     </div>
 </template>
 
@@ -55,4 +52,16 @@
     <div id="{{_id}}" class="span focus_marker instaMarker">
     <img src="{{image_thumb}}"/>
     </div>
+</template>
+
+<template name="public_view">
+ <h3 style="padding-top:4em;margin-left:1.25em;">Instageo</h3>
+            
+        <div class="span" style="padding-top:2em;color:black">
+            <em>An <a href="http://instagram.com/developer/">Instagram-API</a> and Google Maps-API powered visualization of instagram posts with location data!</em>
+            <ul style="padding-top:.5em;"><li>Log in / create an account</li><li>Press log into instagram (easier if you're already logged into instagram)</li><li>Click sidebar thumbnails to center map. Click thumbnail image markers to pull up post information and search for nearby locations. Click red location markers to find related public posts to that location. </p></li></ul>
+            
+            <b><a href="http://redcapmedia.com">Ronaldo Barbachano 2013</a></b>
+        </div>
+
 </template>
