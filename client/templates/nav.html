@@ -1,4 +1,3 @@
-
 <template name="nav">
     <nav>
         <span class="login">
@@ -9,20 +8,10 @@
                             <form class="span" style="font-size:.85em;">
                             <fieldset>
                                 <input id="mFilterDefault" name="mFilter" type="radio" value="likes" /> Default
-
-                                <input id="mFilterLikes" name="mFilter" type="radio" value="likes"/> Likes
+                           <input id="mFilterLikes" name="mFilter" type="radio" value="likes"/> Likes
                                 <input id="mFilterLastChange" name="mFilter" type="radio" value="lastHit"/> Last Change
                                 <input id="mFilterDate" name="mFilter" type="radio" value="postId"/> Date
                             </fieldset>
-                            <!--
-                            <fieldset>
-                                <input id="mOrder" name="mOrder" type="radio" value="postOrderAsc"/> Ascending
-                                <input id="mOrder" name="mOrder" type="radio" value="postOrderD"/> Descending
-                            </fieldset>
-                            <a class="btn user_self">instaFeed</a>
-                            -->
-                            
-
                             </form>
                         {{else}}
                             <b>requesting...</b>
@@ -53,7 +42,7 @@
             
         <div class="span" style="padding-top:2em;color:black">
             <em>An <a href="http://instagram.com/developer/">Instagram-API</a> and Google Maps-API powered visualization of instagram posts with location data!</em>
-            <ul style="padding-top:.5em;"><li>Log in / create an account</li><li>Press log into instagram (easier if you're already logged into instagram)</li><li>Click sidebar thumbnails to center map. Click thumbnail image markers to pull up post information.</p></li></ul>
+            <ul style="padding-top:.5em;"><li>Log in / create an account</li><li>Press log into instagram (easier if you're already logged into instagram)</li><li>Click sidebar thumbnails to center map. Click thumbnail image markers to pull up post information and search for nearby locations. Click red location markers to find related public posts to that location. </p></li></ul>
             
             <b><a href="http://redcapmedia.com">Ronaldo Barbachano 2013</a></b>
         </div>
