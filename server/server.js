@@ -122,9 +122,9 @@ Meteor.methods({
                 // query server side database for cooards? this is kinda weird way to store data sets... data will be repeated incessantly...
                 // shall i round lat and lng ?
                 var locations_check = insta_grams.findOne({_id : postId, locations: {"$exists":true}},{locations:1});
-                console.log(locations_check);
+               // console.log(locations_check);
                 if(typeof locations_check == 'undefined'){
-                    console.log('undefined2');
+                    //console.log('undefined2');
                     var base_url = 'https://api.instagram.com/v1/locations/search?lat='+lat+'&distance=1&lng='+lng+'&access_token=' + access_token;
                    console.log(base_url);
                     try{
@@ -139,7 +139,8 @@ Meteor.methods({
                                     locations_result.push(insta_locations.insert(arr));
                                     Meteor.call("locations_media_recent",access_token,arr.id,function(error,result){
                                         result.id = parseInt(arr.id);
-                                        console.log(insta_locations_grams.insert(result));
+                                        insta_locations_grams.insert(result);
+                                        // so this inserts things .. new record for each user need to do a 'does this exist check' first... probably...
                                     });
                                     // take arr and begin lookup and store that insta_locations_posts ?
                                     
