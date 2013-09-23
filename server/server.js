@@ -6,6 +6,17 @@ Meteor.publish("userInstaGrams",function(userId){
         return false;
 });
 
+Meteor.publish("allLocations",function(){
+// eventually use geojson to only get locations near by? automagically ... ?
+    return insta_locations.find({},{});
+});
+
+Meteor.publish("locationsPosts",function(){
+// eventually use geojson to only get locations near by? automagically ... ?
+    //console.log(this.added("insta_locations_grams"));
+    return insta_locations_grams.find({},{});
+});
+
 Meteor.methods({
     instaInsert : function(the_owner,arr){
          if(arr.location != null){
@@ -122,17 +133,31 @@ Meteor.methods({
                             if(typeof request.data.data != 'undefined'){
                                 // filter data
                                 //console.log(request.data);
+                                var locations_result = [];
+                                 request.data.data.filter(function(arr){
+                                    arr.id = parseInt(arr.id);
+                                    locations_result.push(insta_locations.insert(arr));
+                                    Meteor.call("locations_media_recent",access_token,arr.id,function(error,result){
+                                        result.id = parseInt(arr.id);
+                                        console.log(insta_locations_grams.insert(result));
+                                    });
+                                    // take arr and begin lookup and store that insta_locations_posts ?
+                                    
+                                 });
+                                  console.log(locations_result);
                                  console.log(insta_grams.update(postId,
                                     {"$set" :{
-                                         locations : request.data.data}
+                                         locations : locations_result}
                                     }
                                  ));
+                                // return from local database ???
+                                
                                 return request.data.data;
                                 //return true;
                        
                             }else{
                
-               
+                                    console.log('should not be happening');
                                   console.log(insta_grams.update(postId,
                                     {"$set" :{
                                          locations : request.data}
@@ -154,6 +179,7 @@ Meteor.methods({
                    }
                    
                 }else{
+                    console.log('not enough data?');
                     return locations_check.locations;
                 }
                }
