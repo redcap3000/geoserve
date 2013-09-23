@@ -70,7 +70,7 @@ placeLocationMarker = function(latLng,title,theId,theData){
         });
         // hmm
         if(!lMarkerExists && typeof theData != 'undefined'){
-            var theInfoWindow = '<h1>' + title + '</h1>';
+            var theInfoWindow = '<h1>' + title + '</h1><ul class="locInfoContainer">';
                 theData.filter(function(arr){
                     // DRY !!!
                     /*
@@ -102,11 +102,11 @@ placeLocationMarker = function(latLng,title,theId,theData){
                     r.lat = arr.location.latitude;
                     r.lon = arr.location.longitude;
                     */
-                        theInfoWindow = theInfoWindow + '<a href="'+arr.link+'" target="_new"><img alt="image" src="'+arr.images.low_resolution.url+'"/></a><div id="'+arr.id+'" class="instaLocPost"><h5>'+arr.user.username+'</h5><b>'+arr.likes.count+'</b>' + (arr.caption != null && typeof arr.caption.text != 'undefined' && arr.caption.text != '' ? "<p>" + arr.caption.text + "</p>" : "") + '</div>';
+                        theInfoWindow = theInfoWindow + '<li class="locInfoWindow"><a href="'+arr.link+'" target="_new"><img alt="image" src="'+arr.images.low_resolution.url+'"/></a><div id="'+arr.id+'" class="instaLocPost"><h5>'+arr.user.username+ ' ' + arr.likes.count+ '</h5>' + (arr.caption != null && typeof arr.caption.text != 'undefined' && arr.caption.text != '' ? "<p>" + arr.caption.text + "</p>" : "") + '</div></li>';
                     
                 });
                 var infoWindow2 = new google.maps.InfoWindow({
-                    content: theInfoWindow
+                    content: theInfoWindow + "</ul>"
                 });
             infoWindows.push(infoWindow2);
             
@@ -127,6 +127,8 @@ placeLocationMarker = function(latLng,title,theId,theData){
             
             google.maps.event.addListener(new_marker2, 'click', function() {
                 closeInfoWindows();
+                infoWindow2.setOptions({maxWidth:900});
+
                 infoWindow2.open(map,new_marker2);
             });
             

@@ -1,3 +1,5 @@
+/* @override http://localhost:3000/client/css/client.css?c072ecf0fca95db73c289da7c036d9a6094ffa9e */
+
 html, body {
 
     height: 100%;
@@ -12,7 +14,7 @@ h1{
 }
 
 #map_canvas  h1 {
-width: 11.75em;clear: both;
+width: 100%;clear: both;
 float: left;margin: 0;padding: 0;
 }
 
@@ -38,18 +40,20 @@ div .instaLocPost {
 	color: white;
 	float: left;
 	position: relative;
-	bottom: 6em;
+	top: -24em;
+	max-height: 9em;
+	overflow: auto;
 	background-color: maroon;
 	clear: both;
 	padding-left: .55em;
-	width: 22.95em;
+	width: 23em;
 	opacity: 0.9;
-	margin-bottom: -6em;
+	padding-bottom: .25em;
 }
 
 
 .instaLocPost p {
-width: 21.25em;overflow: auto;
+width: 95%;overflow: auto;
 margin: 0;
 padding: 1.25em;
 padding: 0;
@@ -71,11 +75,13 @@ font-size: 1em;
 }
 
 #map_canvas div a img{
-	float: left;clear: both;
+	float: left;clear: both;width: auto;
 }
 
-
-
+ul.locInfoContainer {
+	float: left;width: 100%;
+	
+}
 
 div.span.focus_marker {
 	margin: 0;
@@ -272,6 +278,15 @@ margin: 0;
 	margin: 0;
 	padding:  0 .5em;
 	line-height: 1em;
+}
+ul{
+	margin: 0;
+	padding: 0;
+	width:auto;overflow: visible;
+	visibility: visible;
+}
+li.locInfoWindow {
+	width: 23em;float: left;margin: 0;padding: 0;height: 24.25em;
 }
 
 
