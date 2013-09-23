@@ -120,7 +120,7 @@ placeLocationMarker = function(latLng,title,theId,theData){
         });
         // hmm
         if(!lMarkerExists && typeof theData != 'undefined'){
-            var theInfoWindow = '<h1>' + title + '</h1><ul class="locInfoContainer">';
+            var theInfoWindow = '<ul class="locInfoContainer"><li class="title"><h1>' + title + '</h1></li>';
                 theData.filter(function(arr){
                     // DRY !!!
                     /*
@@ -177,7 +177,7 @@ placeLocationMarker = function(latLng,title,theId,theData){
             
             google.maps.event.addListener(new_marker2, 'click', function() {
                 closeInfoWindows();
-                infoWindow2.setOptions({maxWidth:900});
+                infoWindow2.setOptions({maxWidth:615});
 
                 infoWindow2.open(map,new_marker2);
             });
