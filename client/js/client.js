@@ -12,13 +12,15 @@ Template.nav.events = {
     'click .instaLogin' : function () {
             var doesHaveAccess = Session.get('access_token');
             if(!doesHaveAccess){
+                console.log('does not have access running authenticate...');
                 Meteor.call('authenticate',
                     function(error,result){
                         if(typeof error != 'undefined'){
                             console.log('error');
                         }else
                             // redirect here...
-                           window.location.replace(result);
+                            window.open(result, '_self', 'toolbar=0,location=0,menubar=0');
+//                           window.location.replace(result);
                         });
             }else if(doesHaveAccess){
                 Meteor.call('request_auth_code',doesHaveAccess,Meteor.settings.redirect_uri,
@@ -35,12 +37,7 @@ Template.nav.events = {
                 );
             }
         },
-    'click .user_self' : function(){
-        var access_token = Session.get('access_token');
-         if(access_token && Session.get('user_self')){
-             Session.set('user_self',false);
-        }
-    },
+    
     'click #mFilterLikes': function(evt,tmpl){
         Session.set('markerSort', {likes:-1});
     },
@@ -92,9 +89,22 @@ Template.instaMarker.created = function(){
     
 };
 
-Template.loggedInMenu.destroyed = function(){
+Template.instaMarker.destroyed = function(){
+    console.log('destroying logged in menu..');
+    if(map !== undefined){
     map = undefined;
+    
     gmapsMarkers = [];
+    
+    infoWindows = [];
+
+    locationsMarkers = [];
+    }else{
+        // redirect to different url to get rid of access_token ?
+        console.log('already destroyed');
+                window.location.replace('/');
+
+    }
 };
 
 Template.instaMarker.preserve = ['img','.instaUser'];
