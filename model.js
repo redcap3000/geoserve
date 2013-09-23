@@ -1,4 +1,7 @@
-
+/*
+ * instageo / geoserve - Ronaldo Barbachano 2013
+ * http://redcapmedia.com
+ */
 var default_permissions = {
     insert:function(userId,doc){
         return (userId && doc.owner === userId);

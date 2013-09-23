@@ -1,5 +1,7 @@
-// for hiding the loginto instagram button ..
-
+/*
+ * instageo / geoserve - Ronaldo Barbachano 2013
+ * http://redcapmedia.com
+ */
 
 Template.nav.instaPostReady =function(){
     return !Session.equals("user_self",false);
