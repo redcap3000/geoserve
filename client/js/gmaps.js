@@ -127,7 +127,6 @@ placeLocationMarker = function(latLng,title,theId,theData){
             
             google.maps.event.addListener(new_marker2, 'click', function() {
                 closeInfoWindows();
-                console.log(infoWindow2);
                 infoWindow2.open(map,new_marker2);
             });
             
