@@ -40,18 +40,21 @@ Meteor.startup(function(){
                     }else{
                         console.log(error);
                 }});
-            }else if(locationsFilter.length > 0){
-                insta_locations.find({id : {"$in" : locationsFilter}}).fetch().filter(function(arr){
-                    // have to cascade this for now to properly generate info window on marker creation....
-                    // look up associated post object and pass as data... use something else for now...
-                    var location_data = insta_locations_grams.findOne({id: parseInt(arr.id)});
-                    // so perhaps we ne
-                    if(location_data && typeof location_data.data != 'undefined' && location_data.data.length > 0)
-                        placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,parseInt(arr.id),location_data.data);
-                    //else
-                    //    console.log('problem with lookup in insta_locations_grams for ' + arr.id);
-                
-                });
+            }else if(locationsFilter){
+                if(locationsFilter.length > 0){
+            
+                    insta_locations.find({id : {"$in" : locationsFilter}}).fetch().filter(function(arr){
+                        // have to cascade this for now to properly generate info window on marker creation....
+                        // look up associated post object and pass as data... use something else for now...
+                        var location_data = insta_locations_grams.findOne({id: parseInt(arr.id)});
+                        // so perhaps we ne
+                        if(location_data && typeof location_data.data != 'undefined' && location_data.data.length > 0)
+                            placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,parseInt(arr.id),location_data.data);
+                        //else
+                        //    console.log('problem with lookup in insta_locations_grams for ' + arr.id);
+                    
+                    });
+                }
             }
         }else if(userId){
             if(!access_token){

@@ -62,15 +62,30 @@ placeNavMarker = function(latLng,data) {
                 Meteor.call('locations_search',access_token,data.lat,data.lon,data._id,
                             function(error,result){
                                 if(typeof error =='undefined' && typeof result != 'undefined'){
-                                   if(typeof map != 'undefined'){
-                                        if(result.length > 0){
-                                            result.filter(function(arr){
-                                                placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,arr.id);
-                                            });
-                                        }
-                                        else
-                                            console.log('no nearby markers in search..');
+                                    console.log('did a location search...');
+                                    // how do we resubscribe???
+                                    var lookups = [];
+                                    result.filter(function(arr){
+                                        lookups.push(arr.id);
                                     }
+                                    );
+                            
+                                 insta_locations.find({id : {"$in" : lookups}}).fetch().filter(function(arr){
+                                    // have to cascade this for now to properly generate info window on marker creation....
+                                    // look up associated post object and pass as data... use something else for now...
+                                    var location_data = insta_locations_grams.findOne({id: parseInt(arr.id)});
+                                    // so perhaps we ne
+                                    if(location_data && typeof location_data.data != 'undefined' && location_data.data.length > 0)
+                                        placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,parseInt(arr.id),location_data.data);
+                                    //else
+                                    //    console.log('problem with lookup in insta_locations_grams for ' + arr.id);
+                                
+                                });
+
+                            
+                            
+                                    Session.set('locationsFilter',lookups);
+                                    return true;
                                     // do default call for user feed ... to populate map with markers...
                                     // set the interval to continually fetch new results ??
                                 }else{
