@@ -63,17 +63,19 @@ Template.instaMarker.created = function(){
 Template.instaMarker.destroyed = function(){
     console.log('destroying logged in menu..');
     if(map !== undefined){
-    map = undefined;
-    
-    gmapsMarkers = [];
-    
-    infoWindows = [];
+        map = undefined;
+        
+        gmapsMarkers = [];
+        
+        infoWindows = [];
 
-    locationsMarkers = [];
+        locationsMarkers = [];
+        window.location.replace('/');
+    
     }else{
         // redirect to different url to get rid of access_token ?
         console.log('already destroyed');
-                window.location.replace('/');
+                
 
     }
 };
