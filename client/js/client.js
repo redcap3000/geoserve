@@ -109,7 +109,7 @@ Template.instaMarker.events = {
             this.wasClicked = true;
         }else if(typeof this.wasClicked == 'undefined' && typeof this.locations != 'undefined'){
         
-            insta_locations.find({_id : {"$in" : this.locations}}).fetch().filter(function(arr){
+            insta_locations.find({id : {"$in" : this.locations}}).fetch().filter(function(arr){
                     var lId = parseInt(arr.id);
                     var location_feed = insta_locations_grams.findOne({id: lId});
                     if(location_feed && typeof location_feed.data != 'undefined'){

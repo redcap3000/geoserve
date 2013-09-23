@@ -136,12 +136,19 @@ Meteor.methods({
                                 var locations_result = [];
                                  request.data.data.filter(function(arr){
                                     arr.id = parseInt(arr.id);
-                                    locations_result.push(insta_locations.insert(arr));
-                                    Meteor.call("locations_media_recent",access_token,arr.id,function(error,result){
-                                        result.id = parseInt(arr.id);
-                                        insta_locations_grams.insert(result);
-                                        // so this inserts things .. new record for each user need to do a 'does this exist check' first... probably...
-                                    });
+                                    // check to see its not already there....
+                                    
+                                    var instaCheck = insta_locations.findOne({id:arr.id},{id:1});
+                                    if(!instaCheck){
+                                        insta_locations.insert(arr);
+                                        Meteor.call("locations_media_recent",access_token,arr.id,function(error,result){
+                                            result.id = parseInt(arr.id);
+                                            insta_locations_grams.insert(result);
+                                            // so this inserts things .. new record for each user need to do a 'does this exist check' first... probably...
+                                        });
+                                    }
+                                    locations_result.push(arr.id);
+
                                     // take arr and begin lookup and store that insta_locations_posts ?
                                     
                                  });
