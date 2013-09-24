@@ -10,9 +10,15 @@ Meteor.publish("userInstaGrams",function(userId){
         return false;
 });
 
-Meteor.publish("allLocations",function(){
+Meteor.publish("allLocations",function(idFilter){
 // eventually use geojson to only get locations near by? automagically ... ?
-    return insta_locations.find({},{});
+    if(typeof idFilter == 'undefined' || typeof idFilter != 'object' ||  !idFilter){
+    // no filter
+        return false;
+        }
+    else{
+        return insta_locations.find({id: {"$in" : idFilter}});
+        }
 });
 
 Meteor.publish("locationsPosts",function(theFilter){
@@ -102,30 +108,6 @@ Meteor.methods({
                 console.log('Could not initalize settings, was meteor deployed with --settings deploy_settings.json');
             }
         },
-     request_auth_code : function(code){
-        
-        var settings = Meteor.settings;
-        if(typeof settings.client_id !== 'undefined'){
-            var client_id = settings.client_id;
-            var client_secret = settings.secret;
-            var redirect_uri = settings.redirect_uri;
-        
-            var base_url = 'https://api.instagram.com/oauth/access_token';
-            // does NOT like the slashes....
-            var url_params = { params:{
-                'client_id' : client_id,
-                'client_secret' : client_secret,
-                'grant_type' : 'authorization_code',
-                'redirect_uri' : redirect_uri,
-                'code' : code}}
-
-            var request = HTTP.get(base_url,url_params,function(error,result){if(result) return result;});
-
-            }else{
-                console.log('Could not initalize settings, was meteor deployed with --settings deploy_settings.json');
-            }
-        return false;
-    },
      locations_search : function(access_token,lat,lng,postId){
             if(typeof access_token != 'undefined' && typeof lat != 'undefined' && typeof lng != 'undefined' && typeof postId != 'undefined'){
                   //  console.log('search');
@@ -142,12 +124,10 @@ Meteor.methods({
                         if(request.statusCode === 200 && typeof request.data != 'undefined'){
                             if(typeof request.data.data != 'undefined'){
                                 // filter data
-                                //console.log(request.data);
                                 var locations_result = [];
                                  request.data.data.filter(function(arr){
                                     arr.id = parseInt(arr.id);
                                     // check to see its not already there....
-                                    
                                     var instaCheck = insta_locations.findOne({id:arr.id},{id:1});
                                     if(!instaCheck){
                                         insta_locations.insert(arr);
@@ -158,8 +138,6 @@ Meteor.methods({
                                         });
                                     }
                                     locations_result.push(arr.id);
-
-                                    // take arr and begin lookup and store that insta_locations_posts ?
                                     
                                  });
                                 // updated associated post with list of location ID's as organized via instagram api (not the mongo id)
@@ -169,21 +147,7 @@ Meteor.methods({
                                     }
                                  );
                                 // return from local database ???
-                                // just return true..
                                 return request.data.data;
-                                //return true;
-                       
-                            }else{
-               
-                                    console.log('should not be happening');
-                                  console.log(insta_grams.update(postId,
-                                    {"$set" :{
-                                         locations : request.data}
-                                    }
-                                 ));
-               
-                                console.log(request.data);
-                                return request.data;
                             }
                        // set the interval if not already set ? 
                            }
