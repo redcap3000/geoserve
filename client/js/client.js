@@ -3,6 +3,9 @@
  * http://redcapmedia.com
  */
 
+
+/* Handlebar template functions */
+
 Template.nav.instaPostReady =function(){
     return !Session.equals("user_self",false);
 };
@@ -14,6 +17,7 @@ Template.loggedInMenu.hasInstaCode = function(){
     return (Session.get("access_token")?true:false);
 };
 
+/* Template click events.. for sorting manipulations */
 
 Template.nav.events = {
     'click #mFilterLikes': function(evt,tmpl){
@@ -32,7 +36,7 @@ Template.nav.events = {
 };
 
 /*
- *  these are the 'main' markers ... do some stuff with session and sorting next ?
+ *  Instagram Users' friends feed (instaMarkers)
  *
  */
 
@@ -46,26 +50,31 @@ Template.loggedInMenu.instaMarkers = function(){
         filter.sort = {id:-1,lastHit:1,likes:-1};
         
     }
-    
     filter.locations = 0;
     return insta_grams.find({},filter);
 }
 
+/*
+ * Click event that centers map to marker (for instaMarkers), also closes any open infowindows.
+ *
+ */
 Template.instaMarker.events = {
-    "click .focus_marker" : function(){
-             closeInfoWindows();
+    "click .focus_marker" : function(evt,tmpl){
+        closeInfoWindows();
         setMapCenter([this.lat,this.lon]);
     }
 }
-/*
- *  Place nav marker and setup google marker with a basic thing of its text .. only run this once? Need to figure
- *  out how to update this with the latest data .... could do a check on 'rendered' to see if it has changed or not from
- *  previous values ?
- */
+
 Template.instaMarker.created = function(){
     placeNavMarker(new google.maps.LatLng(this.data.lat,this.data.lon),this.data );
 
 };
+
+Template.instaMarker.getLocationsLength = function(){
+    return ( typeof this.locations != 'undefined' ? this.locations.length : '');
+};
+/* Clear out map/markers if public view renders ...  might need some work */
+
 Template.public_view.rendered = function(){
     map = undefined;
     gmapsMarkers = [];
@@ -74,9 +83,10 @@ Template.public_view.rendered = function(){
 };
 
 Template.public_view.destroyed = function(){
-    createMap();
+    if(typeof map == 'undefined')
+        createMap();
 };
-
+/* set center of map to latest instaMarker */
 Template.loggedInMenu.rendered = function(){
     if(typeof map != 'undefined' && typeof gmapsMarkers[0] != 'undefined' && typeof this.map_set == 'undefined'){
           console.log(gmapsMarkers[0].getPosition());
@@ -87,6 +97,5 @@ Template.loggedInMenu.rendered = function(){
        }
     }
 }
-
-
-Template.instaMarker.preserve = ['img','.instaUser'];
+// dom elements to avoid rerendering if things change... 
+Template.instaMarker.preserve = ['img','.instaUser','.instaTitle','p','.locInfoContainer'];

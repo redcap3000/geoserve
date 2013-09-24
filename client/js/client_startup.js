@@ -4,8 +4,6 @@
  */
     
 Meteor.startup(function(){
-    //createMap();
- 
     // continually refreshes client feed... should probably unset this interval on destroy...
     Meteor.setInterval(function(){Session.set('user_self',false);},60 * 60 * 45);
     Deps.autorun(function(){
@@ -14,18 +12,17 @@ Meteor.startup(function(){
             access_token = access_token[1].split("=")[1];
             Session.set('access_token', access_token);
             var doesHaveAccess = Session.get('access_token');
-
         }else if(access_token.length >1){
             // get rid of token if logged out
             window.location.replace('/');
         }
-    
-    
-         if(Meteor.userId()){
+        if(Meteor.userId()){
+            if(typeof map == 'undefined'){
+                createMap();
+            }
             var locationsFilter = Session.get('locationsFilter');
             // also use this reactive source to determine interface elements in templates...
             instaGramPosts = Meteor.subscribe("userInstaGrams", Meteor.userId());
-            instaGramLocations = Meteor.subscribe("allLocations");
             instaGramLocationsPosts = Meteor.subscribe("locationsPosts",locationsFilter);
         }
         var access_token = Session.get('access_token'), userId = Meteor.userId() ;
@@ -33,7 +30,7 @@ Meteor.startup(function(){
             // for only storing the location feed data based on what the user clicks.. maybe store to local minimongo later
             
             if(!Session.get('user_self')){
-                // set this to true so deps doesn't re run while its waiting for the response...
+            // set this to true so deps doesn't re run while its waiting for the response...
              Session.set('user_self',true);
              Meteor.call('user_self',access_token,Meteor.userId(),
                 function(error,result){
@@ -47,18 +44,14 @@ Meteor.startup(function(){
                         console.log(error);
                 }});
             }else if(locationsFilter){
-                if(locationsFilter.length > 0){
-            
+                instaGramLocations = Meteor.subscribe("allLocations",locationsFilter);
+                if(locationsFilter.length > 0 && instaGramLocations.ready()){
                     insta_locations.find({id : {"$in" : locationsFilter}}).fetch().filter(function(arr){
                         // have to cascade this for now to properly generate info window on marker creation....
                         // look up associated post object and pass as data... use something else for now...
                         var location_data = insta_locations_grams.findOne({id: parseInt(arr.id)});
-                        // so perhaps we ne
                         if(location_data && typeof location_data.data != 'undefined' && location_data.data.length > 0)
                             placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,parseInt(arr.id),location_data.data);
-                        //else
-                        //    console.log('problem with lookup in insta_locations_grams for ' + arr.id);
-                    
                     });
                 }
             }
