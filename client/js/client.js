@@ -78,11 +78,13 @@ Template.public_view.destroyed = function(){
 };
 
 Template.loggedInMenu.rendered = function(){
-    if(typeof map != 'undefined' && typeof gmapsMarkers[0] != 'undefined'){
-//        console.log(gmapsMarkers[0].getPosition());
+    if(typeof map != 'undefined' && typeof gmapsMarkers[0] != 'undefined' && typeof this.map_set == 'undefined'){
+          console.log(gmapsMarkers[0].getPosition());
        var get_pos = gmapsMarkers[0].getPosition();
-       if(get_pos)
+       if(get_pos){
         setMapCenter(get_pos);
+         this.map_set = true;
+       }
     }
 }
 
