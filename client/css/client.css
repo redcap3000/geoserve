@@ -1,7 +1,3 @@
-/* @override http://localhost:3000/client/css/client.css?d0b3b7de11ec7316015c4d5428e3fb6432f1632d */
-
-/* @override http://localhost:3000/client/css/client.css?c072ecf0fca95db73c289da7c036d9a6094ffa9e */
-
 html, body {
 
     height: 100%;
@@ -10,6 +6,20 @@ html, body {
     font-size: 15px;
     font-family: "Arial";
     color:white;
+}
+label.status{
+ position: fixed;
+ left:50%;
+ top:.25em;
+ float: left;
+ text-align: center;
+ z-index: 10;
+ background-color: white;
+ padding: 1% 2%;
+ opacity: 0.86;
+ max-width: 25%;
+ font-weight: bold;
+ font-variant: small-caps;
 }
 h1{
     color:black;
@@ -302,5 +312,4 @@ ul{
 li.locInfoWindow {
 	width: 23em;float: left;margin: 0;padding: 0;height: 24.25em;
 }
-
 

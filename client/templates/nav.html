@@ -6,6 +6,7 @@
                     {{#if hasInstaCode}}
                         {{#if instaPostReady}}
                             <form class="span" style="font-size:.85em;">
+                            {{#if getStatus}}<label class="status">{{getStatus}}</label>{{/if}}
                             <fieldset>
                                 <input id="mFilterDefault" name="mFilter" type="radio" value="likes" /> Default
                            <input id="mFilterLikes" name="mFilter" type="radio" value="likes"/> Likes
