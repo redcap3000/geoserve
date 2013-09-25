@@ -6,17 +6,17 @@
 /* Template click events.. for sorting manipulations */
 
 Template.nav.events = {
-    'click #mFilterLikes': function(evt,tmpl){
-        Session.set('markerSort', {likes:-1});
+    "click #mFilterLikes": function(evt,tmpl){
+        Session.set("markerSort", {likes:-1});
     },
-    'click #mFilterLastChange': function(evt,tmpl){
-        Session.set('markerSort', {lastHit:-1});
+    "click #mFilterLastChange": function(evt,tmpl){
+        Session.set("markerSort", {lastHit:-1});
     },
-    'click #mFilterDate': function(evt,tmpl){
-        Session.set('markerSort', {id:-1});
+    "click #mFilterDate": function(evt,tmpl){
+        Session.set("markerSort", {id:-1});
     },
-    'click #mFilterDefault': function(evt,tmpl){
-        Session.set('markerSort', undefined);
+    "click #mFilterDefault": function(evt,tmpl){
+        Session.set("markerSort", undefined);
     }
     
 };
@@ -30,12 +30,16 @@ Template.nav.hasInstaCode =  function(){
     return (Session.get("access_token")?true:false);
 };
 
+Template.nav.getStatus = function(){
+    return Session.get("status");
+};
+
 Template.loggedInMenu.instaMarkers = function(){
     // default filter ...
     var filter = {};
-    if(!Session.equals('markerSort',undefined)){
+    if(!Session.equals("markerSort",undefined)){
         // does this work?
-        filter.sort = Session.get('markerSort');
+        filter.sort = Session.get("markerSort");
     }else{
         filter.sort = {id:-1,lastHit:1,likes:-1};
         
@@ -51,7 +55,7 @@ Template.loggedInMenu.hasInstaCode = function(){
 
 /* set center of map to latest instaMarker */
 Template.loggedInMenu.rendered = function(){
-    if(typeof map != 'undefined' && typeof gmapsMarkers[0] != 'undefined' && typeof this.map_set == 'undefined'){
+    if(typeof map != "undefined" && typeof gmapsMarkers[0] != "undefined" && typeof this.map_set == "undefined"){
           console.log(gmapsMarkers[0].getPosition());
        var get_pos = gmapsMarkers[0].getPosition();
        if(get_pos){
@@ -84,7 +88,7 @@ Template.instaMarker = {
         }
     ,
     // dom elements to avoid rerendering if things change... 
-    preserve : ['img','.instaUser','.instaTitle','p']
+    preserve : ["img",".instaUser",".instaTitle","p"]
 };
 
 /* Clear out map/markers if public view renders ...  might need some work */
@@ -98,7 +102,7 @@ Template.public_view = {
         },
     destroyed :
         function(){
-            if(typeof map == 'undefined')
+            if(typeof map == "undefined")
                 createMap();
         }
 };
