@@ -6,6 +6,9 @@
 Meteor.startup(function(){
     // continually refreshes client feed... should probably unset this interval on destroy...
     Meteor.setInterval(function(){Session.set('user_self',false);},60 * 60 * 45);
+    // for hiding the status window performance implication? 
+    Meteor.setInterval(function(){Session.set('status',"");},4800);
+
     Deps.autorun(function(){
        var access_token = window.location.href.split("#");
         if(access_token.length > 1 && Meteor.userId()){
@@ -22,6 +25,7 @@ Meteor.startup(function(){
             }
             var locationsFilter = Session.get('locationsFilter');
             // also use this reactive source to determine interface elements in templates...
+            Session.set('status','Getting locations');
             instaGramPosts = Meteor.subscribe("userInstaGrams", Meteor.userId());
             instaGramLocationsPosts = Meteor.subscribe("locationsPosts",locationsFilter);
         }
@@ -35,6 +39,7 @@ Meteor.startup(function(){
              Meteor.call('user_self',access_token,Meteor.userId(),
                 function(error,result){
                     if(typeof error =='undefined'){
+                        Session.set('status',"Geofeed obtained");
                         Session.set('user_self',result);
                          if(Meteor.userId()){
                         // should set interval elsewhere.... probably...
@@ -45,8 +50,12 @@ Meteor.startup(function(){
                 }});
             }else if(locationsFilter){
                 instaGramLocations = Meteor.subscribe("allLocations",locationsFilter);
+                Session.set('status','Building location markers.');
                 if(locationsFilter.length > 0 && instaGramLocations.ready()){
-                    insta_locations.find({id : {"$in" : locationsFilter}}).fetch().filter(function(arr){
+                    insta_locations.find({id : {"$in" : locationsFilter}}).fetch().filter(function(arr,i){
+                        if(i == 0){
+                            Session.set('status',"Placing location markers.");
+                        }
                         // have to cascade this for now to properly generate info window on marker creation....
                         // look up associated post object and pass as data... use something else for now...
                         var location_data = insta_locations_grams.findOne({id: parseInt(arr.id)});
@@ -57,14 +66,17 @@ Meteor.startup(function(){
             }
         }else if(userId){
             if(!access_token){
-                console.log('does not have access running authenticate...');
+                Session.set('status',"Authenticating");
                 Meteor.call('authenticate',
                     function(error,result){
                         if(typeof error != 'undefined'){
+                            Session.set('status',"Problem with authentication call.");
                             console.log('error');
                         }else
                             // redirect here...
                             // handle differently if mobile? Cookie gets lost after instagram credentials are entered
+                            Session.set('status',"Redirecting to instagram");
+
                             window.open(result, '_self', 'toolbar=0,location=0,menubar=0');
                             //window.location.replace(result);
                         });

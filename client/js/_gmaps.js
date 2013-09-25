@@ -50,10 +50,11 @@ placeNavMarker = function(latLng,data) {
             // find stuff near it ..
             var access_token = Session.get('access_token');
             if(access_token){
+                Session.set('status','Looking up nearby markers.');
                 Meteor.call('locations_search',access_token,data.lat,data.lon,data._id,
                             function(error,result){
                                 if(typeof error =='undefined' && typeof result != 'undefined'){
-                                    console.log('did a location search...');
+                                    Session.set('status','Downloading marker feeds.');
                                     var lookups = [],dontPush = false;
                                     result.filter(
                                         function(arr){
@@ -85,7 +86,7 @@ placeNavMarker = function(latLng,data) {
                                     // set the interval to continually fetch new results ??
                                 }else{
                                     new_marker.wasClicked = false;
-                                    console.log('Please reclick to retry locations search');
+                                    Session.set('status','Insta api returned an error on locations search.')
                                     // maybe attempt to make call again?
                                 }
                             }
@@ -177,6 +178,9 @@ placeLocationMarker = function(latLng,title,theId,theData){
 },
 // takes either array with two integers (x,y) or a google maps LatLng object.
 setMapCenter = function(q){
+    if(typeof map == 'undefined' && Meteor.userId()){
+        createMap();
+    }
     map.setCenter((typeof q == 'object' && q.length == 2? new google.maps.LatLng(q[0],q[1]) : (typeof q == 'object' ? q: new google.maps.LatLng(0,0))));
 }
  });
