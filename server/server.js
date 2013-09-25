@@ -132,8 +132,14 @@ Meteor.methods({
                                     if(!instaCheck){
                                         insta_locations.insert(arr);
                                         Meteor.call("locations_media_recent",access_token,arr.id,function(error,result){
-                                            result.id = parseInt(arr.id);
-                                            insta_locations_grams.insert(result);
+                                            console.log(arr.id);
+                                            if(typeof result != 'undefined'){
+                                                var cpy = result;
+                                                cpy.id = parseInt(arr.id);
+                                                insta_locations_grams.insert(result);
+                                            }else{
+                                                console.log('problem with request result...');
+                                            }
                                             // so this inserts things .. new record for each user need to do a 'does this exist check' first... probably...
                                         });
                                     }

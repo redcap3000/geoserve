@@ -54,21 +54,31 @@ placeNavMarker = function(latLng,data) {
                             function(error,result){
                                 if(typeof error =='undefined' && typeof result != 'undefined'){
                                     console.log('did a location search...');
-                                    // how do we resubscribe???
-                                    var lookups = [];
-                                    result.filter(function(arr){
-                                        lookups.push(arr.id);
-                                    }
+                                    var lookups = [],dontPush = false;
+                                    result.filter(
+                                        function(arr){
+                                            var intId = parseInt(arr.id);
+                                            /* 
+                                             * doing a check on local global variable locations markers to avoid sending
+                                             * id's that are absolutely known to exist on screen
+                                             * this also occurs later.. probably try to turn this into a function or mayyybe use underscore?
+                                             */
+                                            if(locationsMarkers.length > 0){
+                                                locationsMarkers.filter(function(arr2,index){
+                                                    if(arr2.instaId == intId){
+                                                        dontPush = true;
+                                                        return false;
+                                                    }
+                                                    if(index == (result.length - 1) && dontPush !== true){
+                                                        // push the id for the lookup!
+                                                        lookups.push(intId);
+                                                    }
+                                                });
+                                            }else{
+                                                lookups.push(arr.id);
+                                            }
+                                        }
                                     );
-                            
-                                    //insta_locations.find({}).fetch().filter(function(arr){
-                                        // have to cascade this for now to properly generate info window on marker creation....
-                                        // look up associated post object and pass as data... use something else for now...
-                                    //    var location_data = insta_locations_grams.findOne({id: parseInt(arr.id)});
-                                    //    if(location_data && typeof location_data.data != 'undefined' && location_data.data.length > 0)
-                                    //        placeLocationMarker(new google.maps.LatLng(arr.latitude,arr.longitude),arr.name,parseInt(arr.id),location_data.data);
-                                    
-                                    //});
                                     Session.set('locationsFilter',lookups);
                                     return true;
                                     // do default call for user feed ... to populate map with markers...
@@ -85,7 +95,23 @@ placeNavMarker = function(latLng,data) {
             new_marker.wasClicked = true;
         }else if(typeof new_marker.wasClicked == 'undefined' && typeof data.locations != 'undefined'){
             // first modify add the sub for the locations_posts to avoid getting everything ?
-            Session.set('locationsFilter',data.locations);
+            var toPush = [];
+            data.locations.filter(
+                function(theId,index){
+                    var dontPush = false;
+                    locationsMarkers.filter(function(arr,index2){
+                        if(dontPush === false && arr.id == theId){
+                            dontPush = true;
+                            return false;
+                        }
+                    });
+                    if(dontPush == false){
+                        toPush.push(theId);
+                    }
+                }
+            );
+            if(toPush.length > 0)
+                Session.set('locationsFilter',toPush);
             // do we need to run this find?
             new_marker.wasClicked = true;
         }
