@@ -13,9 +13,8 @@ var default_permissions = {
         return doc.owner === userId;
     },
     fetch: ['owner']
-};
-
-var read_only_permissions = {
+},
+read_only_permissions = {
     insert:function(){
         return true;
     },
@@ -25,28 +24,16 @@ var read_only_permissions = {
     remove: function(){
         return true;
     }
-    
 };
 
+/*
+ *   insta_grams            = users geo-active feed, stored via owner ID
+ *   insta_locations        = public collection with locations first looked up via location id stored in insta_grams.locations ( [int,int,int] )
+ *   insta_locations_grams  = feeds from insta_locations, stored via insta_location id
+ */
 
-// stores various codes associated with a group; i.e. multiple codes could refer to the same group and grant different types of access
-
-
-// maybe make this a minimongo collection ONLY?
-insta_grams = new Meteor.Collection("insta_grams");
-
-// use this to store basic location data and hopefully to avoid having
-// too many identical objects (store mongo id of location inside of insta_grams
-// insta locations is server side only and does not store any user info... only 'public' feed stuff
-insta_locations = new Meteor.Collection("insta_locations");
+insta_grams = new Meteor.Collection("insta_grams"),insta_locations = new Meteor.Collection("insta_locations"),insta_locations_grams = new Meteor.Collection("insta_locations_grams");
 
 insta_grams.allow(default_permissions);
-
-// only server can remove theses...
-
 insta_locations.deny(read_only_permissions);
-
-// for data associated with a location ...
-insta_locations_grams = new Meteor.Collection("insta_locations_grams");
-
 insta_locations_grams.deny(read_only_permissions);

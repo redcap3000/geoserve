@@ -3,20 +3,6 @@
  * http://redcapmedia.com
  */
 
-
-/* Handlebar template functions */
-
-Template.nav.instaPostReady =function(){
-    return !Session.equals("user_self",false);
-};
-Template.nav.hasInstaCode =  function(){
-    return (Session.get("access_token")?true:false);
-};
-
-Template.loggedInMenu.hasInstaCode = function(){
-    return (Session.get("access_token")?true:false);
-};
-
 /* Template click events.. for sorting manipulations */
 
 Template.nav.events = {
@@ -35,10 +21,14 @@ Template.nav.events = {
     
 };
 
-/*
- *  Instagram Users' friends feed (instaMarkers)
- *
- */
+/* Handlebar template functions */
+
+Template.nav.instaPostReady =function(){
+    return !Session.equals("user_self",false);
+};
+Template.nav.hasInstaCode =  function(){
+    return (Session.get("access_token")?true:false);
+};
 
 Template.loggedInMenu.instaMarkers = function(){
     // default filter ...
@@ -54,38 +44,11 @@ Template.loggedInMenu.instaMarkers = function(){
     return insta_grams.find({},filter);
 }
 
-/*
- * Click event that centers map to marker (for instaMarkers), also closes any open infowindows.
- *
- */
-Template.instaMarker.events = {
-    "click .focus_marker" : function(evt,tmpl){
-        closeInfoWindows();
-        setMapCenter([this.lat,this.lon]);
-    }
-}
-
-Template.instaMarker.created = function(){
-    placeNavMarker(new google.maps.LatLng(this.data.lat,this.data.lon),this.data );
-
+Template.loggedInMenu.hasInstaCode = function(){
+    return (Session.get("access_token")?true:false);
 };
 
-Template.instaMarker.getLocationsLength = function(){
-    return ( typeof this.locations != 'undefined' ? this.locations.length : '');
-};
-/* Clear out map/markers if public view renders ...  might need some work */
 
-Template.public_view.rendered = function(){
-    map = undefined;
-    gmapsMarkers = [];
-    infoWindows = [];
-    locationsMarkers = [];
-};
-
-Template.public_view.destroyed = function(){
-    if(typeof map == 'undefined')
-        createMap();
-};
 /* set center of map to latest instaMarker */
 Template.loggedInMenu.rendered = function(){
     if(typeof map != 'undefined' && typeof gmapsMarkers[0] != 'undefined' && typeof this.map_set == 'undefined'){
@@ -97,5 +60,45 @@ Template.loggedInMenu.rendered = function(){
        }
     }
 }
-// dom elements to avoid rerendering if things change... 
-Template.instaMarker.preserve = ['img','.instaUser','.instaTitle','p','.locInfoContainer'];
+
+
+/*
+ *  Instagram Users' friends feed (instaMarkers)
+ *
+ */
+
+Template.instaMarker = {
+    events : {
+        /*
+         * Click event that centers map to marker (for instaMarkers), also closes any open infowindows.
+         *
+         */
+        "click .focus_marker" : function(evt,tmpl){
+            closeInfoWindows();
+            setMapCenter([this.lat,this.lon]);
+        }
+    },
+    created :
+        function(){
+            placeNavMarker(new google.maps.LatLng(this.data.lat,this.data.lon),this.data );
+        }
+    ,
+    // dom elements to avoid rerendering if things change... 
+    preserve : ['img','.instaUser','.instaTitle','p']
+};
+
+/* Clear out map/markers if public view renders ...  might need some work */
+Template.public_view = {
+    rendered :
+        function(){
+            map = undefined;
+            gmapsMarkers = [];
+            infoWindows = [];
+            locationsMarkers = [];
+        },
+    destroyed :
+        function(){
+            if(typeof map == 'undefined')
+                createMap();
+        }
+};
