@@ -58,7 +58,7 @@ placeNavMarker = function(latLng,data) {
                                     var lookups = [],dontPush = false;
                                     result.filter(
                                         function(arr){
-                                            var intId = parseInt(arr.id);
+                                            var intId = parseInt(arr);
                                             /* 
                                              * doing a check on local global variable locations markers to avoid sending
                                              * id's that are absolutely known to exist on screen
@@ -76,7 +76,7 @@ placeNavMarker = function(latLng,data) {
                                                     }
                                                 });
                                             }else{
-                                                lookups.push(arr.id);
+                                                lookups.push(intId);
                                             }
                                         }
                                     );
@@ -164,7 +164,6 @@ placeLocationMarker = function(latLng,title,theId,theData){
             locationsMarkers.push(new_marker2);
         }else if(lMarkerExists){
             // do nothing catch without having to write a bunch of extra logic
-            //console.log('avoiding duplicate marker');
             ;
         }else{
         // look up data ???
