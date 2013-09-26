@@ -136,7 +136,7 @@ placeLocationMarker = function(latLng,title,theId,theData){
             
                 if(typeof theData == 'object'){
                 theData.filter(function(arr){
-                    theInfoWindow = theInfoWindow + '<li class="locInfoWindow"><a href="'+arr.link+'" target="_new"><img alt="image" src="'+arr.images.low_resolution.url+'"/></a><div id="'+arr.id+'" class="instaLocPost"><h5>'+arr.user.username+ ' ' + arr.likes.count+ '</h5>' + (arr.caption != null && typeof arr.caption.text != 'undefined' && arr.caption.text != '' ? "<p>" + arr.caption.text + "</p>" : "") + '</div></li>';
+                    theInfoWindow = theInfoWindow + '<li class="locInfoWindow"><a href="'+arr.link+'" target="_new"><img alt="image" src="'+arr.image+'"/></a><div id="'+arr.id+'" class="instaLocPost"><h5>'+arr.user+ ' ' + arr.likes+ '</h5>' + (arr.caption != null && typeof arr.caption != 'undefined' && arr.caption != '' ? "<p>" + arr.caption + "</p>" : "") + '</div></li>';
                     
                 });
                 }else{
