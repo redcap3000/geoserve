@@ -55,14 +55,21 @@ Template.loggedInMenu.hasInstaCode = function(){
 
 
 /* set center of map to latest instaMarker */
-Template.loggedInMenu.rendered = function(){
-    if(typeof map != "undefined" && typeof gmapsMarkers[0] != "undefined" && typeof this.map_set == "undefined"){
-       var get_pos = gmapsMarkers[0].getPosition();
-       if(get_pos){
-        setMapCenter(get_pos);
-         this.map_set = true;
-       }
-    }
+Template.map.rendered = function(){
+
+    if(typeof map != "undefined" && typeof gmapsMarkers[0] != "undefined" && typeof map_set != true){
+                   var get_pos = gmapsMarkers[0].getPosition();
+        console.log('rendered');
+                   if(get_pos){
+                        alert('setting center');
+                       setMapCenter(get_pos);
+                       // to hopefully avoid resetting the map center every time the geo feed is updated?
+                       map_set = true;
+                   }
+                }
+
+    
+
 }
 
 
