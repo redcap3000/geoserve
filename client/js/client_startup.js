@@ -11,8 +11,10 @@ Meteor.startup(function(){
     // for hiding the status window performance implication?   
     Session.set('map_set',false);
     updateGeofeed = function(timeout){
+        console.log('update geofeed');
         if(typeof timeout == 'undefined'){
-            timeout = 60*60*45;
+        // 5 mintutes right?
+            timeout = 60*60*(60* 5);
         }
         if(typeof geofeedInterval != 'undefined'){
             Meteor.clearInterval(geofeedInterval);
@@ -22,7 +24,7 @@ Meteor.startup(function(){
         Session.set('user_self',false);
 
     // set the session to force the feed to update NOW!
-        var geofeedInterval = Meteor.setInterval(function(){Session.set('user_self',false);},60 * 60 * 45);
+        var geofeedInterval = Meteor.setInterval(function(){Session.set('user_self',false);},timeout);
 
         
         
@@ -42,12 +44,14 @@ Meteor.startup(function(){
         statusInterval = Meteor.setInterval(function(){Session.set('status','');},newTimeout);
     };
     
+    Deps.autorun(function(){
+        if(typeof geofeedInterval == 'undefined' && !Session.get('user_self')){
+            
     
-    updateGeofeed();
+            //
 
     
-    Deps.autorun(function(){
-    
+        }
     
         if(typeof map != "undefined" && typeof gmapsMarkers[0] != "undefined" && Session.equals('map_set',false)){
                    var get_pos = gmapsMarkers[0].getPosition();
@@ -69,9 +73,11 @@ Meteor.startup(function(){
             window.location.replace('/');
         }
         if(Meteor.userId()){
-            if(typeof map == 'undefined'){
-                createMap();
-            }
+//            if(typeof map == 'undefined'){
+//                createMap();
+                
+//                updateGeofeed();
+//            }
             var locationsFilter = Session.get('locationsFilter');
             // also use this reactive source to determine interface elements in templates...
             updateStatus('Getting locations');

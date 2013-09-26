@@ -59,12 +59,14 @@ Template.map.rendered = function(){
 
     if(typeof map != "undefined" && typeof gmapsMarkers[0] != "undefined" && typeof map_set != true){
                    var get_pos = gmapsMarkers[0].getPosition();
-        console.log('rendered');
+                    console.log('rendered');
                    if(get_pos){
                         alert('setting center');
+                       
                        setMapCenter(get_pos);
                        // to hopefully avoid resetting the map center every time the geo feed is updated?
                        map_set = true;
+                       updateStatus();
                    }
                 }
 
@@ -98,18 +100,7 @@ Template.instaMarker = {
     ,
     destroyed:
         function(){
-            if(typeof this.gone === "undefined"){
-                // giving it a timeout set to the value of the timeout that does the geo feed refresh..
-                updateStatus("Please wait while feed is refreshed.",60 * 60 * 45);
-                // also force a refresh of the geo feed ?
-                // keep the location markers ? do we need to refresh locations frequently?
-                gmapsMarkers.filter(function(arr){
-                    return arr.setMap(null);
-                });
-                this.gone = true;
-                updateGeofeed();
-                
-            }
+            console.log('destroying');
             // if one gets destroyed then avoid the others from following suit ?
         },
     // dom elements to avoid rerendering if things change... 
