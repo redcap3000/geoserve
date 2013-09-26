@@ -2,26 +2,30 @@
  * instageo / geoserve - Ronaldo Barbachano 2013
  * http://redcapmedia.com
  */
-    
+         map_set = false;
+
 Meteor.startup(function(){
     // continually refreshes client feed... should probably unset this interval on destroy...
     // setting to values to destroy and possibly recreate them .. specifically if the insta_grams db gets 'refreshed'
     
-    
     // for hiding the status window performance implication?   
-    
+    Session.set('map_set',false);
     updateGeofeed = function(timeout){
         if(typeof timeout == 'undefined'){
             timeout = 60*60*45;
         }
         if(typeof geofeedInterval != 'undefined'){
             Meteor.clearInterval(geofeedInterval);
+            geofeedInterval = undefined;
         }
         
         Session.set('user_self',false);
 
-        // set the session to force the feed to update NOW!
+    // set the session to force the feed to update NOW!
         var geofeedInterval = Meteor.setInterval(function(){Session.set('user_self',false);},60 * 60 * 45);
+
+        
+        
         
     }
     
@@ -31,8 +35,10 @@ Meteor.startup(function(){
         }
         if(typeof statusInterval != 'undefined'){
             Meteor.clearInterval(statusInterval);
+            statusInterval = undefined;
+        
+//            Session.set('status',status + '\n' +         Session.get('status'));
         }
-        Session.set('status',status);
         statusInterval = Meteor.setInterval(function(){Session.set('status','');},newTimeout);
     };
     
@@ -41,6 +47,18 @@ Meteor.startup(function(){
 
     
     Deps.autorun(function(){
+    
+    
+        if(typeof map != "undefined" && typeof gmapsMarkers[0] != "undefined" && Session.equals('map_set',false)){
+                   var get_pos = gmapsMarkers[0].getPosition();
+                   if(get_pos){
+                       console.log('setting center');
+                       setMapCenter(get_pos);
+                       // to hopefully avoid resetting the map center every time the geo feed is updated?
+                       Session.set('map_set',true);
+                   }
+                }
+    
        var access_token = window.location.href.split("#");
         if(access_token.length > 1 && Meteor.userId()){
             access_token = access_token[1].split("=")[1];
