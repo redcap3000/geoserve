@@ -34,6 +34,7 @@ Template.nav.getStatus = function(){
     return Session.get("status");
 };
 
+
 Template.loggedInMenu.instaMarkers = function(){
     // default filter ...
     var filter = {};
@@ -56,7 +57,6 @@ Template.loggedInMenu.hasInstaCode = function(){
 /* set center of map to latest instaMarker */
 Template.loggedInMenu.rendered = function(){
     if(typeof map != "undefined" && typeof gmapsMarkers[0] != "undefined" && typeof this.map_set == "undefined"){
-          console.log(gmapsMarkers[0].getPosition());
        var get_pos = gmapsMarkers[0].getPosition();
        if(get_pos){
         setMapCenter(get_pos);
@@ -82,11 +82,29 @@ Template.instaMarker = {
             setMapCenter([this.lat,this.lon]);
         }
     },
-    created :
+    rendered :
         function(){
             placeNavMarker(new google.maps.LatLng(this.data.lat,this.data.lon),this.data );
+            // find and destroy any related markers in locationsMarkers ?
+            this.gone = undefined;
         }
     ,
+    destroyed:
+        function(){
+            if(typeof this.gone === "undefined"){
+                // giving it a timeout set to the value of the timeout that does the geo feed refresh..
+                updateStatus("Please wait while feed is refreshed.",60 * 60 * 45);
+                // also force a refresh of the geo feed ?
+                // keep the location markers ? do we need to refresh locations frequently?
+                gmapsMarkers.filter(function(arr){
+                    return arr.setMap(null);
+                });
+                this.gone = true;
+                updateGeofeed();
+                
+            }
+            // if one gets destroyed then avoid the others from following suit ?
+        },
     // dom elements to avoid rerendering if things change... 
     preserve : ["img",".instaUser",".instaTitle","p"]
 };

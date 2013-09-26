@@ -5,10 +5,41 @@
     
 Meteor.startup(function(){
     // continually refreshes client feed... should probably unset this interval on destroy...
-    Meteor.setInterval(function(){Session.set('user_self',false);},60 * 60 * 45);
-    // for hiding the status window performance implication? 
-    Meteor.setInterval(function(){Session.set('status',"");},4800);
+    // setting to values to destroy and possibly recreate them .. specifically if the insta_grams db gets 'refreshed'
+    
+    
+    // for hiding the status window performance implication?   
+    
+    updateGeofeed = function(timeout){
+        if(typeof timeout == 'undefined'){
+            timeout = 60*60*45;
+        }
+        if(typeof geofeedInterval != 'undefined'){
+            Meteor.clearInterval(geofeedInterval);
+        }
+        
+        Session.set('user_self',false);
 
+        // set the session to force the feed to update NOW!
+        var geofeedInterval = Meteor.setInterval(function(){Session.set('user_self',false);},60 * 60 * 45);
+        
+    }
+    
+    updateStatus = function(status,newTimeout){
+        if(typeof newTimeout == 'undefined'){
+            newTimeout = 4800;
+        }
+        if(typeof statusInterval != 'undefined'){
+            Meteor.clearInterval(statusInterval);
+        }
+        Session.set('status',status);
+        statusInterval = Meteor.setInterval(function(){Session.set('status','');},newTimeout);
+    };
+    
+    
+    updateGeofeed();
+
+    
     Deps.autorun(function(){
        var access_token = window.location.href.split("#");
         if(access_token.length > 1 && Meteor.userId()){
@@ -25,7 +56,7 @@ Meteor.startup(function(){
             }
             var locationsFilter = Session.get('locationsFilter');
             // also use this reactive source to determine interface elements in templates...
-            Session.set('status','Getting locations');
+            updateStatus('Getting locations');
             instaGramPosts = Meteor.subscribe("userInstaGrams", Meteor.userId());
             instaGramLocationsPosts = Meteor.subscribe("locationsPosts",locationsFilter);
         }
@@ -39,7 +70,7 @@ Meteor.startup(function(){
              Meteor.call('user_self',access_token,Meteor.userId(),
                 function(error,result){
                     if(typeof error =='undefined'){
-                        Session.set('status',"Geofeed obtained");
+                        updateStatus("Geofeed obtained");
                         Session.set('user_self',result);
                          if(Meteor.userId()){
                         // should set interval elsewhere.... probably...
@@ -50,11 +81,11 @@ Meteor.startup(function(){
                 }});
             }else if(locationsFilter){
                 instaGramLocations = Meteor.subscribe("allLocations",locationsFilter);
-                Session.set('status','Building location markers.');
+                updateStatus('Building location markers.');
                 if(locationsFilter.length > 0 && instaGramLocations.ready()){
                     insta_locations.find({id : {"$in" : locationsFilter}}).fetch().filter(function(arr,i){
                         if(i == 0){
-                            Session.set('status',"Placing location markers.");
+                            updateStatus("Placing location markers.");
                         }
                         // have to cascade this for now to properly generate info window on marker creation....
                         // look up associated post object and pass as data... use something else for now...
@@ -66,16 +97,16 @@ Meteor.startup(function(){
             }
         }else if(userId){
             if(!access_token){
-                Session.set('status',"Authenticating");
+                updateStatus("Authenticating");
                 Meteor.call('authenticate',
                     function(error,result){
                         if(typeof error != 'undefined'){
-                            Session.set('status',"Problem with authentication call.");
+                            updateStatus("Problem with authentication call.");
                             console.log('error');
                         }else
                             // redirect here...
                             // handle differently if mobile? Cookie gets lost after instagram credentials are entered
-                            Session.set('status',"Redirecting to instagram");
+                            updateStatus("Redirecting to instagram");
 
                             window.open(result, '_self', 'toolbar=0,location=0,menubar=0');
                             //window.location.replace(result);
