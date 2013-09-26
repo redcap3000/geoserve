@@ -110,11 +110,9 @@ Meteor.methods({
         },
      locations_search : function(access_token,lat,lng,postId){
             if(typeof access_token != 'undefined' && typeof lat != 'undefined' && typeof lng != 'undefined' && typeof postId != 'undefined'){
-                  //  console.log('search');
                 // query server side database for cooards? this is kinda weird way to store data sets... data will be repeated incessantly...
                 // shall i round lat and lng ?
                 var locations_check = insta_grams.findOne({_id : postId, locations: {"$exists":true}},{locations:1});
-               // console.log(locations_check);
                 if(typeof locations_check == 'undefined'){
                     //console.log('undefined2');
                     var base_url = 'https://api.instagram.com/v1/locations/search?lat='+lat+'&distance=1&lng='+lng+'&access_token=' + access_token;
@@ -142,18 +140,21 @@ Meteor.methods({
                                             }
                                             // so this inserts things .. new record for each user need to do a 'does this exist check' first... probably...
                                         });
+                                        locations_result.push(arr.id);
+                                    
                                     }
-                                    locations_result.push(arr.id);
                                     
                                  });
                                 // updated associated post with list of location ID's as organized via instagram api (not the mongo id)
-                                 insta_grams.update({_id:postId},
-                                    {"$set" :{
-                                         locations : locations_result}
-                                    }
-                                 );
+                                 if(locations_result.length > 0){
+                                     insta_grams.update({_id:postId},
+                                        {"$set" :{
+                                             locations : locations_result}
+                                        }
+                                     );
+                                }
                                 // return from local database ???
-                                return request.data.data;
+                                return locations_result;
                             }
                        // set the interval if not already set ? 
                            }
