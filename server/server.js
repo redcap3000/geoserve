@@ -131,10 +131,40 @@ Meteor.methods({
                                         insta_locations.insert(arr);
                                         Meteor.call("locations_media_recent",access_token,arr.id,function(error,result){
                                             console.log(arr.id);
+                                            /*
+                                                attempt to make this object MUCH smaller ... maybe pregenerate some html?
+                                            */
                                             if(typeof result != 'undefined'){
-                                                var cpy = result;
-                                                cpy.id = parseInt(arr.id);
-                                                insta_locations_grams.insert(result);
+                                                var cpy = {};
+                                                cpy.id = arr.id;
+                                                
+                                                cpy.data = result.data;
+                                                var new_data = [];
+                                                
+                                                cpy.data.filter(function(obj){
+                                                    
+                                                    var new_obj = {};
+                                                    new_obj.user = obj.user.username,
+//                                                    new_obj.lat = obj.location.latitude,
+//                                                    new_obj.lon = obj.location.longitude,
+                                                    new_obj.location_id = obj.location.id,
+                                                    new_obj.created_time = obj.created_time,
+                                                    new_obj.link = obj.link,
+                                                    new_obj.likes = obj.likes.count,
+                                                    new_obj.image =  obj.images.low_resolution.url,
+                                                    new_obj.id = obj.id;
+                                                    
+                                                    
+                                                    if(obj.caption != null){
+                                                        new_obj.caption = obj.caption.text;
+                                                        new_obj.caption_id = obj.caption_id;
+                                                    }
+                                                    
+                                                    new_data.push(new_obj);
+                                                    
+                                                });
+                                                cpy.data = new_data;
+                                                insta_locations_grams.insert(cpy);
                                             }else{
                                                 console.log('problem with request result...');
                                             }
