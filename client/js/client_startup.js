@@ -2,14 +2,13 @@
  * instageo / geoserve - Ronaldo Barbachano 2013
  * http://redcapmedia.com
  */
-         map_set = false;
 
 Meteor.startup(function(){
     // continually refreshes client feed... should probably unset this interval on destroy...
     // setting to values to destroy and possibly recreate them .. specifically if the insta_grams db gets 'refreshed'
     
     // for hiding the status window performance implication?   
-    Session.set('map_set',false);
+    //Session.set('map_set',false);
     updateGeofeed = function(timeout){
         console.log('update geofeed');
         if(typeof timeout == 'undefined'){
@@ -25,9 +24,6 @@ Meteor.startup(function(){
 
     // set the session to force the feed to update NOW!
         var geofeedInterval = Meteor.setInterval(function(){Session.set('user_self',false);},timeout);
-
-        
-        
         
     }
     
@@ -45,15 +41,7 @@ Meteor.startup(function(){
     };
     
     Deps.autorun(function(){
-        if(typeof geofeedInterval == 'undefined' && !Session.get('user_self')){
-            
-    
-            //
-
-    
-        }
-    
-        if(typeof map != "undefined" && typeof gmapsMarkers[0] != "undefined" && Session.equals('map_set',false)){
+/*        if(typeof map != "undefined" && typeof gmapsMarkers[0] != "undefined" && Session.equals('map_set',false)){
                    var get_pos = gmapsMarkers[0].getPosition();
                    if(get_pos){
                        console.log('setting center');
@@ -61,7 +49,7 @@ Meteor.startup(function(){
                        // to hopefully avoid resetting the map center every time the geo feed is updated?
                        Session.set('map_set',true);
                    }
-                }
+                }*/
     
        var access_token = window.location.href.split("#");
         if(access_token.length > 1 && Meteor.userId()){
@@ -73,11 +61,6 @@ Meteor.startup(function(){
             window.location.replace('/');
         }
         if(Meteor.userId()){
-//            if(typeof map == 'undefined'){
-//                createMap();
-                
-//                updateGeofeed();
-//            }
             var locationsFilter = Session.get('locationsFilter');
             // also use this reactive source to determine interface elements in templates...
             updateStatus('Getting locations');
