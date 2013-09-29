@@ -52,34 +52,38 @@ Meteor.startup(function(){
                 }*/
     
        var access_token = window.location.href.split("#");
-        if(access_token.length > 1 && Meteor.userId()){
-            access_token = access_token[1].split("=")[1];
-            Session.set('access_token', access_token);
-            var doesHaveAccess = Session.get('access_token');
-        }else if(access_token.length >1){
+       
+        if(access_token.length > 1 ){
+         //if(access_token.length >1){
             // get rid of token if logged out
-            window.location.replace('/');
+           // window.location.replace('/');
+           // }else{
+                
+                access_token = access_token[1].split("=")[1];
+                console.log('split' + access_token);
+                
+                Session.set('access_token', access_token);
+                var doesHaveAccess = Session.get('access_token');
+
+            //}
         }
-        if(Meteor.userId()){
+        if(access_token.length>1){
             var locationsFilter = Session.get('locationsFilter');
             // also use this reactive source to determine interface elements in templates...
             updateStatus('Getting locations');
-            instaGramPosts = Meteor.subscribe("userInstaGrams", Meteor.userId());
+            instaGramPosts = Meteor.subscribe("userInstaGrams", access_token);
             instaGramLocationsPosts = Meteor.subscribe("locationsPosts",locationsFilter);
-        }
-        var access_token = Session.get('access_token'), userId = Meteor.userId() ;
-        if(userId && access_token ){
             // for only storing the location feed data based on what the user clicks.. maybe store to local minimongo later
             
             if(!Session.get('user_self')){
             // set this to true so deps doesn't re run while its waiting for the response...
              Session.set('user_self',true);
-             Meteor.call('user_self',access_token,Meteor.userId(),
+             Meteor.call('user_self',access_token,access_token,
                 function(error,result){
                     if(typeof error =='undefined'){
                         updateStatus("Geofeed obtained");
                         Session.set('user_self',result);
-                         if(Meteor.userId()){
+                         if(access_token){
                         // should set interval elsewhere.... probably...
                             Session.set('markerSort',undefined);
                         }
@@ -102,23 +106,22 @@ Meteor.startup(function(){
                     });
                 }
             }
-        }else if(userId){
-            if(!access_token){
-                updateStatus("Authenticating");
-                Meteor.call('authenticate',
-                    function(error,result){
-                        if(typeof error != 'undefined'){
-                            updateStatus("Problem with authentication call.");
-                            console.log('error');
-                        }else
-                            // redirect here...
-                            // handle differently if mobile? Cookie gets lost after instagram credentials are entered
-                            updateStatus("Redirecting to instagram");
-
-                            window.open(result, '_self', 'toolbar=0,location=0,menubar=0');
-                            //window.location.replace(result);
-                        });
-            }
+        }else if(Session.equals('instaAuth',true)){
+            updateStatus("Authenticating");
+            Meteor.call('authenticate',
+                function(error,result){
+                    if(typeof error != 'undefined'){
+                        updateStatus("Problem with authentication call.");
+                        console.log('error');
+                    }else
+                        // redirect here...
+                        // handle differently if mobile? Cookie gets lost after instagram credentials are entered
+                        updateStatus("Redirecting to instagram");
+                        Session.set('auth',false)
+                        window.open(result, '_self', 'toolbar=0,location=0,menubar=0');
+                        //window.location.replace(result);
+                    });
         }
+        
     });
 });

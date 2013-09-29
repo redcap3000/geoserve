@@ -199,6 +199,7 @@ Meteor.methods({
                    
                 }else{
                     console.log('not enough data?');
+                    console.log(locations_check.locations);
                     return locations_check.locations;
                 }
                }

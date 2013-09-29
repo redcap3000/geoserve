@@ -28,9 +28,14 @@ createMap = function(latLng) {
 },
 placeNavMarker = function(latLng,data) {
     var image = data.image_low,likes = data.likes ,
-        tags = (data.tags.length > 0  ? '\n' + data.tags.join(', ')  :false),
-        title = data.caption;
+        tags = (data.tags.length > 0  ? '\n' + data.tags.join(', ')  :false);
     
+    
+        if(typeof data.caption != 'undefined')
+            var title = data.caption;
+        else
+            var title = '';
+            
     var new_marker = new google.maps.Marker({
         position: latLng,
         map: map,
@@ -177,7 +182,7 @@ placeLocationMarker = function(latLng,title,theId,theData){
 },
 // takes either array with two integers (x,y) or a google maps LatLng object.
 setMapCenter = function(q){
-    if(typeof map == 'undefined' && Meteor.userId()){
+    if(typeof map == 'undefined' && Session.get('access_token')){
         createMap();
     }
     map.setCenter((typeof q == 'object' && q.length == 2? new google.maps.LatLng(q[0],q[1]) : (typeof q == 'object' ? q: new google.maps.LatLng(0,0))));
