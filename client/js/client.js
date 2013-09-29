@@ -54,6 +54,8 @@ Template.nav.getStatus = function(){
     return Session.get("status");
 };
 
+Template.instaLocations.getStatus = Template.nav.getStatus;
+
 
 Template.loggedInMenu.instaMarkers = function(){
     // default filter ...

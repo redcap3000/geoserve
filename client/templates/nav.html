@@ -5,7 +5,6 @@
                         <input id="logout" type="button" value="Logout"/>
                         {{#if instaPostReady}}
                             <form class="span" style="font-size:.85em;">
-                            {{#if getStatus}}<label class="status">{{getStatus}}</label>{{/if}}
                             <fieldset>
                                 <input id="mFilterDefault" name="mFilter" type="radio" value="likes" /> Default
                                 <input id="mFilterLikes" name="mFilter" type="radio" value="likes"/> Likes
@@ -56,6 +55,8 @@
 
 <template name="instaLocations">
     <ul class="instaLocations">
+        <li><small><b>Latest location downloads</b></small></li>
+        <li> {{#if getStatus}}<label>{{getStatus}}</label>{{/if}}</li>
     {{#each getLocations}}
         <li><a>{{name}}</a></li>
     {{/each}}
