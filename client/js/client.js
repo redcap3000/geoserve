@@ -36,6 +36,11 @@ Template.nav.events = {
     
 };
 
+
+Template.instaLocations.getLocations = function(){
+    return insta_locations.find({});
+};
+
 /* Handlebar template functions */
 
 Template.nav.instaPostReady =function(){

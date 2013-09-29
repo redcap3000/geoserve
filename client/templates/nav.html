@@ -42,6 +42,9 @@
             {{/if}}
         {{/if}}
     </div>
+    <div id="locations_menu" >
+        {{>instaLocations}}
+    </div>
 </template>
 
 <template name="instaMarker">
@@ -49,6 +52,14 @@
     <img src="{{image_thumb}}"/>
     <span class="locCheck">{{getLocationsLength}}</span>
     </div>
+</template>
+
+<template name="instaLocations">
+    <ul class="instaLocations">
+    {{#each getLocations}}
+        <li><a>{{name}}</a></li>
+    {{/each}}
+    </ul>
 </template>
 
 <template name="public_view">
