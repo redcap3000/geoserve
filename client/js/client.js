@@ -6,6 +6,21 @@
 /* Template click events.. for sorting manipulations */
 
 Template.nav.events = {
+    "click #instaAuth": function(evt,tmpl){
+        Session.set('instaAuth',true);
+    },
+    "click #logout": function(evt,tmpl){
+        
+        map = undefined;
+        gmapsMarkers = [];
+        infoWindows = [];
+        locationsMarkers = [];
+        Session.set("access_token",undefined);
+        Session.set("user_self",undefined);
+        window.location.replace('/');
+        // reset intervals too ??
+
+    },
     "click #mFilterLikes": function(evt,tmpl){
         Session.set("markerSort", {likes:-1});
     },
@@ -59,7 +74,6 @@ Template.map.rendered = function(){
 
     if(typeof map != "undefined" && typeof gmapsMarkers[0] != "undefined" && typeof map_set != true){
                    var get_pos = gmapsMarkers[0].getPosition();
-                    console.log('rendered');
                    if(get_pos){
                         alert('setting center');
                        
@@ -91,6 +105,11 @@ Template.instaMarker = {
             setMapCenter([this.lat,this.lon]);
         }
     },
+    created:
+        function(){
+            if(typeof map == 'undefined')
+                createMap();
+        },
     rendered :
         function(){
             placeNavMarker(new google.maps.LatLng(this.data.lat,this.data.lon),this.data );
@@ -120,5 +139,6 @@ Template.public_view = {
         function(){
             if(typeof map == "undefined")
                 createMap();
+            updateGeofeed();
         }
 };
