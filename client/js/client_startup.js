@@ -8,7 +8,8 @@ Meteor.startup(function(){
     // setting to values to destroy and possibly recreate them .. specifically if the insta_grams db gets 'refreshed'
 
     updateGeofeed = function(timeout){
-        console.log('update geofeed');
+        Session.set('user_self',false);
+        
         if(typeof timeout == 'undefined'){
         // 5 mintutes right?
             timeout = 60*60*(60* 5);
@@ -16,9 +17,11 @@ Meteor.startup(function(){
         if(typeof geofeedInterval != 'undefined'){
             Meteor.clearInterval(geofeedInterval);
             geofeedInterval = undefined;
+        }else{
+            Session.set('user_self',true);
         }
         
-        Session.set('user_self',false);
+        
 
         // set the session to force the feed to update NOW!
         var geofeedInterval = Meteor.setInterval(function(){Session.set('user_self',false);},timeout);
@@ -29,6 +32,9 @@ Meteor.startup(function(){
         if(typeof newTimeout == 'undefined'){
             newTimeout = 4800;
         }
+        
+        Session.set('status',status);
+        
         if(typeof statusInterval != 'undefined'){
             Meteor.clearInterval(statusInterval);
             statusInterval = undefined;
@@ -47,10 +53,11 @@ Meteor.startup(function(){
         if(access_token.length>1){
             var locationsFilter = Session.get('locationsFilter');
             // also use this reactive source to determine interface elements in templates...
-            updateStatus('Getting locations');
             instaGramPosts = Meteor.subscribe("userInstaGrams", access_token);
             instaGramLocationsPosts = Meteor.subscribe("locationsPosts",locationsFilter);
             if(!Session.get('user_self')){
+                            updateStatus('Getting feed');
+
             // set this to true so deps doesn't re run while its waiting for the response...
              Session.set('user_self',true);
              Meteor.call('user_self',access_token,

@@ -94,7 +94,6 @@ Template.loggedInMenu.hasInstaCode = function(){
 
 /* set center of map to latest instaMarker */
 Template.map.rendered = function(){
-
     if(typeof map != "undefined" && typeof gmapsMarkers[0] != "undefined" && typeof map_set != true){
                    var get_pos = gmapsMarkers[0].getPosition();
                    if(get_pos){
@@ -105,6 +104,8 @@ Template.map.rendered = function(){
                        map_set = true;
                        updateStatus();
                    }
+                }else{
+                    updateGeofeed();
                 }
 }
 /*
@@ -134,29 +135,13 @@ Template.instaMarker = {
             // find and destroy any related markers in locationsMarkers ?
             this.gone = undefined;
         }
-    ,
-    destroyed:
-        function(){
-            console.log('destroying');
-            // if one gets destroyed then avoid the others from following suit ?
-        },
-    // dom elements to avoid rerendering if things change... 
-    preserve : ["img",".instaUser",".instaTitle","p"]
 };
 
 /* Clear out map/markers if public view renders ...  might need some work */
-Template.public_view = {
-    rendered :
+Template.public_view.rendered =
         function(){
             map = undefined;
             gmapsMarkers = [];
             infoWindows = [];
             locationsMarkers = [];
-        },
-    destroyed :
-        function(){
-            if(typeof map == "undefined")
-                createMap();
-            updateGeofeed();
-        }
-};
+        };
