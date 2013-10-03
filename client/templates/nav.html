@@ -14,15 +14,15 @@
                         {{else}}
                             <b>requesting...</b>
                         {{/if}}
-                    {{else}}
-                        <input id="instaAuth" type="button" value="Login to instagram"/>
+                    
+                        
                     {{/if}}
 
        </span>
             {{#if hasInstaCode}}
                 {{>loggedInMenu}}
-            {{else}}
-                {{>public_view}}
+     
+                
             {{/if}}
     </nav>
 </template>
@@ -55,7 +55,6 @@
 
 <template name="instaLocations">
     <ul class="instaLocations">
-        <li><small><b>Latest location downloads</b></small></li>
         <li> {{#if getStatus}}<label>{{getStatus}}</label>{{/if}}</li>
     {{#each getLocations}}
         <li><a>{{name}}</a></li>
@@ -63,14 +62,3 @@
     </ul>
 </template>
 
-<template name="public_view">
- <h3 style="padding-top:4em;margin-left:1.25em;color:black;">Instageo</h3>
-            
-        <div class="span" style="padding:1em;color:black">
-            <em>An <a href="http://instagram.com/developer/">Instagram-API</a> and Google Maps-API powered visualization of instagram posts with location data!</em>
-            <ul style="padding-top:.5em;"><li>Log in with instagram account</li><<li>Click sidebar thumbnails to center map. Click thumbnail image markers to pull up post information and search for nearby locations. Click red location markers to find related public posts to that location. </p></li></ul>
-            
-            <b><a href="http://redcapmedia.com">Ronaldo Barbachano 2013</a></b>
-        </div>
-
-</template>
