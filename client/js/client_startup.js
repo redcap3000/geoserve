@@ -6,9 +6,7 @@
 Meteor.startup(function(){
     // continually refreshes client feed... should probably unset this interval on destroy...
     // setting to values to destroy and possibly recreate them .. specifically if the insta_grams db gets 'refreshed'
-    
-    // for hiding the status window performance implication?   
-    //Session.set('map_set',false);
+
     updateGeofeed = function(timeout){
         console.log('update geofeed');
         if(typeof timeout == 'undefined'){
@@ -22,10 +20,10 @@ Meteor.startup(function(){
         
         Session.set('user_self',false);
 
-    // set the session to force the feed to update NOW!
+        // set the session to force the feed to update NOW!
         var geofeedInterval = Meteor.setInterval(function(){Session.set('user_self',false);},timeout);
         
-    }
+    };
     
     updateStatus = function(status,newTimeout){
         if(typeof newTimeout == 'undefined'){
@@ -34,38 +32,17 @@ Meteor.startup(function(){
         if(typeof statusInterval != 'undefined'){
             Meteor.clearInterval(statusInterval);
             statusInterval = undefined;
-        
-//            Session.set('status',status + '\n' +         Session.get('status'));
         }
         statusInterval = Meteor.setInterval(function(){Session.set('status','');},newTimeout);
     };
     
     Deps.autorun(function(){
-/*        if(typeof map != "undefined" && typeof gmapsMarkers[0] != "undefined" && Session.equals('map_set',false)){
-                   var get_pos = gmapsMarkers[0].getPosition();
-                   if(get_pos){
-                       console.log('setting center');
-                       setMapCenter(get_pos);
-                       // to hopefully avoid resetting the map center every time the geo feed is updated?
-                       Session.set('map_set',true);
-                   }
-                }*/
-    
-       var access_token = window.location.href.split("#");
-       
-        if(access_token.length > 1 ){
-         //if(access_token.length >1){
-            // get rid of token if logged out
-           // window.location.replace('/');
-           // }else{
-                
-                access_token = access_token[1].split("=")[1];
-                console.log('split' + access_token);
-                
-                Session.set('access_token', access_token);
-                var doesHaveAccess = Session.get('access_token');
+        var access_token = window.location.href.split("#");
 
-            //}
+        if(access_token.length > 1 ){
+            access_token = access_token[1].split("=")[1];
+            Session.set('access_token', access_token);
+            var doesHaveAccess = Session.get('access_token');
         }
         if(access_token.length>1){
             var locationsFilter = Session.get('locationsFilter');
@@ -73,12 +50,10 @@ Meteor.startup(function(){
             updateStatus('Getting locations');
             instaGramPosts = Meteor.subscribe("userInstaGrams", access_token);
             instaGramLocationsPosts = Meteor.subscribe("locationsPosts",locationsFilter);
-            // for only storing the location feed data based on what the user clicks.. maybe store to local minimongo later
-            
             if(!Session.get('user_self')){
             // set this to true so deps doesn't re run while its waiting for the response...
              Session.set('user_self',true);
-             Meteor.call('user_self',access_token,access_token,
+             Meteor.call('user_self',access_token,
                 function(error,result){
                     if(typeof error =='undefined'){
                         updateStatus("Geofeed obtained");
