@@ -92,8 +92,7 @@ Meteor.methods({
         }
 
     },
-           
-     authenticate : function(client_id){
+    authenticate : function(client_id){
         var settings = Meteor.settings;
         if(typeof settings.redirect_uri != 'undefined'){
             var redirect_uri = settings.redirect_uri,
@@ -126,9 +125,11 @@ Meteor.methods({
                                  request.data.data.filter(function(arr){
                                     arr.id = parseInt(arr.id);
                                     // check to see its not already there....
+                                    locations_result.push(arr.id);
                                     var instaCheck = insta_locations.findOne({id:arr.id},{id:1});
                                     if(!instaCheck){
                                         insta_locations.insert(arr);
+                                        
                                         Meteor.call("locations_media_recent",access_token,arr.id,function(error,result){
                                             console.log(arr.id);
                                             /*
@@ -153,27 +154,19 @@ Meteor.methods({
                                                     new_obj.likes = obj.likes.count,
                                                     new_obj.image =  obj.images.low_resolution.url,
                                                     new_obj.id = obj.id;
-                                                    
-                                                    
                                                     if(obj.caption != null){
                                                         new_obj.caption = obj.caption.text;
                                                         new_obj.caption_id = obj.caption_id;
                                                     }
-                                                    
                                                     new_data.push(new_obj);
-                                                    
                                                 });
                                                 cpy.data = new_data;
                                                 insta_locations_grams.insert(cpy);
                                             }else{
                                                 console.log('problem with request result...');
                                             }
-                                            // so this inserts things .. new record for each user need to do a 'does this exist check' first... probably...
                                         });
-                                        locations_result.push(arr.id);
-                                    
                                     }
-                                    
                                  });
                                 // updated associated post with list of location ID's as organized via instagram api (not the mongo id)
                                  if(locations_result.length > 0){
@@ -225,10 +218,10 @@ Meteor.methods({
                
             }
      },
-     user_self : function(access_token,client_id,count,min_id,max_id){
+     user_self : function(access_token){
         // do a check to determine if access_token matches value that could be stored for client id instead
         // of continually logging in/out....
-            if(typeof access_token != 'undefined' && typeof client_id != 'undefined'){
+            if(typeof access_token != 'undefined'){
                 var base_url = 'https://api.instagram.com/v1/users/self/feed?access_token=' + access_token;
                 try{
                     var request = HTTP.get(base_url);
@@ -237,7 +230,7 @@ Meteor.methods({
                             // filter data
                             var result = [];
                             if(typeof request.data.pagination.next_url != 'undefined')
-                            Meteor.call('user_self_backlog',request.data.pagination.next_url,client_id,
+                            Meteor.call('user_self_backlog',request.data.pagination.next_url,access_token,
                                 function(error,result){
                                     if (result){
                                         return true;
@@ -247,7 +240,7 @@ Meteor.methods({
                                 }
                             );
                             request.data.data.filter(function(arr){
-                                Meteor.call('instaInsert',client_id,arr);
+                                Meteor.call('instaInsert',access_token,arr);
                             });
                             return true;
                    
@@ -272,11 +265,7 @@ Meteor.methods({
      user_self_backlog : function(url,userId){
      // especially helpful if we have the pagination url
         // this is for the filter functions that often forget what the user is for
-        if(typeof userId != 'undefined'){
-            insertUserId = userId;
-        }else{
-            insertUserId = undefined;
-        }
+  
         try{
             var request = HTTP.get(url);
             if(request.statusCode === 200 && typeof request.data != 'undefined'){
