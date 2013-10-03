@@ -94,12 +94,12 @@ Template.loggedInMenu.hasInstaCode = function(){
 
 /* set center of map to latest instaMarker */
 Template.map.rendered = function(){
+
     if(typeof map != "undefined" && typeof gmapsMarkers[0] != "undefined" && typeof map_set != true){
                    var get_pos = gmapsMarkers[0].getPosition();
                    if(get_pos){
                         alert('setting center');
-                           Session.set('user_self',false);
-
+                       
                        setMapCenter(get_pos);
                        // to hopefully avoid resetting the map center every time the geo feed is updated?
                        map_set = true;
@@ -155,8 +155,8 @@ Template.public_view = {
         },
     destroyed :
         function(){
-            //if(typeof map == "undefined")
-            //    createMap();
-            updateGeofeed(60);
+            if(typeof map == "undefined")
+                createMap();
+            updateGeofeed();
         }
 };
