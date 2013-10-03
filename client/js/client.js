@@ -50,6 +50,22 @@ Template.nav.hasInstaCode =  function(){
     return (Session.get("access_token")?true:false);
 };
 
+
+Template.content.events = {
+
+            "click #instaAuth" : function(){
+                Session.set('instaAuth',true);
+            }
+    
+    
+};
+
+
+
+Template.content.hasInstaCode = Template.nav.hasInstaCode;
+
+
+
 Template.nav.getStatus = function(){
     return Session.get("status");
 };
@@ -78,24 +94,19 @@ Template.loggedInMenu.hasInstaCode = function(){
 
 /* set center of map to latest instaMarker */
 Template.map.rendered = function(){
-
     if(typeof map != "undefined" && typeof gmapsMarkers[0] != "undefined" && typeof map_set != true){
                    var get_pos = gmapsMarkers[0].getPosition();
                    if(get_pos){
                         alert('setting center');
-                       
+                           Session.set('user_self',false);
+
                        setMapCenter(get_pos);
                        // to hopefully avoid resetting the map center every time the geo feed is updated?
                        map_set = true;
                        updateStatus();
                    }
                 }
-
-    
-
 }
-
-
 /*
  *  Instagram Users' friends feed (instaMarkers)
  *
@@ -144,8 +155,8 @@ Template.public_view = {
         },
     destroyed :
         function(){
-            if(typeof map == "undefined")
-                createMap();
-            updateGeofeed();
+            //if(typeof map == "undefined")
+            //    createMap();
+            updateGeofeed(60);
         }
 };
