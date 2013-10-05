@@ -7,6 +7,8 @@
  *
  */
 
+
+
 Meteor.startup(function(){
 
 gmapsMarkers = [],infoWindows = [],locationsMarkers = [],
